@@ -5,11 +5,9 @@ services:
     restart: always
     env_file:
       - DB/secrets.env
-    ports:
-      - "5432:5432"
     volumes:
-      - DB/migrations:/docker-entrypoint-initdb.d/init.sql
-      - DB/pgData:/var/lib/postgresql/data
+      - ./DB/migrations:/docker-entrypoint-initdb.d/init.sql
+      - ./DB/pgData:/var/lib/postgresql/data
     networks:
       - dev_bridge
   backend:
