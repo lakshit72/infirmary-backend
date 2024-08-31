@@ -1,7 +1,7 @@
 package com.infirmary.backend.shared.utility;
 
 import lombok.Getter;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -9,5 +9,12 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource(value = "classpath:message.properties")
 @Getter
 public class MessageConfigUtil {
+    @Value("${patient_not_found}")
     private String patientNotFound;
+
+    @Value("${invalid_data_exception}")
+    private String invalidDataException;
+
+    @Value("${sapid_exist_exception}")
+    private String sapIdExistException;
 }
