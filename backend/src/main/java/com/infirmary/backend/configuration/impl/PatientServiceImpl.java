@@ -30,6 +30,7 @@ public class PatientServiceImpl implements PatientService {
         this.messageConfigUtil = messageConfigUtil;
         this.functionUtil = functionUtil;
     }
+  
     @Override
     public PatientDTO getPatientBySapId(Long sapId) throws PatientNotFoundException{
         try {
@@ -50,6 +51,10 @@ public class PatientServiceImpl implements PatientService {
         }
     }
 
+    private boolean isIdValid(Long sapId){
+        String sapIdstr = sapId.toString();
+        return sapIdstr.matches("^5\\d{8}$");
+    }
     public PatientDTO createPatient(PatientDTO patientDTO){
         try {
             Patient patient = new Patient(patientDTO);
@@ -93,5 +98,4 @@ public class PatientServiceImpl implements PatientService {
             throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
         }
     }
-
 }
