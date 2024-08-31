@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: infirmary_db_container
+    restart: always
+    env_file:
+      - DB/secrets.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - DB/migrations:/docker-entrypoint-initdb.d/init.sql
+      - DB/pgData:/var/lib/postgresql/data
+    networks:
+      - dev_bridge
+  backend:
+    container_name: infirmary_backend_container
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    networks:
+      - dev_bridge
+    env_file:
+      - backend/secrets.env
+
+networks:
+  dev_bridge:
+    name: dev_bridge
+    external: true

@@ -24,8 +24,11 @@ public class PatientServiceImpl implements PatientService {
         this.messageConfigUtil = messageConfigUtil;
     }
 
-    public PatientDTO getPatientBySapId(Long sapId){
+    public PatientDTO getPatientBySapId(Long sapId) throws PatientNotFoundException {
         try {
+            if(sapId==null || !isIdValid(sapId)){
+                throw new IllegalArgumentException("Invalid SAP ID");
+            }
             Optional<Patient> patient = patientRepository.findBySapId(sapId);
             if (patient.isEmpty()){
                 throw new PatientNotFoundException(messageConfigUtil.getPatientNotFound());
@@ -38,5 +41,10 @@ public class PatientServiceImpl implements PatientService {
             log.error("Exception in getPatientBySapId", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean isIdValid(Long sapId){
+        String sapIdstr = sapId.toString();
+        return sapIdstr.matches("^5\\d{8}$");
     }
 }
