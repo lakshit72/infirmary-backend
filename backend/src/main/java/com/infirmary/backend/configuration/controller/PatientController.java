@@ -22,26 +22,25 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping(value = "/{sap-id}")
-    public ResponseEntity<?> getPatientBySapId(@PathVariable("sap-id") Long sapId)
+    @GetMapping(value = "/{sap-email}")
+    public ResponseEntity<?> getPatientBySapEmail(@PathVariable("sap-email") String sapEmail)
             throws PatientNotFoundException {
-        PatientDTO response = patientService.getPatientBySapId(sapId);
+        PatientDTO response = patientService.getPatientBySapEmail(sapEmail);
         return createSuccessResponse(response);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> createPatient(PatientDTO patientDTO, MedicalDetailsDTO medicalDetailsDTO) throws SapIdExistException {
-        patientService.validatePatientData(patientDTO);
-        PatientDetailsResponseDTO response = patientService.createPatient(patientDTO, medicalDetailsDTO);
-        return createSuccessResponse(response);
-    }
-
-    @PutMapping("/update/{sap-id}")
-    public ResponseEntity<?> updatePatient(@PathVariable("sap-id") Long sapId, @RequestBody PatientDTO patientDTO,
+    @PutMapping(value = "/update/{sap-email}")
+    public ResponseEntity<?> updatePatient(@PathVariable("sap-email") String sapEmail,
                                            @RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-        PatientDetailsResponseDTO response = patientService.updatePatientDetails(sapId, patientDTO, medicalDetailsDTO);
+        MedicalDetailsDTO response = patientService.updatePatientDetails(sapEmail, medicalDetailsDTO);
         return createSuccessResponse(response);
     }
 
+    @GetMapping(value = "/getAllDetails/{sap-email}")
+    public ResponseEntity<?> getAllDetails(@PathVariable("sap-email") String sapEmail) throws
+            PatientNotFoundException, MedicalDetailsNotFoundException {
+        PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
+        return createSuccessResponse(response);
+    }
 }

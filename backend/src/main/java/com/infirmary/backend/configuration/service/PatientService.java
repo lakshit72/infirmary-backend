@@ -7,11 +7,11 @@ import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 
 public interface PatientService {
-    PatientDTO getPatientBySapId(Long sapId) throws PatientNotFoundException;
-    PatientDetailsResponseDTO createPatient(PatientDTO patientDTO, MedicalDetailsDTO medicalDetailsDTO);
+    PatientDTO getPatientBySapEmail(String sapEmail) throws PatientNotFoundException;
     void validatePatientData(PatientDTO patientDTO);
-    PatientDetailsResponseDTO updatePatientDetails(Long sapId,
-                                                   PatientDTO patientDTO,
+    MedicalDetailsDTO updatePatientDetails(String sapEmail,
                                                    MedicalDetailsDTO medicalDetailsDTO)
             throws PatientNotFoundException, MedicalDetailsNotFoundException;
+
+    PatientDetailsResponseDTO getAllDetails(String sapEmail) throws PatientNotFoundException, MedicalDetailsNotFoundException;
 }
