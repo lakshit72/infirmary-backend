@@ -41,6 +41,7 @@ public class PatientServiceImpl implements PatientService {
         this.medicalDetails = medicalDetails;
         this.medicalDetailsRepository = medicalDetailsRepository;
     }
+  
     @Override
     public PatientDTO getPatientBySapId(Long sapId) throws PatientNotFoundException{
         try {
@@ -148,5 +149,4 @@ public class PatientServiceImpl implements PatientService {
             throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
         }
     }
-
 }

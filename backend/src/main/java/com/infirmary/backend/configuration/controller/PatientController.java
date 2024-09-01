@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.lang.String;
+
 @RestController
 @RequestMapping(value = "/api/patient")
 public class PatientController {
@@ -20,6 +22,11 @@ public class PatientController {
 
     public PatientController(PatientService patientService) {
         this.patientService = patientService;
+    }
+
+    @GetMapping(value = "/test")
+    public String test(){
+        return "Hello world";
     }
 
     @GetMapping(value = "/{sap-id}")
