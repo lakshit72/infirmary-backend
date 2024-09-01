@@ -40,6 +40,12 @@ public class Patient implements Serializable {
     @Column(name = "emergency_contact", nullable = false)
     private String emergencyContact;
 
+    @Column(name = "weight")
+    private Long weight;
+
+    @Column(name = "height")
+    private Long height;
+
     public Patient(PatientDTO patientDTO){
         this.sapId = patientDTO.getSapId();
         this.name = patientDTO.getName();
@@ -49,5 +55,15 @@ public class Patient implements Serializable {
         this.phoneNumber = patientDTO.getPhoneNumber();
         this.address = patientDTO.getAddress();
         this.emergencyContact = patientDTO.getEmergencyContact();
+        this.weight = patientDTO.getWeight();
+        this.height = patientDTO.getHeight();
+    }
+
+    public void updateFromDTO(PatientDTO patientDTO){
+        this.phoneNumber = patientDTO.getPhoneNumber();
+        this.address = patientDTO.getAddress();
+        this.emergencyContact = patientDTO.getEmergencyContact();
+        this.weight = patientDTO.getWeight();
+        this.height = patientDTO.getHeight();
     }
 }
