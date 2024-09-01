@@ -17,4 +17,7 @@ public class MessageConfigUtil {
 
     @Value("${sapid_exist_exception}")
     private String sapIdExistException;
+
+    @Value("${medical_details_not_found_exception}")
+    private String medicalDetailsNotFoundException;
 }

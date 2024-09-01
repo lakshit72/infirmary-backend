@@ -19,6 +19,8 @@ public class PatientDTO {
     private String phoneNumber;
     private String address;
     private String emergencyContact;
+    private Long weight;
+    private Long height;
 
     public PatientDTO(Patient patient){
         this.sapId = patient.getSapId();
@@ -29,5 +31,7 @@ public class PatientDTO {
         this.phoneNumber = patient.getPhoneNumber();
         this.address = patient.getAddress();
         this.emergencyContact = patient.getEmergencyContact();
+        this.weight = patient.getWeight();
+        this.height = patient.getHeight();
     }
 }

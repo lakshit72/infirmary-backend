@@ -1,8 +1,11 @@
 package com.infirmary.backend.configuration.controller;
 
+import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
+import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
+import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 import com.infirmary.backend.configuration.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +37,18 @@ public class PatientController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> createPatient(PatientDTO patientDTO) throws SapIdExistException {
+    public ResponseEntity<?> createPatient(PatientDTO patientDTO, MedicalDetailsDTO medicalDetailsDTO) throws SapIdExistException {
         patientService.validatePatientData(patientDTO);
-        PatientDTO response = patientService.createPatient(patientDTO);
+        PatientDetailsResponseDTO response = patientService.createPatient(patientDTO, medicalDetailsDTO);
         return createSuccessResponse(response);
     }
+
+    @PutMapping("/update/{sap-id}")
+    public ResponseEntity<?> updatePatient(@PathVariable("sap-id") Long sapId, @RequestBody PatientDTO patientDTO,
+                                           @RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
+            PatientNotFoundException, MedicalDetailsNotFoundException {
+        PatientDetailsResponseDTO response = patientService.updatePatientDetails(sapId, patientDTO, medicalDetailsDTO);
+        return createSuccessResponse(response);
+    }
+
 }

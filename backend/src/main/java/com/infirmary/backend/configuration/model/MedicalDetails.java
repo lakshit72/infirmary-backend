@@ -18,6 +18,10 @@ public class MedicalDetails {
     @Column(name = "id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sap_id", referencedColumnName = "sap_id")
+    private Patient patient;
+
     @Column(name = "gender", nullable = false)
     private String gender;
 
@@ -37,6 +41,12 @@ public class MedicalDetails {
         this.id = medicalDetailsDTO.getId();
         this.gender = medicalDetailsDTO.getGender();
         this.bloodGroup = medicalDetailsDTO.getBloodGroup();
+        this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
+        this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();
+        this.allergies = medicalDetailsDTO.getAllergies();
+    }
+
+    public void updateFromMedicalDetailsDTO(MedicalDetailsDTO medicalDetailsDTO){
         this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
         this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();
         this.allergies = medicalDetailsDTO.getAllergies();

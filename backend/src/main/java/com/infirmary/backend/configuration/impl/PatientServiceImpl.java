@@ -1,10 +1,15 @@
 package com.infirmary.backend.configuration.impl;
 
 import com.infirmary.backend.configuration.Exception.InvalidDataException;
+import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
+import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
+import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
+import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
+import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.service.PatientService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
@@ -13,6 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -20,15 +26,20 @@ import java.util.stream.Stream;
 @Transactional
 @Service
 public class PatientServiceImpl implements PatientService {
+    private final MedicalDetailsRepository medicalDetailsRepository;
     private final PatientRepository patientRepository;
     private final MessageConfigUtil messageConfigUtil;
     private final FunctionUtil functionUtil;
+    private final MedicalDetails medicalDetails;
 
     public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil,
-                              FunctionUtil functionUtil) {
+                              FunctionUtil functionUtil, MedicalDetails medicalDetails,
+                              MedicalDetailsRepository medicalDetailsRepository) {
         this.patientRepository = patientRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.functionUtil = functionUtil;
+        this.medicalDetails = medicalDetails;
+        this.medicalDetailsRepository = medicalDetailsRepository;
     }
   
     @Override
@@ -50,22 +61,22 @@ public class PatientServiceImpl implements PatientService {
             throw new RuntimeException(e);
         }
     }
-
-    private boolean isIdValid(Long sapId){
-        String sapIdstr = sapId.toString();
-        return sapIdstr.matches("^5\\d{8}$");
-    }
-    public PatientDTO createPatient(PatientDTO patientDTO){
+    @Override
+    public PatientDetailsResponseDTO createPatient(PatientDTO patientDTO, MedicalDetailsDTO medicalDetailsDTO){
         try {
             Patient patient = new Patient(patientDTO);
+            MedicalDetails medicalDetails = new MedicalDetails(medicalDetailsDTO);
             Patient savedPatient = patientRepository.save(patient);
-            return new PatientDTO(savedPatient);
+            MedicalDetails savedMedicalDetails = medicalDetailsRepository.save(medicalDetails);
+            return new PatientDetailsResponseDTO(
+                    new PatientDTO(savedPatient),
+                    new MedicalDetailsDTO(savedMedicalDetails));
         } catch (Exception e){
             log.error("Exception in patient creation");
             throw new RuntimeException(e);
         }
     }
-
+    @Override
     public void validatePatientData(PatientDTO patientDTO) {
         try {
             if (!FunctionUtil.isValidId(patientDTO.getSapId())) {
@@ -86,6 +97,46 @@ public class PatientServiceImpl implements PatientService {
             throw e;
         } catch (Exception e) {
             log.error("Exception in method validatePatientData", e);
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public PatientDetailsResponseDTO updatePatientDetails(Long sapId,
+                                                          PatientDTO patientDTO,
+                                                          MedicalDetailsDTO medicalDetailsDTO)
+            throws PatientNotFoundException, MedicalDetailsNotFoundException {
+
+        if (!FunctionUtil.isValidId(sapId)) {
+            throw new IllegalArgumentException("Invalid SAP ID: " + sapId);
+        }
+
+        try {
+            Optional<Patient> optionalPatient = patientRepository.findBySapId(sapId);
+            Patient existingPatient = optionalPatient
+                    .map(patient -> {
+                        patient.updateFromDTO(patientDTO);
+                        return patient;
+                    })
+                    .orElseThrow(() -> new PatientNotFoundException("Patient not found with SAP ID: " + sapId));
+
+            MedicalDetails existingMedicalDetails = medicalDetailsRepository.findByPatient_SapId(
+                    existingPatient.getSapId()
+            );
+            if (Objects.isNull(existingMedicalDetails)) {
+                throw new MedicalDetailsNotFoundException(
+                        "Medical details not found for the SAP ID: " + existingPatient.getSapId()
+                );
+            }
+            existingMedicalDetails.updateFromMedicalDetailsDTO(medicalDetailsDTO);
+
+            Patient updatedPatient = patientRepository.save(existingPatient);
+            MedicalDetails updatedMedicalDetails = medicalDetailsRepository.save(existingMedicalDetails);
+
+            return new PatientDetailsResponseDTO(
+                    new PatientDTO(updatedPatient),
+                    new MedicalDetailsDTO(updatedMedicalDetails));
+        } catch (Exception e) {
+            log.error("Exception in updatePatientDetails", e);
             throw new RuntimeException(e);
         }
     }
