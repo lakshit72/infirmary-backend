@@ -16,8 +16,8 @@ import java.io.Serializable;
 @Table(name = "patient")
 public class Patient implements Serializable {
     @Id
-    @Column(name = "sap_id", nullable = false)
-    private Long sapId;
+    @Column(name = "sap_email", nullable = false)
+    private String sapEmail;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -34,36 +34,25 @@ public class Patient implements Serializable {
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "address", nullable = false)
-    private String address;
-
     @Column(name = "emergency_contact", nullable = false)
     private String emergencyContact;
 
-    @Column(name = "weight")
-    private Long weight;
+    @Column(name = "blood_group")
+    private String bloodGroup;
 
-    @Column(name = "height")
-    private Long height;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     public Patient(PatientDTO patientDTO){
-        this.sapId = patientDTO.getSapId();
+        this.sapEmail = patientDTO.getSapEmail();
         this.name = patientDTO.getName();
         this.school = patientDTO.getSchool();
         this.dateOfBirth = patientDTO.getDateOfBirth();
         this.program = patientDTO.getProgram();
         this.phoneNumber = patientDTO.getPhoneNumber();
-        this.address = patientDTO.getAddress();
         this.emergencyContact = patientDTO.getEmergencyContact();
-        this.weight = patientDTO.getWeight();
-        this.height = patientDTO.getHeight();
-    }
+        this.bloodGroup = patientDTO.getBloodGroup();
+        this.imageUrl = patientDTO.getImageUrl();
 
-    public void updateFromDTO(PatientDTO patientDTO){
-        this.phoneNumber = patientDTO.getPhoneNumber();
-        this.address = patientDTO.getAddress();
-        this.emergencyContact = patientDTO.getEmergencyContact();
-        this.weight = patientDTO.getWeight();
-        this.height = patientDTO.getHeight();
     }
 }

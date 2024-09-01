@@ -18,15 +18,15 @@ public class MedicalDetails {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sap_id", referencedColumnName = "sap_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")
     private Patient patient;
 
     @Column(name = "gender", nullable = false)
     private String gender;
 
-    @Column(name = "blood_group", nullable = false)
-    private String bloodGroup;
+    @Column(name = "current_address", nullable = false)
+    private String currentAddress;
 
     @Column(name = "medical_history", nullable = false)
     private String medicalHistory;
@@ -40,13 +40,14 @@ public class MedicalDetails {
     public MedicalDetails(MedicalDetailsDTO medicalDetailsDTO){
         this.id = medicalDetailsDTO.getId();
         this.gender = medicalDetailsDTO.getGender();
-        this.bloodGroup = medicalDetailsDTO.getBloodGroup();
+        this.currentAddress = medicalDetailsDTO.getCurrentAddress();
         this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
         this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();
         this.allergies = medicalDetailsDTO.getAllergies();
     }
 
     public void updateFromMedicalDetailsDTO(MedicalDetailsDTO medicalDetailsDTO){
+        this.currentAddress = medicalDetailsDTO.getCurrentAddress();
         this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
         this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();
         this.allergies = medicalDetailsDTO.getAllergies();
