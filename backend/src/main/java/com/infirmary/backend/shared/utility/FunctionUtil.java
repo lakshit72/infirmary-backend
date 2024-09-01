@@ -24,7 +24,7 @@ public class FunctionUtil {
                 || StringUtils.containsAny(name,"[!@#$%&*()+=|<>?{}\\[\\]~]");
     }
 
-    public static boolean isValidId(Long Id){
-        return Id.toString().matches("^5\\d{8}$");
+    public static boolean isValidId(String Email){
+        return Email.contains("stu.upes.ac.in") || Email.contains("ddn.upes.ac.in");
     }
 }

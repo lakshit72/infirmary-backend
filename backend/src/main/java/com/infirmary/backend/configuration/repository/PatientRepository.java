@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-    Optional<Patient> findBySapId(@NonNull Long sapId);
+
+    Optional<Patient> findBySapEmail(@NonNull String sapEmail);
 }
