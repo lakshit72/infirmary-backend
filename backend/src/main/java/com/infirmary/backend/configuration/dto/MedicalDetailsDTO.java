@@ -11,7 +11,7 @@ import lombok.Setter;
 public class MedicalDetailsDTO {
     private Long id;
     private String gender;
-    private String bloodGroup;
+    private String currentAddress;
     private String medicalHistory;
     private String familyMedicalHistory;
     private String allergies;
@@ -19,7 +19,7 @@ public class MedicalDetailsDTO {
     public MedicalDetailsDTO(MedicalDetails medicalDetails){
         this.id = medicalDetails.getId();
         this.gender = medicalDetails.getGender();
-        this.bloodGroup = medicalDetails.getBloodGroup();
+        this.currentAddress = medicalDetails.getCurrentAddress();
         this.medicalHistory = medicalDetails.getMedicalHistory();
         this.familyMedicalHistory = medicalDetails.getFamilyMedicalHistory();
         this.allergies = medicalDetails.getAllergies();

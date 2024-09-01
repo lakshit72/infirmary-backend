@@ -11,7 +11,7 @@ import java.nio.file.SecureDirectoryStream;
 @Setter
 @NoArgsConstructor
 public class PatientDTO {
-    private Long sapId;
+    private String sapEmail;
     private String name;
     private String school;
     private String dateOfBirth;
@@ -19,11 +19,11 @@ public class PatientDTO {
     private String phoneNumber;
     private String address;
     private String emergencyContact;
-    private Long weight;
-    private Long height;
+    private String bloodGroup;
+    private String imageUrl;
 
     public PatientDTO(Patient patient){
-        this.sapId = patient.getSapId();
+        this.sapEmail = patient.getSapEmail();
         this.name = patient.getName();
         this.school = patient.getSchool();
         this.dateOfBirth = patient.getDateOfBirth();
@@ -31,7 +31,7 @@ public class PatientDTO {
         this.phoneNumber = patient.getPhoneNumber();
         this.address = patient.getAddress();
         this.emergencyContact = patient.getEmergencyContact();
-        this.weight = patient.getWeight();
-        this.height = patient.getHeight();
+        this.bloodGroup = patient.getBloodGroup();
+        this.imageUrl = patient.getImageUrl();
     }
 }
