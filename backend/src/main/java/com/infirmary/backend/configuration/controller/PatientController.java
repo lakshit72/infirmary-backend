@@ -23,24 +23,24 @@ public class PatientController {
     }
 
     @GetMapping(value = "/{sap-email}")
-    public ResponseEntity<?> getPatientBySapEmail(@PathVariable("sap-email") String sapEmail)
+    public ResponseEntity<?> getPatientBySapEmail(@PathVariable("sap-email") Long sapId)
             throws PatientNotFoundException {
-        PatientDTO response = patientService.getPatientBySapEmail(sapEmail);
+        PatientDTO response = patientService.getPatientBySapEmail(sapId);
         return createSuccessResponse(response);
     }
 
     @PutMapping(value = "/update/{sap-email}")
-    public ResponseEntity<?> updatePatient(@PathVariable("sap-email") String sapEmail,
+    public ResponseEntity<?> updatePatient(@PathVariable("sap-email") Long sapId,
                                            @RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-        MedicalDetailsDTO response = patientService.updatePatientDetails(sapEmail, medicalDetailsDTO);
+        MedicalDetailsDTO response = patientService.updatePatientDetails(sapId, medicalDetailsDTO);
         return createSuccessResponse(response);
     }
 
     @GetMapping(value = "/getAllDetails/{sap-email}")
-    public ResponseEntity<?> getAllDetails(@PathVariable("sap-email") String sapEmail) throws
+    public ResponseEntity<?> getAllDetails(@PathVariable("sap-email") Long sapId) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-        PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
+        PatientDetailsResponseDTO response = patientService.getAllDetails(sapId);
         return createSuccessResponse(response);
     }
 }

@@ -6,5 +6,5 @@ import org.springframework.lang.NonNull;
 
 public interface MedicalDetailsRepository extends JpaRepository<MedicalDetails, Long> {
 
-    MedicalDetails findByPatient_SapEmail(@NonNull String sapEmail);
+    MedicalDetails findByPatient_SapId(@NonNull Long sapId);
 }
