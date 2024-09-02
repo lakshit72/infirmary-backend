@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.net.URL;
 import java.nio.file.SecureDirectoryStream;
 
 @Getter
@@ -19,6 +20,8 @@ public class PatientDTO {
     private String phoneNumber;
     private String address;
     private String emergencyContact;
+    private URL studentDetails;
+
 
     public PatientDTO(Patient patient){
         this.sapId = patient.getSapId();
@@ -29,5 +32,6 @@ public class PatientDTO {
         this.phoneNumber = patient.getPhoneNumber();
         this.address = patient.getAddress();
         this.emergencyContact = patient.getEmergencyContact();
+        this.studentDetails = patient.getStudentDetails();
     }
 }

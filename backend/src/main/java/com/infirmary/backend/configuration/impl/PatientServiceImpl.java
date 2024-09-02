@@ -97,5 +97,8 @@ public class PatientServiceImpl implements PatientService {
                 .anyMatch(String::isEmpty)) {
             throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
         }
+        if (patientDTO.getStudentDetails() == null) {
+            throw new InvalidDataException("Student Details URL cannot be null");
+        }
     }
 }
