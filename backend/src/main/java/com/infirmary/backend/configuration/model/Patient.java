@@ -7,9 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 
 @Entity
 @Getter
@@ -42,8 +39,8 @@ public class Patient implements Serializable {
     @Column(name = "emergency_contact", nullable = false)
     private String emergencyContact;
 
-    @Column(name = "student_details", nullable = true)
-    private URL studentDetails;
+    @Column(name = "image", nullable = true)
+    private String image;
 
     public Patient(PatientDTO patientDTO){
         this.sapId = patientDTO.getSapId();
@@ -54,7 +51,7 @@ public class Patient implements Serializable {
         this.phoneNumber = patientDTO.getPhoneNumber();
         this.address = patientDTO.getAddress();
         this.emergencyContact = patientDTO.getEmergencyContact();
-        this.studentDetails = patientDTO.getStudentDetails();
+        this.image = patientDTO.getImage();
 
     }
 }

@@ -20,7 +20,7 @@ public class PatientDTO {
     private String phoneNumber;
     private String address;
     private String emergencyContact;
-    private URL studentDetails;
+    private String image;
 
 
     public PatientDTO(Patient patient){
@@ -32,6 +32,6 @@ public class PatientDTO {
         this.phoneNumber = patient.getPhoneNumber();
         this.address = patient.getAddress();
         this.emergencyContact = patient.getEmergencyContact();
-        this.studentDetails = patient.getStudentDetails();
+        this.image = patient.getImage();
     }
 }
