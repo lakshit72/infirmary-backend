@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PatientDTO {
-    private Long Id;
+    private String email;
     private String name;
     private String school;
     private String dateOfBirth;
@@ -19,8 +19,8 @@ public class PatientDTO {
     private String bloodGroup;
     private String imageUrl;
 
-    public PatientDTO(Patient patient){
-        this.Id = patient.getId();
+    public PatientDTO(Patient patient) {
+        this.email = patient.getEmail();
         this.name = patient.getName();
         this.school = patient.getSchool();
         this.dateOfBirth = patient.getDateOfBirth();

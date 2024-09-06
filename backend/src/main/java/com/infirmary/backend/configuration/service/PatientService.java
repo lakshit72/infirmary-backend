@@ -5,13 +5,17 @@ import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface PatientService {
-    PatientDTO getPatientBySapEmail(Long sapId) throws PatientNotFoundException;
+    PatientDTO getPatientBySapEmail(String sapEmail) throws PatientNotFoundException;
+
     void validatePatientData(PatientDTO patientDTO);
-    MedicalDetailsDTO updatePatientDetails(Long sapId,
-                                                   MedicalDetailsDTO medicalDetailsDTO)
+
+    MedicalDetailsDTO updatePatientDetails(String sapEmail,
+                                           MedicalDetailsDTO medicalDetailsDTO)
             throws PatientNotFoundException, MedicalDetailsNotFoundException;
 
-    PatientDetailsResponseDTO getAllDetails(Long sapId) throws PatientNotFoundException, MedicalDetailsNotFoundException;
+    PatientDetailsResponseDTO getAllDetails(String sapEmail) throws PatientNotFoundException, MedicalDetailsNotFoundException;
 }
