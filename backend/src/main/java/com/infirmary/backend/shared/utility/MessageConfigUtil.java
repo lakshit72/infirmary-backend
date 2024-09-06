@@ -20,4 +20,10 @@ public class MessageConfigUtil {
 
     @Value("${medical_details_not_found_exception}")
     private String medicalDetailsNotFoundException;
+
+    @Value("${appointment_not_found_exception}")
+    private String appointmentNotFoundException;
+
+    @Value("${doctor_not_found_exception}")
+    private String doctorNotFoundException;
 }
