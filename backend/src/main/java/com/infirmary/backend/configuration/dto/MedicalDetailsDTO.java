@@ -16,7 +16,7 @@ public class MedicalDetailsDTO {
     private String familyMedicalHistory;
     private String allergies;
 
-    public MedicalDetailsDTO(MedicalDetails medicalDetails){
+    public MedicalDetailsDTO(MedicalDetails medicalDetails) {
         this.id = medicalDetails.getId();
         this.gender = medicalDetails.getGender();
         this.currentAddress = medicalDetails.getCurrentAddress();
