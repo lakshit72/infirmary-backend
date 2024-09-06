@@ -131,5 +131,4 @@ public class PatientServiceImpl implements PatientService {
             throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
         }
     }
-
 }

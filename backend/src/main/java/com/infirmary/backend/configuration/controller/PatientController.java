@@ -13,6 +13,8 @@ import java.net.http.HttpResponse;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.lang.String;
+
 @RestController
 @RequestMapping(value = "/api/patient")
 public class PatientController {
