@@ -22,11 +22,7 @@ public class DoctorController {
 
     @GetMapping(value = "/byId/{id}")
     public ResponseEntity<?> getDoctorById(@PathVariable("id") Long id) {
-        try {
             DoctorDTO response = doctorService.getDoctorById(id);
             return createSuccessResponse(response);
-        } catch (DoctorNotFoundException e) {
-            return ResponseEntity.status(404).body("Doctor Not Found");
-        }
     }
 }

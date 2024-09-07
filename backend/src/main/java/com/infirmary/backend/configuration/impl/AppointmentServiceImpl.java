@@ -30,68 +30,49 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     public AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException {
-        try {
-            Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
-            if (Objects.isNull(appointment)) {
-                throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-            }
-            return new AppointmentDTO(appointment);
-        } catch (Exception e) {
-            log.error("Exception in getAppointmentById", e);
-            throw e;
+        Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
+        if (Objects.isNull(appointment)) {
+            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
         }
+        return new AppointmentDTO(appointment);
     }
 
     public List<AppointmentDTO> getAppointmentsByPatientId(String email) throws AppointmentNotFoundException,
             PatientNotFoundException {
-        try {
-            if (Objects.isNull(email)) {
-                throw new PatientNotFoundException(messageConfigUtil.getPatientNotFound());
-            } else {
-                List<Appointment> appointmentList = appointmentRepository.findByPatient_Email(email);
-                if (appointmentList.isEmpty()) {
-                    throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-                }
-                return appointmentList.stream().map(AppointmentDTO::new).toList();
+        if (Objects.isNull(email)) {
+            throw new PatientNotFoundException(messageConfigUtil.getPatientNotFound());
+        } else {
+            List<Appointment> appointmentList = appointmentRepository.findByPatient_Email(email);
+            if (appointmentList.isEmpty()) {
+                throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
             }
-        } catch (Exception e) {
-            log.error("Exception in getAppointmentsByPatientId", e);
-            throw e;
+            return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
     }
 
     public List<AppointmentDTO> getAppointmentsByDoctorId(Long doctorId) throws DoctorNotFoundException,
             AppointmentNotFoundException {
-        try {
-            if (Objects.isNull(doctorId)) {
-                throw new PatientNotFoundException(messageConfigUtil.getDoctorNotFoundException());
-            } else {
-                List<Appointment> appointmentList = appointmentRepository.findByDoctor_DoctorId(doctorId);
-                if (appointmentList.isEmpty()) {
-                    throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-                }
-                return appointmentList.stream().map(AppointmentDTO::new).toList();
+        if (Objects.isNull(doctorId)) {
+            throw new PatientNotFoundException(messageConfigUtil.getDoctorNotFoundException());
+        } else {
+            List<Appointment> appointmentList = appointmentRepository.findByDoctor_DoctorId(doctorId);
+            if (appointmentList.isEmpty()) {
+                throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
             }
-        } catch (Exception e) {
-            log.error("Exception in getAppointmentsByPatientId", e);
-            throw e;
+            return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
     }
 
     public AppointmentDTO getAppointmentByPrescriptionUrl(String url) throws AppointmentNotFoundException {
-        try {
-            if (Objects.isNull(url)) {
-                throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-            }
-            Appointment byPrescriptionURL = appointmentRepository.findByPrescriptionURL(url);
-            if (Objects.isNull(byPrescriptionURL)) {
-                throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-            }
-            return new AppointmentDTO(byPrescriptionURL);
-        } catch (Exception e) {
-            log.error("Exception in getAppointmentByPrescriptionUrl", e);
-            throw e;
+
+        if (Objects.isNull(url)) {
+            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
         }
+        Appointment byPrescriptionURL = appointmentRepository.findByPrescriptionURL(url);
+        if (Objects.isNull(byPrescriptionURL)) {
+            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
+        }
+        return new AppointmentDTO(byPrescriptionURL);
     }
 
     public LocalDate getLastAppointmentDateByEmail(String patientEmail) {
