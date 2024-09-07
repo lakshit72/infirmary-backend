@@ -5,12 +5,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+import java.security.SecureRandomParameters;
+
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "current_appointment")
-public class CurrentAppointment {
+public class CurrentAppointment implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "current_appointment_id")

@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class AppointmentForm implements Serializable {
     @Column(name = "reason", nullable = false)
     private String reason;
 
-    @Column(name = "is_follow_up", columnDefinition = "")
+    @Column(name = "is_follow_up", columnDefinition = "boolean default false")
     private Boolean isFollowUp;
 
     @Column(name = "pref_doctor")

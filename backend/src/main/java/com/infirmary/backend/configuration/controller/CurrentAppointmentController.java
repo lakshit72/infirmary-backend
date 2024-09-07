@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
 @RestController
@@ -19,7 +20,7 @@ public class CurrentAppointmentController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") Long id) {
         CurrentAppointmentDTO currentAppointment = currentAppointmentService.getCurrentAppointmentById(id);
         return createSuccessResponse(currentAppointment);
     }

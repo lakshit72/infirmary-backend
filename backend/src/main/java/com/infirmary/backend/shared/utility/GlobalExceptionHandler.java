@@ -3,7 +3,7 @@ package com.infirmary.backend.shared.utility;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+//import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -30,11 +30,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Handle 403 Forbidden
-    @ExceptionHandler(AccessDeniedException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ResponseEntity<Object> handleForbidden(Exception ex) {
-        return buildResponse(HttpStatus.FORBIDDEN, "Forbidden", ex);
-    }
+//    @ExceptionHandler(AccessDeniedException.class)
+//    @ResponseStatus(HttpStatus.FORBIDDEN)
+//    public ResponseEntity<Object> handleForbidden(Exception ex) {
+//        return buildResponse(HttpStatus.FORBIDDEN, "Forbidden", ex);
+//    }
 
     // Handle 404 Not Found
     @ExceptionHandler(ResourceNotFoundException.class)
