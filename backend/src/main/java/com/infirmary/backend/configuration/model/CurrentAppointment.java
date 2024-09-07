@@ -17,14 +17,14 @@ public class CurrentAppointment {
     private Long currentAppointmentId;
 
     @ManyToOne
-    @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id", nullable = false)
+    @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id")
     private Appointment appointment;
 
     @OneToOne
-    @JoinColumn(name = "sap_email", referencedColumnName = "sap_email", nullable = false)
+    @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")
     private Patient patient;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
+    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id")
     private Doctor doctor;
 }
