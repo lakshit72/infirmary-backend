@@ -26,4 +26,8 @@ public class MessageConfigUtil {
 
     @Value("${doctor_not_found_exception}")
     private String doctorNotFoundException;
+
+    @Value("${current_appointment_not_found}")
+    private String currentAppointmentNotFound;
+
 }
