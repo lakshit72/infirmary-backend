@@ -18,7 +18,7 @@ public class PatientMedicalDetailsMapping {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "patient_sap_id", referencedColumnName = "sap_id", nullable = false)
+    @JoinColumn(name = "sap_email", referencedColumnName = "sap_email", nullable = false)
     private Patient patient;
 
     @OneToOne

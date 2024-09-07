@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class Patient implements Serializable {
     @Id
     @Column(name = "sap_email", nullable = false)
-    private String sapEmail;
+    private String email;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -44,7 +44,7 @@ public class Patient implements Serializable {
     private String imageUrl;
 
     public Patient(PatientDTO patientDTO){
-        this.sapEmail = patientDTO.getSapEmail();
+        this.email = patientDTO.getEmail();
         this.name = patientDTO.getName();
         this.school = patientDTO.getSchool();
         this.dateOfBirth = patientDTO.getDateOfBirth();

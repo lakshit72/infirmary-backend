@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
 
 @Component
@@ -21,10 +22,25 @@ public class FunctionUtil {
     public static boolean isNameInvalid(String name) {
         return Objects.isNull(name)
                 || name.length() <= MIN_NAME_LENGTH
-                || StringUtils.containsAny(name,"[!@#$%&*()+=|<>?{}\\[\\]~]");
+                || StringUtils.containsAny(name, "[!@#$%&*()+=|<>?{}\\[\\]~]");
     }
 
-    public static boolean isValidId(String Email){
-        return Email.contains("stu.upes.ac.in") || Email.contains("ddn.upes.ac.in");
+    public static boolean isValidId(String email) {
+        if (email.contains("stu.upes.ac.in")) {
+            String[] parts = email.split("@");
+            if (parts.length > 0) {
+                String localPath = parts[0];
+                return localPath.matches("5\\d{8}") && !localPath.matches(".*[a-zA-Z].*");
+            }
+        }
+
+        if (email.contains("ddn.upes.ac.in")) {
+            String[] parts = email.split("@");
+            if (parts.length > 0) {
+                String localPath = parts[0];
+                return localPath.matches("4\\d{8}") || localPath.matches(".*[a-zA-Z].*");
+            }
+        }
+        return false;
     }
 }
