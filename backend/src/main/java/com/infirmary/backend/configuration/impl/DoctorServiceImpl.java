@@ -25,15 +25,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     public DoctorDTO getDoctorById(Long id) throws DoctorNotFoundException {
-        try {
-            Doctor doctor = doctorRepository.findByDoctorId(id);
-            if (Objects.isNull(doctor)) {
-                throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
-            }
-            return new DoctorDTO(doctor);
-        } catch (Exception e) {
-            log.error("Exception in getDoctorById", e);
-            throw e;
+        Doctor doctor = doctorRepository.findByDoctorId(id);
+        if (Objects.isNull(doctor)) {
+            throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
+        return new DoctorDTO(doctor);
     }
 }

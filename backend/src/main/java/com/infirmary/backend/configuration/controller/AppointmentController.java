@@ -27,43 +27,27 @@ public class AppointmentController {
     @GetMapping(value = "/{appointment-id}")
     public ResponseEntity<?> getAppointmentById(@PathVariable("appointment-id") Long appointmentId)
             throws AppointmentNotFoundException {
-        try {
             AppointmentDTO response = appointmentService.getAppointmentById(appointmentId);
             return createSuccessResponse(response);
-        } catch (AppointmentNotFoundException e) {
-            return ResponseEntity.status(404).body("Appointment Not Found");
-        }
     }
 
     @GetMapping(value = "/byPatient/{patient-id}")
     public ResponseEntity<?> getAppointmentByPatientId(@PathVariable("patient-id") String email)
             throws PatientNotFoundException, AppointmentNotFoundException {
-        try {
             List<AppointmentDTO> response = appointmentService.getAppointmentsByPatientId(email);
             return createSuccessResponse(response);
-        } catch (AppointmentNotFoundException e) {
-            return ResponseEntity.status(404).body("Appointment Not Found");
-        }
     }
 
     @GetMapping(value = "/byDoctor/{doctor-id}")
     public ResponseEntity<?> getAppointmentByDoctorId(@PathVariable("doctor-id") Long doctorId)
             throws DoctorNotFoundException, AppointmentNotFoundException {
-        try {
             List<AppointmentDTO> response = appointmentService.getAppointmentsByDoctorId(doctorId);
             return createSuccessResponse(response);
-        } catch (AppointmentNotFoundException e) {
-            return ResponseEntity.status(404).body("Appointment Not Found");
-        }
     }
 
     @GetMapping(value = "/byPrescription/{url}")
     public ResponseEntity<?> getAppointmentByPrescriptionUrl(@PathVariable("url") String url) {
-        try {
             AppointmentDTO response = appointmentService.getAppointmentByPrescriptionUrl(url);
             return createSuccessResponse(response);
-        } catch (AppointmentNotFoundException e) {
-            return ResponseEntity.status(404).body("Appointment Not Found");
-        }
     }
 }

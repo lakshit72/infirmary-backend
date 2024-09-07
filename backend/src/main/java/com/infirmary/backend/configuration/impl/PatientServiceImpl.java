@@ -50,27 +50,18 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void validatePatientData(PatientDTO patientDTO) {
-        try {
-            if (!FunctionUtil.isValidId(patientDTO.getEmail())) {
-                throw new IllegalArgumentException("Sap Id not found!");
-            }
-
-            validateRequiredFields(patientDTO);
-            if (FunctionUtil.isNameInvalid(patientDTO.getName())) {
-                throw new IllegalArgumentException("Invalid name entered");
-            }
-
-            patientRepository.findByEmail(patientDTO.getEmail()).ifPresent(patient -> {
-                throw new SapIdExistException(messageConfigUtil.getSapIdExistException());
-            });
-
-        } catch (SapIdExistException | InvalidDataException e) {
-            log.error("{} in method validatePatientData: {}", e.getClass().getSimpleName(), e.getMessage(), e);
-            throw e;
-        } catch (Exception e) {
-            log.error("Exception in method validatePatientData", e);
-            throw new RuntimeException(e);
+        if (!FunctionUtil.isValidId(patientDTO.getEmail())) {
+            throw new IllegalArgumentException("Sap Id not found!");
         }
+
+        validateRequiredFields(patientDTO);
+        if (FunctionUtil.isNameInvalid(patientDTO.getName())) {
+            throw new IllegalArgumentException("Invalid name entered");
+        }
+
+        patientRepository.findByEmail(patientDTO.getEmail()).ifPresent(patient -> {
+            throw new SapIdExistException(messageConfigUtil.getSapIdExistException());
+        });
     }
 
     @Override
@@ -81,25 +72,19 @@ public class PatientServiceImpl implements PatientService {
         if (!FunctionUtil.isValidId(email)) {
             throw new IllegalArgumentException("Invalid SAP EMAIL: " + email);
         }
-        try {
-
-            MedicalDetails existingMedicalDetails = medicalDetailsRepository.findByPatient_Email(
-                    email
+        MedicalDetails existingMedicalDetails = medicalDetailsRepository.findByPatient_Email(
+                email
+        );
+        if (Objects.isNull(existingMedicalDetails)) {
+            throw new MedicalDetailsNotFoundException(
+                    "Medical details not found for the SAP ID: " + email
             );
-            if (Objects.isNull(existingMedicalDetails)) {
-                throw new MedicalDetailsNotFoundException(
-                        "Medical details not found for the SAP ID: " + email
-                );
-            }
-            existingMedicalDetails.updateFromMedicalDetailsDTO(medicalDetailsDTO);
-
-            MedicalDetails updatedMedicalDetails = medicalDetailsRepository.save(existingMedicalDetails);
-
-            return new MedicalDetailsDTO(updatedMedicalDetails);
-        } catch (Exception e) {
-            log.error("Exception in updatePatientDetails", e);
-            throw new RuntimeException(e);
         }
+        existingMedicalDetails.updateFromMedicalDetailsDTO(medicalDetailsDTO);
+
+        MedicalDetails updatedMedicalDetails = medicalDetailsRepository.save(existingMedicalDetails);
+
+        return new MedicalDetailsDTO(updatedMedicalDetails);
     }
 
     @Override
@@ -107,20 +92,15 @@ public class PatientServiceImpl implements PatientService {
         if (!FunctionUtil.isValidId(email)) {
             throw new IllegalArgumentException("Invalid SAP EMAIL: " + email);
         }
-        try {
-            Optional<Patient> patient = patientRepository.findByEmail(email);
-            Patient currentPatient = patient.orElseThrow(() -> new PatientNotFoundException("Patient not found"));
+        Optional<Patient> patient = patientRepository.findByEmail(email);
+        Patient currentPatient = patient.orElseThrow(() -> new PatientNotFoundException("Patient not found"));
 
-            MedicalDetails medicalDetails = medicalDetailsRepository.findByPatient_Email(email);
-            if (Objects.isNull(medicalDetails)) {
-                throw new MedicalDetailsNotFoundException("Medical Details not found for the user");
-            }
-
-            return new PatientDetailsResponseDTO(new PatientDTO(currentPatient), new MedicalDetailsDTO(medicalDetails));
-        } catch (Exception e) {
-            log.error("Exception in getAllDetails", e);
-            throw e;
+        MedicalDetails medicalDetails = medicalDetailsRepository.findByPatient_Email(email);
+        if (Objects.isNull(medicalDetails)) {
+            throw new MedicalDetailsNotFoundException("Medical Details not found for the user");
         }
+
+        return new PatientDetailsResponseDTO(new PatientDTO(currentPatient), new MedicalDetailsDTO(medicalDetails));
     }
 
     private void validateRequiredFields(PatientDTO patientDTO) {
