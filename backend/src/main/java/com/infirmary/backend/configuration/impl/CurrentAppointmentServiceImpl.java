@@ -24,9 +24,9 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         this.messageConfigUtil = messageConfigUtil;
     }
 
-    public CurrentAppointmentDTO getCurrentAppointmentById(Long currentAppointmentId){
+    public CurrentAppointmentDTO getCurrentAppointmentById(Long currentAppointmentId) {
         CurrentAppointment appointment = currentAppointmentRepository.findByAppointment_AppointmentId(currentAppointmentId);
-        if (Objects.isNull(appointment)){
+        if (Objects.isNull(appointment)) {
             throw new CurrentAppointmentNotFoundException(messageConfigUtil.getCurrentAppointmentNotFound());
         }
         return new CurrentAppointmentDTO(appointment);
