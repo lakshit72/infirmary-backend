@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
+import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,5 +50,11 @@ public class AppointmentController {
     public ResponseEntity<?> getAppointmentByPrescriptionUrl(@PathVariable("url") String url) {
         AppointmentDTO response = appointmentService.getAppointmentByPrescriptionUrl(url);
         return createSuccessResponse(response);
+    }
+
+    @GetMapping(value = "/doctor/next-appointment")
+    public ResponseEntity<?> getNextAppointmentForDoctor(){
+        Long nextAppointment = appointmentService.getNextAppointment();
+        return createSuccessResponse(nextAppointment);
     }
 }
