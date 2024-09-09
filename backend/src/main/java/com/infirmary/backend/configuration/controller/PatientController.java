@@ -28,22 +28,27 @@ public class PatientController {
     @GetMapping(value = "/{sap-email}")
     public ResponseEntity<?> getPatientBySapEmail(@PathVariable("sap-email") String sapEmail)
             throws PatientNotFoundException {
-            PatientDTO response = patientService.getPatientBySapEmail(sapEmail);
-            return createSuccessResponse(response);
+        PatientDTO response = patientService.getPatientBySapEmail(sapEmail);
+        return createSuccessResponse(response);
     }
 
     @PutMapping(value = "/update/{sap-email}")
     public ResponseEntity<?> updatePatient(@PathVariable("sap-email") String sapEmail,
                                            @RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-            MedicalDetailsDTO response = patientService.updatePatientDetails(sapEmail, medicalDetailsDTO);
-            return createSuccessResponse(response);
+        MedicalDetailsDTO response = patientService.updatePatientDetails(sapEmail, medicalDetailsDTO);
+        return createSuccessResponse(response);
     }
 
     @GetMapping(value = "/getAllDetails/{sap-email}")
     public ResponseEntity<?> getAllDetails(@PathVariable("sap-email") String sapEmail) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-            PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
-            return createSuccessResponse(response);
+        PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
+        return createSuccessResponse(response);
+    }
+
+    @GetMapping(value = "/get")
+    public String TestAPI(){
+        return "hello";
     }
 }
