@@ -1,5 +1,6 @@
 package com.infirmary.backend.configuration.controller;
 
+import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.dto.CurrentAppointmentDTO;
 import com.infirmary.backend.configuration.service.CurrentAppointmentService;
 import org.springframework.http.ResponseEntity;
@@ -23,5 +24,12 @@ public class CurrentAppointmentController {
     public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") Long id) {
         CurrentAppointmentDTO currentAppointment = currentAppointmentService.getCurrentAppointmentById(id);
         return createSuccessResponse(currentAppointment);
+    }
+
+    @GetMapping(value = "/status/{id}")
+    public ResponseEntity<?> getAppointmentDoctorStatusById(@PathVariable("id") Long id)
+    {
+        AppointmentResDTO appointmentStatusDoctorStatus = currentAppointmentService.getAppointmentStatusDoctorStatus(id);
+        return createSuccessResponse(appointmentStatusDoctorStatus);
     }
 }

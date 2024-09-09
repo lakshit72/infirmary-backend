@@ -91,6 +91,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentQueueManager.getNextAppointment();
     }
 
-
+    public AppointmentDTO getCurrentNextAppointment()throws AppointmentNotFoundException
+    {
+        Long nextId = getNextAppointment();
+        // no need to check as getAppointmentByid will be checking fo rnulll
+        return getAppointmentById(nextId);
+    }
 
 }

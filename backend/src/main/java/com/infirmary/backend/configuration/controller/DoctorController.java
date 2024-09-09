@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
@@ -49,5 +50,12 @@ public class DoctorController {
             throws AppointmentNotFoundException {
         int count = doctorService.getAppointmentCountByDate(date);
         return createSuccessResponse(count);
+    }
+
+    @GetMapping(value = "/prescription/{email}")
+    public ResponseEntity<?> getPrescriptionByEmail(@PathVariable("email") String email)
+    {
+        HashMap<LocalDate, String> prescriptionHistory = doctorService.getPrescriptionHistory(email);
+        return createSuccessResponse(prescriptionHistory);
     }
 }

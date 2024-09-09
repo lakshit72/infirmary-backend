@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -75,5 +76,18 @@ public class DoctorServiceImpl implements DoctorService {
             throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
         }
         return byDate.size();
+    }
+
+    public HashMap<LocalDate, String> getPrescriptionHistory(String email)
+    {
+        //put check
+        List<Appointment> listOfAppointments = appointmentRepository.findByPatient_Email(email);
+        HashMap<LocalDate, String> mapOfPrescription = new HashMap<>();
+
+        for(int i=0; i<listOfAppointments.size(); ++i)
+        {
+            mapOfPrescription.put(listOfAppointments.get(i).getDate(), listOfAppointments.get(i).getPrescriptionURL());
+        }
+        return mapOfPrescription;
     }
 }
