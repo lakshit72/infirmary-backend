@@ -10,4 +10,5 @@ import lombok.Setter;
 public class AppointmentResDTO {
     private Boolean isAppointedStatus;
     private Boolean isDoctorAppointed;
+
 }

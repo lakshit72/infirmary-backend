@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
+import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,4 +23,7 @@ public interface AppointmentService {
     AppointmentDTO getAppointmentByPrescriptionUrl(String url) throws AppointmentNotFoundException;
 
     LocalDate getLastAppointmentDateByEmail(String patientEmail);
+
+    void scheduleAppointment(Long appointmentId);
+    Long getNextAppointment();
 }
