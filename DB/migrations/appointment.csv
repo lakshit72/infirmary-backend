@@ -1,0 +1,16 @@
+appointment_id,sap_email,doctor_id,date,prescription_url
+1,john.doe@example.com,1,2024-10-01,http://example.com/prescription1.jpg
+2,jane.smith@example.com,2,2024-10-02,http://example.com/prescription2.jpg
+3,alice.jones@example.com,3,2024-10-03,http://example.com/prescription3.jpg
+4,bob.brown@example.com,4,2024-10-04,http://example.com/prescription4.jpg
+5,emily.white@example.com,1,2024-10-05,http://example.com/prescription5.jpg
+6,charlie.black@example.com,2,2024-10-06,http://example.com/prescription6.jpg
+7,daisy.green@example.com,3,2024-10-07,http://example.com/prescription7.jpg
+8,george.martin@example.com,4,2024-10-08,http://example.com/prescription8.jpg
+9,hannah.taylor@example.com,1,2024-10-09,http://example.com/prescription9.jpg
+10,ian.morris@example.com,2,2024-10-10,http://example.com/prescription10.jpg
+11,julia.lee@example.com,3,2024-10-11,http://example.com/prescription11.jpg
+12,kevin.wood@example.com,4,2024-10-12,http://example.com/prescription12.jpg
+13,lisa.johnson@example.com,1,2024-10-13,http://example.com/prescription13.jpg
+14,mark.white@example.com,2,2024-10-14,http://example.com/prescription14.jpg
+15,nora.harris@example.com,3,2024-10-15,http://example.com/prescription15.jpg

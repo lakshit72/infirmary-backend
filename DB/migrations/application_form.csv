@@ -1,0 +1,11 @@
+id,reason,is_follow_up,pref_doctor,reason_for_pref,appointment_id
+1,Regular Checkup,true,Dr. Alice Smith,Patient requested their preferred doctor,1
+2,Follow-up Visit,false,Dr. Bob Johnson,Patient prefers a new doctor for this visit,2
+3,Consultation,true,Dr. Carol White,Patient wants to see the specialist,3
+4,Routine Examination,false,Dr. David Brown,No specific reason,4
+5,Initial Visit,true,Dr. Alice Smith,Patient's first visit to the clinic,5
+6,Follow-up, true, Dr. Bob Johnson, Follow-up on previous treatment, 6
+7,Consultation, false, Dr. Carol White, Seeking advice on a new condition, 7
+8,Checkup, false, Dr. David Brown, Regular health checkup, 8
+9,Initial Consultation, true, Dr. Alice Smith, New patient consultation, 9
+10,Routine Visit, false, Dr. Bob Johnson, Standard checkup, 10

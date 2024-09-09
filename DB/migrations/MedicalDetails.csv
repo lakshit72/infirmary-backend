@@ -1,4 +1,4 @@
-id,sap\_email,gender,current_address,medical_history,family_medical_history,allergies
+id,sap_email,gender,current_address,medical_history,family_medical_history,allergies
 1,john.doe@example.com,Male,123 Elm Street,No significant history,Diabetes,Penicillin
 2,jane.smith@example.com,Female,456 Oak Avenue,Asthma,No family history,Peanuts
 3,alice.jones@example.com,Female,789 Maple Road,High blood pressure,Heart disease,Nuts
