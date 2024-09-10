@@ -27,6 +27,9 @@ public class MessageConfigUtil {
     @Value("${doctor_not_found_exception}")
     private String doctorNotFoundException;
 
+    @Value("${roles_not_found_exception}")
+    private String rolesNotFoundException;
+
     @Value("${current_appointment_not_found}")
     private String currentAppointmentNotFound;
 
@@ -35,5 +38,4 @@ public class MessageConfigUtil {
 
     @Value("${stock_already_exists}")
     private String stockAlreadyExists;
-
 }

@@ -1,8 +1,11 @@
 package com.infirmary.backend.shared.utility;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,5 +45,10 @@ public class FunctionUtil {
             }
         }
         return false;
+    }
+
+    @Bean
+    public static PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
