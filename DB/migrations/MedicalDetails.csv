@@ -1,0 +1,11 @@
+id,sap_email,gender,current_address,medical_history,family_medical_history,allergies
+1,john.doe@example.com,Male,123 Elm Street,No significant history,Diabetes,Penicillin
+2,jane.smith@example.com,Female,456 Oak Avenue,Asthma,No family history,Peanuts
+3,alice.jones@example.com,Female,789 Maple Road,High blood pressure,Heart disease,Nuts
+4,bob.brown@example.com,Male,101 Pine Lane,No major issues,No family history,Shellfish
+5,emily.white@example.com,Female,202 Birch Blvd,Allergies to dust,High cholesterol,Gluten
+6,charlie.black@example.com,Male,303 Cedar Street,Diabetes,Hypertension,Lactose
+7,daisy.green@example.com,Female,404 Spruce Avenue,No significant issues,No family history,Soy
+8,george.martin@example.com,Male,505 Fir Road,Asthma,No family history,Shellfish
+9,hannah.taylor@example.com,Female,606 Willow Lane,High blood pressure,Diabetes,Penicillin
+10,ian.morris@example.com,Male,707 Redwood Blvd,No major issues,Heart disease,Nuts

@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
+import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,27 +28,33 @@ public class AppointmentController {
     @GetMapping(value = "/{appointment-id}")
     public ResponseEntity<?> getAppointmentById(@PathVariable("appointment-id") Long appointmentId)
             throws AppointmentNotFoundException {
-            AppointmentDTO response = appointmentService.getAppointmentById(appointmentId);
-            return createSuccessResponse(response);
+        AppointmentDTO response = appointmentService.getAppointmentById(appointmentId);
+        return createSuccessResponse(response);
     }
 
     @GetMapping(value = "/byPatient/{patient-id}")
     public ResponseEntity<?> getAppointmentByPatientId(@PathVariable("patient-id") String email)
             throws PatientNotFoundException, AppointmentNotFoundException {
-            List<AppointmentDTO> response = appointmentService.getAppointmentsByPatientId(email);
-            return createSuccessResponse(response);
+        List<AppointmentDTO> response = appointmentService.getAppointmentsByPatientId(email);
+        return createSuccessResponse(response);
     }
 
     @GetMapping(value = "/byDoctor/{doctor-id}")
     public ResponseEntity<?> getAppointmentByDoctorId(@PathVariable("doctor-id") Long doctorId)
             throws DoctorNotFoundException, AppointmentNotFoundException {
-            List<AppointmentDTO> response = appointmentService.getAppointmentsByDoctorId(doctorId);
-            return createSuccessResponse(response);
+        List<AppointmentDTO> response = appointmentService.getAppointmentsByDoctorId(doctorId);
+        return createSuccessResponse(response);
     }
 
     @GetMapping(value = "/byPrescription/{url}")
     public ResponseEntity<?> getAppointmentByPrescriptionUrl(@PathVariable("url") String url) {
-            AppointmentDTO response = appointmentService.getAppointmentByPrescriptionUrl(url);
-            return createSuccessResponse(response);
+        AppointmentDTO response = appointmentService.getAppointmentByPrescriptionUrl(url);
+        return createSuccessResponse(response);
+    }
+
+    @GetMapping(value = "/doctor/next-appointment")
+    public ResponseEntity<?> getNextAppointmentForDoctor(){
+        Long nextAppointment = appointmentService.getNextAppointment();
+        return createSuccessResponse(nextAppointment);
     }
 }

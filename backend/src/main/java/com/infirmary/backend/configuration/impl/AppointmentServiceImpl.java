@@ -7,6 +7,7 @@ import com.infirmary.backend.configuration.dto.AppointmentDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.service.AppointmentService;
+import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,12 @@ import java.util.Optional;
 public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final MessageConfigUtil messageConfigUtil;
+    private final AppointmentQueueManager appointmentQueueManager;
 
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil, AppointmentQueueManager appointmentQueueManager) {
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
+        this.appointmentQueueManager = appointmentQueueManager;
     }
 
     public AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException {
@@ -79,4 +82,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         Optional<Appointment> lastAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(patientEmail);
         return lastAppointment.map(Appointment::getDate).orElse(null);
     }
+
+    public void scheduleAppointment(Long appointmentId) {
+        appointmentQueueManager.addAppointmentToQueue(appointmentId);
+    }
+
+    public Long getNextAppointment(){
+        return appointmentQueueManager.getNextAppointment();
+    }
+
+
+
 }

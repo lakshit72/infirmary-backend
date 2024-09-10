@@ -1,6 +1,8 @@
 package com.infirmary.backend.configuration.Exception;
 
-public class AppointmentNotFoundException extends RuntimeException{
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+
+public class AppointmentNotFoundException extends ResourceNotFoundException {
     public AppointmentNotFoundException(String message){
         super(message);
     }
