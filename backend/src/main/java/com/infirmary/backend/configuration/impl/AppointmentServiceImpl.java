@@ -24,12 +24,10 @@ import java.util.Optional;
 public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final MessageConfigUtil messageConfigUtil;
-    private final AppointmentQueueManager appointmentQueueManager;
 
-    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil, AppointmentQueueManager appointmentQueueManager) {
+    public AppointmentServiceImpl(AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil) {
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
-        this.appointmentQueueManager = appointmentQueueManager;
     }
 
     public AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException {
@@ -84,13 +82,22 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     public void scheduleAppointment(Long appointmentId) {
-        appointmentQueueManager.addAppointmentToQueue(appointmentId);
+        AppointmentQueueManager.addAppointmentToQueue(appointmentId);
     }
 
     public Long getNextAppointment(){
-        return appointmentQueueManager.getNextAppointment();
+        boolean res = AppointmentQueueManager.hasMoreAppointments();
+        if (res) {
+            return AppointmentQueueManager.getNextAppointment();
+        }
+        throw new RuntimeException("Queue empty!");
     }
 
-
+    public AppointmentDTO getCurrentNextAppointment()throws AppointmentNotFoundException
+    {
+        Long nextId = getNextAppointment();
+        // no need to check as getAppointmentByid will be checking fo rnulll
+        return getAppointmentById(nextId);
+    }
 
 }

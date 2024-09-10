@@ -54,7 +54,7 @@ public class AppointmentController {
 
     @GetMapping(value = "/doctor/next-appointment")
     public ResponseEntity<?> getNextAppointmentForDoctor(){
-        Long nextAppointment = appointmentService.getNextAppointment();
-        return createSuccessResponse(nextAppointment);
+        AppointmentDTO currentNextAppointment = appointmentService.getCurrentNextAppointment();
+        return createSuccessResponse(currentNextAppointment);
     }
 }

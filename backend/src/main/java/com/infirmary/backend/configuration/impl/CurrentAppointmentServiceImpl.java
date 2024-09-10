@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.impl;
 
 import com.infirmary.backend.configuration.Exception.CurrentAppointmentNotFoundException;
+import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.dto.CurrentAppointmentDTO;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
@@ -32,5 +33,39 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         return new CurrentAppointmentDTO(appointment);
     }
 
+    public AppointmentResDTO getAppointmentStatusDoctorStatus(Long currentAppointmentId)throws CurrentAppointmentNotFoundException
+    {
+        AppointmentResDTO appointmentResDTO = new AppointmentResDTO();
+        appointmentResDTO.setIsAppointedStatus(null);
+        appointmentResDTO.setIsDoctorAppointed(null);
 
+        CurrentAppointmentDTO currentAppointmentDTO = getCurrentAppointmentById(currentAppointmentId);
+        if (Objects.isNull(currentAppointmentDTO)) {
+            throw new CurrentAppointmentNotFoundException(messageConfigUtil.getCurrentAppointmentNotFound());
+        }
+
+        if(currentAppointmentDTO == null)//current appointment does not exist
+            return appointmentResDTO;
+
+        else
+        {
+            appointmentResDTO.setIsAppointedStatus(false);
+            appointmentResDTO.setIsDoctorAppointed(false);
+            if(currentAppointmentDTO.getAppointmentDTO() == null)//CurrentAppointment exists but Appointment is is null
+                return appointmentResDTO;
+            else
+            {
+                appointmentResDTO.setIsAppointedStatus(true);
+                if(currentAppointmentDTO.getDoctorDTO() == null)// appointment exists but doctor is not assigned
+                    return appointmentResDTO;
+                else
+                {
+                    appointmentResDTO.setIsDoctorAppointed(true);
+                    return appointmentResDTO;
+                }
+
+            }
+        }
+
+    }
 }
