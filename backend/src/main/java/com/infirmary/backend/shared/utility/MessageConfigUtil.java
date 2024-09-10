@@ -30,4 +30,10 @@ public class MessageConfigUtil {
     @Value("${current_appointment_not_found}")
     private String currentAppointmentNotFound;
 
+    @Value("${stock_not_found}")
+    private String stockNotFound;
+
+    @Value("${stock_already_exists}")
+    private String stockAlreadyExists;
+
 }
