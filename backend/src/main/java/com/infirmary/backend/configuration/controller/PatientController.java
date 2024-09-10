@@ -9,8 +9,6 @@ import com.infirmary.backend.configuration.service.PatientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
-
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
 import java.lang.String;

@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -25,10 +25,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     public DoctorDTO getDoctorById(Long id) throws DoctorNotFoundException {
-        Doctor doctor = doctorRepository.findByDoctorId(id);
-        if (Objects.isNull(doctor)) {
+        Optional<Doctor> doctor = doctorRepository.findByDoctorId(id);
+        if (doctor.isEmpty()) {
             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
-        return new DoctorDTO(doctor);
+        return new DoctorDTO(doctor.get());
     }
 }

@@ -18,6 +18,7 @@ public class PatientDTO {
     private String emergencyContact;
     private String bloodGroup;
     private String imageUrl;
+    private String password;
 
     public PatientDTO(Patient patient) {
         this.email = patient.getEmail();
@@ -29,5 +30,6 @@ public class PatientDTO {
         this.emergencyContact = patient.getEmergencyContact();
         this.bloodGroup = patient.getBloodGroup();
         this.imageUrl = patient.getImageUrl();
+        this.password = patient.getPassword();
     }
 }

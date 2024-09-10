@@ -15,9 +15,18 @@ public class Doctor {
     @Column(name = "doctor_id")
     private Long doctorId;
 
+    @Column(name = "doctor_email",unique = true)
+    private String doctorEmail;
+
+    @Column(name = "status",nullable = true)
+    private boolean status;
+
     @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "gender", nullable = false)
     private String gender;
+
+    @Column(name = "password")
+    private String password;
 }

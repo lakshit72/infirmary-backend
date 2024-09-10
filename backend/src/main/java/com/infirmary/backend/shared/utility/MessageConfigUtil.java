@@ -26,4 +26,7 @@ public class MessageConfigUtil {
 
     @Value("${doctor_not_found_exception}")
     private String doctorNotFoundException;
+
+    @Value("${roles_not_found_exception}")
+    private String rolesNotFoundException;
 }

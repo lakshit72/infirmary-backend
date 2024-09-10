@@ -1,6 +1,8 @@
 package com.infirmary.backend.configuration.Exception;
 
-public class PatientNotFoundException extends RuntimeException{
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+
+public class PatientNotFoundException extends ResourceNotFoundException{
     public PatientNotFoundException(String message){
         super(message);
     }
