@@ -12,7 +12,6 @@ import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -22,7 +21,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/signin")
+    @PostMapping("patient/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest){
         return authService.loginServicePat(loginRequest);
     }
