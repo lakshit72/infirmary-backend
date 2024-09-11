@@ -2,7 +2,6 @@ package com.infirmary.backend.configuration.security;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.passwordEncoder;
 
-import org.hibernate.mapping.Array;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

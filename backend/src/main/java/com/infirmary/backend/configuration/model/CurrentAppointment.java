@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.security.SecureRandomParameters;
-
 @Entity
 @Getter
 @Setter
