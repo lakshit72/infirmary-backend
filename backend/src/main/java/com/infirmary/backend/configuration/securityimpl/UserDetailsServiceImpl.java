@@ -28,6 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         temp.add(this.patientDetailsImpl);
         temp.add(this.doctorDetailsImpl);
         temp.add(this.adDetailsImpl);
+        this.usrList = temp;
     }
 
     @Override

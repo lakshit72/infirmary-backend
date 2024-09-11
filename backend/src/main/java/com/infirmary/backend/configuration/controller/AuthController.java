@@ -26,8 +26,7 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest){
         return authService.loginServicePat(loginRequest);
     }
-
-    @PostMapping("/signup")
+    @PostMapping("/patient/signup")
     public ResponseEntity<?> registerUser(@RequestBody PatientDTO patientDTO){
         return authService.signUpPat(patientDTO);
     }

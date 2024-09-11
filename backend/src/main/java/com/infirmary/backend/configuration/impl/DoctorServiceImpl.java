@@ -13,9 +13,11 @@ import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.Objects;
 
 @Slf4j
 @Transactional
+@Service
 public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorStatusRepository doctorStatusRepository;
