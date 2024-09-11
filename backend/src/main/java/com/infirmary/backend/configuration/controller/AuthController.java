@@ -1,8 +1,6 @@
 package com.infirmary.backend.configuration.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +11,6 @@ import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -23,7 +20,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/patient/signin")
+    @PostMapping("patient/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest){
         return authService.loginServicePat(loginRequest);
     }
