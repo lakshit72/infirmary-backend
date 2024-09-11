@@ -7,6 +7,8 @@ import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 import com.infirmary.backend.configuration.service.PatientService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
@@ -23,9 +25,11 @@ public class PatientController {
         this.patientService = patientService;
     }
 
-    @GetMapping(value = "/{sap-email}")
-    public ResponseEntity<?> getPatientBySapEmail(@PathVariable("sap-email") String sapEmail)
+    @GetMapping(value = "/")
+    public ResponseEntity<?> getPatientBySapEmail()
             throws PatientNotFoundException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String sapEmail = userDetails.getUsername();
         PatientDTO response = patientService.getPatientBySapEmail(sapEmail);
         return createSuccessResponse(response);
     }
