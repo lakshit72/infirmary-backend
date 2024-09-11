@@ -34,17 +34,20 @@ public class PatientController {
         return createSuccessResponse(response);
     }
 
-    @PutMapping(value = "/update/{sap-email}")
-    public ResponseEntity<?> updatePatient(@PathVariable("sap-email") String sapEmail,
-                                           @RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
+    @PutMapping(value = "/update")
+    public ResponseEntity<?> updatePatient(@RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String sapEmail = userDetails.getUsername();
         MedicalDetailsDTO response = patientService.updatePatientDetails(sapEmail, medicalDetailsDTO);
         return createSuccessResponse(response);
     }
 
-    @GetMapping(value = "/getAllDetails/{sap-email}")
-    public ResponseEntity<?> getAllDetails(@PathVariable("sap-email") String sapEmail) throws
+    @GetMapping(value = "/getAllDetails")
+    public ResponseEntity<?> getAllDetails() throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String sapEmail = userDetails.getUsername();
         PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
         return createSuccessResponse(response);
     }
