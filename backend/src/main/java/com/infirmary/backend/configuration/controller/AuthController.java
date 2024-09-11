@@ -1,7 +1,6 @@
 package com.infirmary.backend.configuration.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,13 +22,12 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/patient/signin")
+    @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest){
         return authService.loginServicePat(loginRequest);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/patient/signup")
+    @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody PatientDTO patientDTO){
         return authService.signUpPat(patientDTO);
     }

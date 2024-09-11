@@ -32,4 +32,22 @@ public class Appointment implements Serializable {
 
     @Column(name = "prescription_url")
     private String prescriptionURL;
+
+    @Column(name = "reason", nullable = false)
+    private String reason;
+
+    @Column(name = "is_follow_up", columnDefinition = "boolean default false")
+    private Boolean isFollowUp;
+
+    @Column(name = "pref_doctor")
+    private String prefDoctor;
+
+    @Column(name = "reason_for_pref")
+    private String reasonForPreference;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "prev_appointment",referencedColumnName = "appointment_id",nullable = true)
+    private Appointment prevAppointment;
+
+
 }
