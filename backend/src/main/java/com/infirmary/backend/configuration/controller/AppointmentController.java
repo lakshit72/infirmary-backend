@@ -57,4 +57,11 @@ public class AppointmentController {
         AppointmentDTO currentNextAppointment = appointmentService.getCurrentNextAppointment();
         return createSuccessResponse(currentNextAppointment);
     }
+
+    @GetMapping(value = "/prescriptionUrls/byEmail/{patient-id}")
+    public ResponseEntity<?> getPrescriptionUrlByPatientEmail(@PathVariable("patient-id") String email )
+        throws PatientNotFoundException {
+        List<String> response = appointmentService.getPrescriptionUrlByPatientEmail(email);
+        return createSuccessResponse(response);
+    }
 }

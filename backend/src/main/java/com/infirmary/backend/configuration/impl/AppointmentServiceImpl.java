@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -96,8 +97,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     public AppointmentDTO getCurrentNextAppointment()throws AppointmentNotFoundException
     {
         Long nextId = getNextAppointment();
-        // no need to check as getAppointmentByid will be checking fo rnulll
+        // no need to check as getAppointmentById will be checking for null
         return getAppointmentById(nextId);
+    }
+
+    public List<String> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException {
+        if (Objects.isNull(email)) {
+            throw new PatientNotFoundException(messageConfigUtil.getPatientNotFound());
+        }
+        List<Appointment> byEmail = appointmentRepository.findByPatient_Email(email);
+        List<String> urls = byEmail.stream().map(Appointment::getPrescriptionURL).toList();
+        if (urls.isEmpty()) {
+            throw new RuntimeException("No prescriptions urls can be found for the Id");
+        }
+        return urls;
     }
 
 }
