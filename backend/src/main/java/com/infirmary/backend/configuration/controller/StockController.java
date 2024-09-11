@@ -4,9 +4,13 @@ import com.infirmary.backend.configuration.Exception.StockAlreadyExists;
 import com.infirmary.backend.configuration.Exception.StockNotFoundException;
 import com.infirmary.backend.configuration.dto.StockDTO;
 import com.infirmary.backend.configuration.service.StockService;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -43,9 +47,9 @@ public class StockController {
     }
 
     @GetMapping(value = "/byQuantity")
-    public ResponseEntity<?> getStockByQuantityGreaterThan(@RequestParam Long quantity) throws
+    public ResponseEntity<?> getStockByQuantityGreaterThan() throws
             StockNotFoundException {
-        List<StockDTO> response = stockService.getStockByQuantityGreaterEqualThan(quantity);
+        List<StockDTO> response = stockService.getStockByQuantityGreaterEqualThan();
         return createSuccessResponse(response);
     }
 
@@ -76,5 +80,18 @@ public class StockController {
     public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO) throws StockAlreadyExists {
         StockDTO dto = stockService.addStock(stockDTO);
         return createSuccessResponse(dto);
+    }
+
+    @GetMapping(value = "/export")
+    public ResponseEntity<?> exportStocks() throws IOException {
+        byte[] excelContent = stockService.exportStocksToExcel();
+
+        ByteArrayResource resource = new ByteArrayResource(excelContent);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=medicine_stocks.xlsx");
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentLength(excelContent.length);
+
+        return createSuccessResponse(resource, headers);
     }
 }

@@ -26,4 +26,5 @@ public interface AppointmentService {
     void scheduleAppointment(Long appointmentId);
     Long getNextAppointment();
     public AppointmentDTO getCurrentNextAppointment();
+    List<String> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException;
 }
