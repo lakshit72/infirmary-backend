@@ -27,27 +27,14 @@ public class Appointment implements Serializable {
     @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
     private Doctor doctor;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "apt_form",referencedColumnName = "id")
+    private AppointmentForm aptForm;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "prescription_url")
     private String prescriptionURL;
-
-    @Column(name = "reason", nullable = false)
-    private String reason;
-
-    @Column(name = "is_follow_up", columnDefinition = "boolean default false")
-    private Boolean isFollowUp;
-
-    @Column(name = "pref_doctor")
-    private String prefDoctor;
-
-    @Column(name = "reason_for_pref")
-    private String reasonForPreference;
-
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "prev_appointment",referencedColumnName = "appointment_id",nullable = true)
-    private Appointment prevAppointment;
-
 
 }

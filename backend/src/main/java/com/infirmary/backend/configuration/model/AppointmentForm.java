@@ -1,7 +1,6 @@
 package com.infirmary.backend.configuration.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,8 +29,5 @@ public class AppointmentForm implements Serializable {
 
     @Column(name = "reason_for_pref")
     private String reasonForPreference;
-
-    @OneToOne
-    @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id", nullable = false)
-    private Appointment appointment;
 }
+

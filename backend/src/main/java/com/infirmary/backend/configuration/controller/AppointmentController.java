@@ -4,7 +4,6 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
-import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

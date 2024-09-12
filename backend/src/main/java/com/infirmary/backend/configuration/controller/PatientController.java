@@ -51,9 +51,4 @@ public class PatientController {
         PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
         return createSuccessResponse(response);
     }
-
-    @GetMapping(value = "/get")
-    public String TestAPI(){
-        return "hello";
-    }
 }

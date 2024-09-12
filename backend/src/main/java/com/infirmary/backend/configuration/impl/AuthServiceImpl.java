@@ -14,11 +14,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
+import com.infirmary.backend.configuration.dto.AdDTO;
+import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.JwtResponse;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
+import com.infirmary.backend.configuration.model.AD;
+import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Patient;
+import com.infirmary.backend.configuration.repository.AdRepository;
+import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.securityimpl.UserDetailsImpl;
 import com.infirmary.backend.configuration.service.AuthService;
@@ -33,6 +39,8 @@ public class AuthServiceImpl implements AuthService{
     private PatientRepository patientRepository;
     private PasswordEncoder encoder;
     private JwtUtils jwtUtils;
+    private AdRepository adRepository;
+    private DoctorRepository doctorRepository;
     
     @Override
     public ResponseEntity<?> loginServicePat(LoginRequestDTO loginRequestDTO) {
@@ -61,6 +69,39 @@ public class AuthServiceImpl implements AuthService{
             patientRepository.save(patient);
 
             return createSuccessResponse("Patient Created");
+        }
+
+        @Override
+        public ResponseEntity<?> signUpDat(DoctorDTO doctorDTO) throws UserAlreadyExists{
+
+            if(doctorRepository.existsByDoctorEmail(doctorDTO.getDoctorEmail())){
+                throw new UserAlreadyExists("Doctor Already Exists");
+            }
+
+            doctorDTO.setPassword(encoder.encode(doctorDTO.getPassword()));
+
+            Doctor doctor = new Doctor(
+                doctorDTO
+            );
+
+            doctorRepository.save(doctor);
+
+            return createSuccessResponse("Doctor Created");
+        }
+
+        @Override
+        public ResponseEntity<?> signUpAD(AdDTO adDTO) throws UserAlreadyExists{
+            if(adRepository.existsById(adDTO.getEmail())){
+                throw new UserAlreadyExists("AD Already Exists");
+            }
+
+            adDTO.setPassword(encoder.encode(adDTO.getPassword()));
+
+            AD ad = new AD(adDTO);
+
+            adRepository.save(ad);
+
+            return createSuccessResponse("AD created");
         }
 
 }

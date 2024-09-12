@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.infirmary.backend.configuration.dto.AdDTO;
+import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -29,5 +30,13 @@ public class AuthController {
     @PostMapping("/patient/signup")
     public ResponseEntity<?> registerUser(@RequestBody PatientDTO patientDTO){
         return authService.signUpPat(patientDTO);
+    }
+    @PostMapping("/doctor/signup")
+    public ResponseEntity<?> registerDoc(@RequestBody DoctorDTO doctorDTO){
+        return authService.signUpDat(doctorDTO);
+    }
+    @PostMapping("/AD/signup")
+    public ResponseEntity<?> registerAD(@RequestBody AdDTO adDTO){
+        return authService.signUpAD(adDTO);
     }
 }

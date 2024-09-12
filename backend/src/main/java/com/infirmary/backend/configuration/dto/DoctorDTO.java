@@ -9,13 +9,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DoctorDTO {
-    private Long doctorId;
+    private String doctorEmail;
     private String name;
     private String gender;
+    private Boolean status;
+    private String password;
 
     public DoctorDTO(Doctor doctor) {
-        this.doctorId = doctor.getDoctorId();
         this.name = doctor.getName();
+        this.doctorEmail = doctor.getDoctorEmail();
         this.gender = doctor.getGender();
+        this.password = doctor.getPassword();
     }
 }

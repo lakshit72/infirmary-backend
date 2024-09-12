@@ -46,6 +46,9 @@ public class Patient implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "sap_id")
+    private String sapId;
+
     public Patient(PatientDTO patientDTO){
         this.email = patientDTO.getEmail();
         this.name = patientDTO.getName();
@@ -57,5 +60,6 @@ public class Patient implements Serializable {
         this.bloodGroup = patientDTO.getBloodGroup();
         this.imageUrl = patientDTO.getImageUrl();
         this.password = patientDTO.getPassword();
+        this.sapId = patientDTO.getSapID();
     }
 }

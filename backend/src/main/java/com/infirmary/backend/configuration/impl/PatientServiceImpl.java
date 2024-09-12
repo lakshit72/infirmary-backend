@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.InvalidDataException;
 import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
+import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
@@ -110,5 +111,11 @@ public class PatientServiceImpl implements PatientService {
                 .anyMatch(String::isEmpty)) {
             throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
         }
+    }
+
+    @Override
+    public String submitAppointment(String sapEmail, AppointmentResDTO appointmentResDTO) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'submitAppointment'");
     }
 }

@@ -4,4 +4,6 @@ WORKDIR /app/backend
 
 COPY . .
 
-CMD [ "./mvnw","spring-boot:run" ]
+RUN /mvnw install
+
+CMD [ "mvnw","spring-boot:run" ]
