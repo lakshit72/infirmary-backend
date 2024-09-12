@@ -30,7 +30,7 @@ public class PatientController {
     @GetMapping(value = "/")
     public ResponseEntity<?> getPatientBySapEmail()
             throws PatientNotFoundException {
-        System.out.println("recv");
+
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String sapEmail = userDetails.getUsername();
         PatientDTO response = patientService.getPatientBySapEmail(sapEmail);

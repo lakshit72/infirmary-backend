@@ -38,4 +38,7 @@ public class MessageConfigUtil {
 
     @Value("${stock_already_exists}")
     private String stockAlreadyExists;
+
+    @Value("${prescription_not_found_exception}")
+    private String prescriptionNotFoundException;
 }

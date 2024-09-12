@@ -46,6 +46,9 @@ public class Patient implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "gender", nullable = false)
+    private String gender;
+  
     @Column(name = "sap_id")
     private String sapId;
 
@@ -60,6 +63,7 @@ public class Patient implements Serializable {
         this.bloodGroup = patientDTO.getBloodGroup();
         this.imageUrl = patientDTO.getImageUrl();
         this.password = patientDTO.getPassword();
+        this.gender = patientDTO.getGender();
         this.sapId = patientDTO.getSapID();
     }
 }

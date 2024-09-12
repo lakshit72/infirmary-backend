@@ -11,12 +11,13 @@ import lombok.Setter;
 public class DoctorDTO {
     private String doctorEmail;
     private String name;
-    private String gender;
     private Boolean status;
+    private String gender;
     private String password;
 
     public DoctorDTO(Doctor doctor) {
         this.name = doctor.getName();
+        this.status = doctor.isStatus();
         this.doctorEmail = doctor.getDoctorEmail();
         this.gender = doctor.getGender();
         this.password = doctor.getPassword();
