@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.model;
 
+import com.infirmary.backend.configuration.dto.AdDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -23,4 +25,10 @@ public class AD {
 
     @Column(name = "password")
     private String password;
+
+    public AD(AdDTO adDTO){
+        this.adEmail = adDTO.getEmail();
+        this.name = adDTO.getName();
+        this.password = adDTO.getPassword();
+    }
 }

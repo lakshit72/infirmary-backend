@@ -19,12 +19,7 @@ public class AppointmentReqDTO {
     public AppointmentReqDTO(AppointmentForm appointmentForm, AppointmentService appointmentService) {
         this.reason = appointmentForm.getReason();
         this.isFollowUp = appointmentForm.getIsFollowUp();
-        this.prevAppointmentDate = appointmentService.getLastAppointmentDateByEmail(
-                appointmentForm.
-                        getAppointment().
-                        getPatient().
-                        getEmail()
-        );
+    
         this.preferredDoctor = appointmentForm.getPrefDoctor();
         this.reasonPrefDoctor = appointmentForm.getReasonForPreference();
     }

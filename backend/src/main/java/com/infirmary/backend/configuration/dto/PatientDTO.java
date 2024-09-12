@@ -20,6 +20,7 @@ public class PatientDTO {
     private String imageUrl;
     private String password;
     private String gender;
+    private String sapID;
 
     public PatientDTO(Patient patient) {
         this.email = patient.getEmail();
@@ -33,5 +34,6 @@ public class PatientDTO {
         this.imageUrl = patient.getImageUrl();
         this.password = patient.getPassword();
         this.gender = patient.getGender();
+        this.sapID = patient.getSapId();
     }
 }

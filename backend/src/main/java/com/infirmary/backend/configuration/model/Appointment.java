@@ -28,6 +28,10 @@ public class Appointment implements Serializable {
     @JoinColumn(name = "doctor_email", referencedColumnName = "doctor_email", nullable = false)
     private Doctor doctor;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "apt_form",referencedColumnName = "id")
+    private AppointmentForm aptForm;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 

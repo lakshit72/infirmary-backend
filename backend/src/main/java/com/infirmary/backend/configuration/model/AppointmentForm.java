@@ -29,8 +29,5 @@ public class AppointmentForm implements Serializable {
 
     @Column(name = "reason_for_pref")
     private String reasonForPreference;
-
-    @OneToOne
-    @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id", nullable = false)
-    private Appointment appointment;
 }
+

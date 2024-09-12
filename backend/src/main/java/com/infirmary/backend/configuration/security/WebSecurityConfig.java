@@ -73,7 +73,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin(CorsConfiguration.ALL);
         configuration.setAllowedMethods(Arrays.asList(CorsConfiguration.ALL));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowedHeaders(Arrays.asList(CorsConfiguration.ALL));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

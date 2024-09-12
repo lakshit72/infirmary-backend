@@ -1,3 +1,4 @@
+version: '3'
 services:
   postgres:
     image: postgres:latest
@@ -10,21 +11,19 @@ services:
       - ./DB/pgData:/var/lib/postgresql/data
     ports:
       - 5432:5432
-#    networks:
-#      - dev_bridge
-#  backend:
+#     networks:
+#      - devbridge
+#   backend:
 #    container_name: infirmary_backend_container
 #    build:
 #      context: ./backend
 #      dockerfile: Dockerfile
 #    ports:
-#      - 8080:8080
+#      - 8081:8081
 #    networks:
-#      - dev_bridge
+#      - devbridge
 #    env_file:
 #      - backend/secrets.env
-#
-#networks:
-#  dev_bridge:
-#    name: dev_bridge
-#    external: true
+
+# networks:
+#  devbridge:
