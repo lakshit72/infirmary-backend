@@ -1,5 +1,6 @@
 package com.infirmary.backend.configuration.model;
 
+import com.infirmary.backend.configuration.dto.DoctorDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,13 @@ public class Doctor implements Serializable {
 
     @Column(name = "password")
     private String password;
+
+    public Doctor(DoctorDTO doctorDTO) {
+        this.doctorId = doctorDTO.getDoctorId();
+        this.doctorEmail = doctorDTO.getEmail();
+        this.status = doctorDTO.getStatus();
+        this.name = doctorDTO.getName();
+        this.gender = doctorDTO.getGender();
+        this.password = doctorDTO.getPassword();
+    }
 }

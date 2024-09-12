@@ -19,7 +19,7 @@ public class DoctorStatus implements Serializable {
     private Long doctorStatusId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id", nullable = false)
+    @JoinColumn(name = "doctor_email", referencedColumnName = "doctor_email", nullable = false)
     private Doctor doctor;
 
     @Column(name = "is_doctor_check_in", columnDefinition = "BOOLEAN value false")

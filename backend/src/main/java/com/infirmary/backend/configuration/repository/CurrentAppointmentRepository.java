@@ -9,4 +9,6 @@ public interface CurrentAppointmentRepository extends JpaRepository<CurrentAppoi
     CurrentAppointment findByAppointment_AppointmentId(@NonNull Long appointmentId);
 
     CurrentAppointment findByPatient_Email(String email);
+
+    CurrentAppointment findByAppointment_Doctor_DoctorEmail(String doctorEmail);
 }

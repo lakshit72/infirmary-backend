@@ -26,6 +26,6 @@ public class CurrentAppointment implements Serializable {
     private Patient patient;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id", referencedColumnName = "doctor_id")
+    @JoinColumn(name = "doctor_email", referencedColumnName = "doctor_email")
     private Doctor doctor;
 }

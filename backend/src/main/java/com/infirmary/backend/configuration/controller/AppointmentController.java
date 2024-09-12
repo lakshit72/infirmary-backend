@@ -4,8 +4,12 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
+import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,44 +27,46 @@ public class AppointmentController {
     public AppointmentController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
-
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/{appointment-id}")
     public ResponseEntity<?> getAppointmentById(@PathVariable("appointment-id") Long appointmentId)
             throws AppointmentNotFoundException {
         AppointmentDTO response = appointmentService.getAppointmentById(appointmentId);
         return createSuccessResponse(response);
     }
-
-    @GetMapping(value = "/byPatient/{patient-id}")
-    public ResponseEntity<?> getAppointmentByPatientId(@PathVariable("patient-id") String email)
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    @GetMapping(value = "/byPatient")
+    public ResponseEntity<?> getAppointmentByPatientId()
             throws PatientNotFoundException, AppointmentNotFoundException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
         List<AppointmentDTO> response = appointmentService.getAppointmentsByPatientId(email);
         return createSuccessResponse(response);
     }
-
-    @GetMapping(value = "/byDoctor/{doctor-id}")
-    public ResponseEntity<?> getAppointmentByDoctorId(@PathVariable("doctor-id") Long doctorId)
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    @GetMapping(value = "/byDoctor")
+    public ResponseEntity<?> getAppointmentByDoctorId()
             throws DoctorNotFoundException, AppointmentNotFoundException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String doctorId = userDetails.getUsername();
         List<AppointmentDTO> response = appointmentService.getAppointmentsByDoctorId(doctorId);
         return createSuccessResponse(response);
     }
-
-    @GetMapping(value = "/byPrescription/{url}")
-    public ResponseEntity<?> getAppointmentByPrescriptionUrl(@PathVariable("url") String url) {
-        AppointmentDTO response = appointmentService.getAppointmentByPrescriptionUrl(url);
-        return createSuccessResponse(response);
-    }
-
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/doctor/next-appointment")
     public ResponseEntity<?> getNextAppointmentForDoctor(){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String sapEmail = userDetails.getUsername();
         AppointmentDTO currentNextAppointment = appointmentService.getCurrentNextAppointment();
         return createSuccessResponse(currentNextAppointment);
     }
-
-    @GetMapping(value = "/prescriptionUrls/byEmail/{patient-id}")
-    public ResponseEntity<?> getPrescriptionUrlByPatientEmail(@PathVariable("patient-id") String email )
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    @GetMapping(value = "/prescriptionUrls/byEmail")
+    public ResponseEntity<?> getPrescriptionUrlByPatientEmail()
         throws PatientNotFoundException {
-        List<String> response = appointmentService.getPrescriptionUrlByPatientEmail(email);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        List<Prescription> response = appointmentService.getPrescriptionUrlByPatientEmail(email);
         return createSuccessResponse(response);
     }
 }

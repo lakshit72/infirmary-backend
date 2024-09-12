@@ -10,7 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MedicalDetailsDTO {
     private Long id;
-    private String gender;
     private String currentAddress;
     private String medicalHistory;
     private String familyMedicalHistory;
@@ -18,7 +17,6 @@ public class MedicalDetailsDTO {
 
     public MedicalDetailsDTO(MedicalDetails medicalDetails) {
         this.id = medicalDetails.getId();
-        this.gender = medicalDetails.getGender();
         this.currentAddress = medicalDetails.getCurrentAddress();
         this.medicalHistory = medicalDetails.getMedicalHistory();
         this.familyMedicalHistory = medicalDetails.getFamilyMedicalHistory();

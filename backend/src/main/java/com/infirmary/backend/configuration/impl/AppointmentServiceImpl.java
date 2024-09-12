@@ -5,6 +5,7 @@ import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
 import com.infirmary.backend.configuration.model.Appointment;
+import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
@@ -52,29 +53,17 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
     }
 
-    public List<AppointmentDTO> getAppointmentsByDoctorId(Long doctorId) throws DoctorNotFoundException,
+    public List<AppointmentDTO> getAppointmentsByDoctorId(String doctorId) throws DoctorNotFoundException,
             AppointmentNotFoundException {
         if (Objects.isNull(doctorId)) {
             throw new PatientNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         } else {
-            List<Appointment> appointmentList = appointmentRepository.findByDoctor_DoctorId(doctorId);
+            List<Appointment> appointmentList = appointmentRepository.findByDoctor_DoctorEmail(doctorId);
             if (appointmentList.isEmpty()) {
                 throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
             }
             return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
-    }
-
-    public AppointmentDTO getAppointmentByPrescriptionUrl(String url) throws AppointmentNotFoundException {
-
-        if (Objects.isNull(url)) {
-            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-        }
-        Appointment byPrescriptionURL = appointmentRepository.findByPrescriptionURL(url);
-        if (Objects.isNull(byPrescriptionURL)) {
-            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-        }
-        return new AppointmentDTO(byPrescriptionURL);
     }
 
     public LocalDate getLastAppointmentDateByEmail(String patientEmail) {
@@ -101,16 +90,15 @@ public class AppointmentServiceImpl implements AppointmentService {
         return getAppointmentById(nextId);
     }
 
-    public List<String> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException {
+    public List<Prescription> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException {
         if (Objects.isNull(email)) {
             throw new PatientNotFoundException(messageConfigUtil.getPatientNotFound());
         }
         List<Appointment> byEmail = appointmentRepository.findByPatient_Email(email);
-        List<String> urls = byEmail.stream().map(Appointment::getPrescriptionURL).toList();
-        if (urls.isEmpty()) {
+        List<Prescription> list = byEmail.stream().map(Appointment::getPrescription).toList();
+        if (list.isEmpty()) {
             throw new RuntimeException("No prescriptions urls can be found for the Id");
         }
-        return urls;
+        return list;
     }
-
 }

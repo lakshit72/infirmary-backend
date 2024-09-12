@@ -24,9 +24,6 @@ public class MedicalDetails implements Serializable {
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")
     private Patient patient;
 
-    @Column(name = "gender", nullable = false)
-    private String gender;
-
     @Column(name = "current_address", nullable = false)
     private String currentAddress;
 
@@ -41,7 +38,6 @@ public class MedicalDetails implements Serializable {
 
     public MedicalDetails(MedicalDetailsDTO medicalDetailsDTO){
         this.id = medicalDetailsDTO.getId();
-        this.gender = medicalDetailsDTO.getGender();
         this.currentAddress = medicalDetailsDTO.getCurrentAddress();
         this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
         this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();

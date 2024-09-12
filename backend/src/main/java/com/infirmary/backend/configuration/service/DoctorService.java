@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.model.DoctorStatus;
+import com.infirmary.backend.configuration.model.Prescription;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -11,9 +12,9 @@ import java.util.HashMap;
 
 @Service
 public interface DoctorService {
-    DoctorDTO getDoctorById(Long id) throws DoctorNotFoundException;
-    DoctorStatus getDoctorStatusById(Long id) throws DoctorNotFoundException;
-    DoctorStatus setDoctorStatus(Long id, Boolean isDoctorCheckIn) throws DoctorNotFoundException;
+    DoctorDTO getDoctorById(String id) throws DoctorNotFoundException;
+    DoctorStatus getDoctorStatusById(String id) throws DoctorNotFoundException;
+    DoctorStatus setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException;
     int getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException;
-    public HashMap<LocalDate, String> getPrescriptionHistory(String email);
+    HashMap<LocalDate, Prescription> getPrescriptionHistory(String email);
 }
