@@ -1,5 +1,6 @@
 package com.infirmary.backend.configuration.securityimpl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,7 +11,11 @@ import com.infirmary.backend.configuration.repository.DoctorRepository;
 
 import jakarta.transaction.Transactional;
 
+import java.util.List;
+
+@Slf4j
 @Service
+@Transactional
 public class DoctorDetailsImpl implements UserDetailsService{
     private DoctorRepository doctorRepository;
 
@@ -19,11 +24,9 @@ public class DoctorDetailsImpl implements UserDetailsService{
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
         Doctor doctor = doctorRepository.findByDoctorEmail(username).orElseThrow(()-> new UsernameNotFoundException("Doctor Does not Exists"));
 
         return UserDetailsImpl.build(doctor);
     }
-
 }
