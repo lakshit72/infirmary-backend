@@ -28,10 +28,5 @@ public class AppointmentDTO {
         this.doctorDTO = new DoctorDTO(appointment.getDoctor());
         this.date = appointment.getDate();
         this.prescriptionDTO = new PrescriptionDTO(appointment.getPrescription());
-        this.reason = appointment.getReason();
-        this.isFollowUp = appointment.getIsFollowUp();
-        this.prevAppointment = appointment.getPrevAppointment();
-        this.preferredDoctor = appointment.getPrefDoctor();
-        this.reasonPrefDoctor = appointment.getReasonForPreference();
     }
 }

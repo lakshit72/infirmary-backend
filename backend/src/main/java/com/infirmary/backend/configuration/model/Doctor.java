@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
-import com.infirmary.backend.configuration.dto.DoctorDTO;
-
 @Entity
 @Getter
 @Setter
@@ -38,18 +36,11 @@ public class Doctor implements Serializable {
     private String password;
 
     public Doctor(DoctorDTO doctorDTO) {
-        this.doctorId = doctorDTO.getDoctorId();
-        this.doctorEmail = doctorDTO.getEmail();
+        this.doctorEmail = doctorDTO.getDoctorEmail();
         this.status = doctorDTO.getStatus();
         this.name = doctorDTO.getName();
         this.gender = doctorDTO.getGender();
         this.password = doctorDTO.getPassword();
     
-    public Doctor(DoctorDTO doctorDTO) {
-        this.doctorEmail = doctorDTO.getDoctorEmail();
-        this.status = doctorDTO.getStatus();
-        this.name = doctorDTO.getName();
-        this.gender = doctorDTO.getGender();
-        this.password = doctorDTO.getPassword();    
     }
 }

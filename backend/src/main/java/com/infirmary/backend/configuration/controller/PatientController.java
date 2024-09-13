@@ -2,6 +2,7 @@ package com.infirmary.backend.configuration.controller;
 
 import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
+import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
@@ -27,31 +28,39 @@ public class PatientController {
         this.patientService = patientService;
     }
 
+    private static String getTokenClaims(){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userDetails.getUsername();
+    }
+
     @GetMapping(value = "/")
     public ResponseEntity<?> getPatientBySapEmail()
             throws PatientNotFoundException {
-
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String sapEmail = userDetails.getUsername();
-        PatientDTO response = patientService.getPatientBySapEmail(sapEmail);
+        PatientDTO response = patientService.getPatientBySapEmail(getTokenClaims());
         return createSuccessResponse(response);
     }
 
     @PutMapping(value = "/update")
     public ResponseEntity<?> updatePatient(@RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String sapEmail = userDetails.getUsername();
-        MedicalDetailsDTO response = patientService.updatePatientDetails(sapEmail, medicalDetailsDTO);
+        MedicalDetailsDTO response = patientService.updatePatientDetails(getTokenClaims(), medicalDetailsDTO);
         return createSuccessResponse(response);
     }
 
     @GetMapping(value = "/getAllDetails")
     public ResponseEntity<?> getAllDetails() throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String sapEmail = userDetails.getUsername();
-        PatientDetailsResponseDTO response = patientService.getAllDetails(sapEmail);
+        PatientDetailsResponseDTO response = patientService.getAllDetails(getTokenClaims());
         return createSuccessResponse(response);
+    }
+
+    @PostMapping(value = "/submitAppointment")
+    public ResponseEntity<?> submitAppointmnent(@RequestBody AppointmentReqDTO appointmentReqDTO) {
+        return patientService.submitAppointment(getTokenClaims(),appointmentReqDTO);
+    }
+
+    @GetMapping(value = "/getStatus")
+    public ResponseEntity<?> getAppointmentStatus(){
+        return patientService.getStatus(getTokenClaims());
     }
 }

@@ -21,4 +21,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findByPatient_Email(@NonNull String email);
 
     List<Appointment> findByDate(LocalDate date);
+
+    
 }

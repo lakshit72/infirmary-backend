@@ -4,21 +4,36 @@ import com.infirmary.backend.configuration.Exception.InvalidDataException;
 import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
-import com.infirmary.backend.configuration.dto.AppointmentResDTO;
+import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
+import com.infirmary.backend.configuration.dto.CurrentAppointmentDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
+import com.infirmary.backend.configuration.model.Appointment;
+import com.infirmary.backend.configuration.model.AppointmentForm;
+import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
+import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
+import com.infirmary.backend.configuration.repository.AppointmentRepository;
+import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.service.PatientService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
+import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.FunctionUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -30,11 +45,17 @@ public class PatientServiceImpl implements PatientService {
     private final MedicalDetailsRepository medicalDetailsRepository;
     private final PatientRepository patientRepository;
     private final MessageConfigUtil messageConfigUtil;
+    private final CurrentAppointmentRepository currentAppointmentRepository;
+    private final AppointmentRepository appointmentRepository;
+    private final AppointmentFormRepository appointmentFormRepository;
 
-    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository) {
+    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository) {
         this.patientRepository = patientRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.medicalDetailsRepository = medicalDetailsRepository;
+        this.currentAppointmentRepository = currentAppointmentRepository;
+        this.appointmentRepository = appointmentRepository;
+        this.appointmentFormRepository = appointmentFormRepository;
     }
 
     @Override
@@ -114,8 +135,44 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public String submitAppointment(String sapEmail, AppointmentResDTO appointmentResDTO) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'submitAppointment'");
+    public ResponseEntity<?> submitAppointment(String sapEmail,AppointmentReqDTO appointmentReqDTO) throws UsernameNotFoundException {
+        Optional<CurrentAppointment> appointmentForm = currentAppointmentRepository.findByPatient_Email(sapEmail);
+        CurrentAppointment currentAppointment = new CurrentAppointment();
+        Optional<Patient> patient = patientRepository.findByEmail(sapEmail);
+        if(patient.isEmpty()) throw new UsernameNotFoundException("User does not Exists");
+        if(appointmentForm.isEmpty()){
+            currentAppointment.setPatient(patient.get());
+            currentAppointment = currentAppointmentRepository.save(currentAppointment);
+        }else{
+            currentAppointment = appointmentForm.get();
+        }
+
+        AppointmentForm appointmentForm2 = new AppointmentForm(appointmentReqDTO);
+        appointmentForm2 = appointmentFormRepository.save(appointmentForm2);
+
+        Appointment appointment = new Appointment(null);
+        appointment.setPatient(patient.get());
+        appointment.setDate(LocalDate.now());
+        appointment.setAptForm(appointmentForm2);
+        appointmentRepository.save(appointment);
+        currentAppointment.setAppointment(appointment);
+
+        currentAppointment = currentAppointmentRepository.save(currentAppointment);
+        AppointmentQueueManager.addAppointmentToQueue(currentAppointment.getCurrentAppointmentId());
+        return ResponseEntity.ok("Some");
+    }
+
+    public ResponseEntity<?> getStatus(String sapEmail) throws ResourceNotFoundException{
+        Optional<CurrentAppointment> currApt = currentAppointmentRepository.findByPatient_Email(sapEmail);
+        Map<String,Object> resp = new HashMap<>();
+        if(currApt.isEmpty()){
+            resp.put("Appointment", null);
+            resp.put("Doctor", null);
+            return ResponseEntity.ok(resp);
+        } else{
+                resp.put("Appointment", currApt.get().getAppointment());
+                resp.put("Doctor", currApt.get().getDoctor());
+                return ResponseEntity.ok(resp);
+        }
     }
 }
