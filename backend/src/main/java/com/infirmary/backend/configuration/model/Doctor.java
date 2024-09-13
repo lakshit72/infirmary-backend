@@ -17,9 +17,6 @@ public class Doctor implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "doctor_id")
-    private Long doctorId;
-    
     @Column(name = "doctor_email",unique = true)
     private String doctorEmail;
     
@@ -41,6 +38,5 @@ public class Doctor implements Serializable {
         this.name = doctorDTO.getName();
         this.gender = doctorDTO.getGender();
         this.password = doctorDTO.getPassword();
-    
     }
 }

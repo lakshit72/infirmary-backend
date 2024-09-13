@@ -15,14 +15,11 @@ import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Transactional
@@ -94,4 +91,21 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return mapOfPrescription;
     }
+
+    public List<DoctorDTO> getAvailableDoctors() throws DoctorNotFoundException {
+        List<Doctor> byStatus = doctorRepository.findByStatusTrue();
+        List<DoctorDTO> dtoList = byStatus.stream().map(DoctorDTO::new).toList();
+        if (dtoList.isEmpty()) {
+            throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
+        }
+        return dtoList;
+    }
+
+     public List<DoctorDTO> getAllDoctors() throws DoctorNotFoundException {
+         List<Doctor> list = doctorRepository.findAll();
+         if (list.isEmpty()) {
+             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
+         }
+         return list.stream().map(DoctorDTO::new).toList();
+     }
 }
