@@ -45,13 +45,10 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public ResponseEntity<?> loginServicePat(LoginRequestDTO loginRequestDTO) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.genrateJwtToken(authentication);
-
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
-
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
     @Override
