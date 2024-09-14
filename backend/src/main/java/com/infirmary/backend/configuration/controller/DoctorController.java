@@ -57,8 +57,8 @@ public class DoctorController {
                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                        LocalDate date)
             throws AppointmentNotFoundException {
-        int count = doctorService.getAppointmentCountByDate(date);
-        return createSuccessResponse(count);
+        HashMap<String, Long> countByDate = doctorService.getAppointmentCountByDate(date);
+        return createSuccessResponse(countByDate);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/prescription/{email}")
