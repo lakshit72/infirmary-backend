@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
@@ -82,6 +83,14 @@ public class AppointmentController {
     public ResponseEntity<?> getPrescriptionByAppointmentId(@PathVariable("app-id") Long appointmentId)
             throws AppointmentNotFoundException, PrescriptionNotFoundException {
         PrescriptionDTO response = appointmentService.getPrescriptionByAppointmentId(appointmentId);
+        return createSuccessResponse(response);
+    }
+
+    @GetMapping(value = "/lastAppointmentDate")
+    public ResponseEntity<?> getLastAppointmentDate() throws AppointmentNotFoundException {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+        LocalDate response = appointmentService.getLastAppointmentDateByEmail(email);
         return createSuccessResponse(response);
     }
 }

@@ -22,7 +22,7 @@ public interface AppointmentService {
     List<AppointmentDTO> getAppointmentsByDoctorId(String doctorId) throws DoctorNotFoundException,
             AppointmentNotFoundException;
 
-    LocalDate getLastAppointmentDateByEmail(String patientEmail);
+    LocalDate getLastAppointmentDateByEmail(String patientEmail) throws AppointmentNotFoundException;
 
     void scheduleAppointment(Long appointmentId);
     Long getNextAppointment();
