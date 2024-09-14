@@ -16,7 +16,6 @@ import java.io.Serializable;
 public class Doctor implements Serializable {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doctor_email",unique = true)
     private String doctorEmail;
     

@@ -22,6 +22,24 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
+    
+    public static UserDetailsImpl build(AD ad){
+        // Initiate Doctor roles
+
+        List<EnumRoles> roles = new ArrayList<>();
+        roles.add(EnumRoles.ROLE_AD);
+
+        List<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
+
+        return new UserDetailsImpl(
+            ad.getAdEmail(),
+            ad.getPassword(),
+            authorities
+        );
+    }
+
+
+
     public static UserDetailsImpl build(Patient patient){
         // Initiate Patient Roles
         List<EnumRoles> roles = new ArrayList<>();
@@ -34,25 +52,10 @@ public class UserDetailsImpl implements UserDetails {
             authorities
         );
     }
-
-    public static UserDetailsImpl build(AD ad){
-        // Initiate Doctor roles
-        List<EnumRoles> roles = new ArrayList<>();
-        roles.add(EnumRoles.ROLE_AD);
-
-        List<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
-        return new UserDetailsImpl(
-            ad.getAdEmail(),
-            ad.getPassword(),
-            authorities
-        );
-    }
-
     public static UserDetailsImpl build(Doctor doctor){
         // Initiate Doctor roles
         List<EnumRoles> roles = new ArrayList<>();
         roles.add(EnumRoles.ROLE_DOCTOR);
-
         List<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
         return new UserDetailsImpl(
             doctor.getDoctorEmail(),
