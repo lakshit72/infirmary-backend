@@ -57,16 +57,18 @@ public class DoctorServiceImpl implements DoctorService {
         return status;
     }
     @Override
-    public DoctorStatus setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException {
+    public Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException {
         if (Objects.isNull(id)) {
             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
-        DoctorStatus doctorStatus = doctorStatusRepository.findByDoctor_DoctorEmail(id);
-        if (doctorStatus == null) {
+        Doctor doctor = doctorRepository.findByDoctorEmail(id).orElseThrow(
+                () -> new IllegalArgumentException("Doctor Status Not Found for the Id: " + id)
+        );
+        if (Objects.isNull(doctor)) {
             throw new IllegalArgumentException("Doctor Status Not Found for the Id:" + id);
         }
-        doctorStatus.setIsDoctorCheckIn(isDoctorCheckIn);
-        return doctorStatusRepository.save(doctorStatus);
+        doctor.setStatus(isDoctorCheckIn);
+        return doctorRepository.save(doctor);
     }
     @Override
     public HashMap<String, Long> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException {

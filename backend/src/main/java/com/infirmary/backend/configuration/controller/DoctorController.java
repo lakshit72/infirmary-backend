@@ -3,6 +3,7 @@ package com.infirmary.backend.configuration.controller;
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
+import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.DoctorStatus;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.DoctorService;
@@ -43,12 +44,12 @@ public class DoctorController {
         return createSuccessResponse(doctorStatusById);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
-    @PostMapping(value = "/status")
+    @GetMapping(value = "/setStatus")
     public ResponseEntity<?> setDoctorStatus(@RequestParam("isDoctorCheckIn")
                                              Boolean isDoctorCheckIn) throws DoctorNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userDetails.getUsername();
-        DoctorStatus doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
+        Doctor doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
         return createSuccessResponse(doctorStatus);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
