@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.impl;
 
 import com.infirmary.backend.configuration.Exception.CurrentAppointmentNotFoundException;
+import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.dto.CurrentAppointmentDTO;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
@@ -24,7 +25,7 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
     }
-
+    @Override
     public CurrentAppointmentDTO getCurrentAppointmentById(Long currentAppointmentId) {
         CurrentAppointment appointment = currentAppointmentRepository.findByAppointment_AppointmentId(currentAppointmentId);
         if (Objects.isNull(appointment)) {
@@ -32,7 +33,7 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         }
         return new CurrentAppointmentDTO(appointment);
     }
-
+    @Override
     public AppointmentResDTO getAppointmentStatusDoctorStatus(Long currentAppointmentId)throws CurrentAppointmentNotFoundException
     {
         AppointmentResDTO appointmentResDTO = new AppointmentResDTO();
@@ -67,5 +68,18 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
             }
         }
 
+    }
+    @Override
+    public CurrentAppointmentDTO getCurrAppByDoctorId(String docEmail) throws CurrentAppointmentNotFoundException,
+            DoctorNotFoundException {
+        if (Objects.isNull(docEmail)) {
+            throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
+        }
+        CurrentAppointment currAppointment = currentAppointmentRepository.
+                findByAppointment_Doctor_DoctorEmail(docEmail);
+        if (Objects.isNull(currAppointment)) {
+            throw new CurrentAppointmentNotFoundException(messageConfigUtil.getCurrentAppointmentNotFound());
+        }
+        return new CurrentAppointmentDTO(currAppointment);
     }
 }
