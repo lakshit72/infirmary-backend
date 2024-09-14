@@ -14,6 +14,8 @@ public class MedicalDetailsDTO {
     private String medicalHistory;
     private String familyMedicalHistory;
     private String allergies;
+    private float height;
+    private float weight;
 
     public MedicalDetailsDTO(MedicalDetails medicalDetails) {
         this.id = medicalDetails.getId();
@@ -21,5 +23,7 @@ public class MedicalDetailsDTO {
         this.medicalHistory = medicalDetails.getMedicalHistory();
         this.familyMedicalHistory = medicalDetails.getFamilyMedicalHistory();
         this.allergies = medicalDetails.getAllergies();
+        this.height = medicalDetails.getHeight();
+        this.weight = medicalDetails.getWeight();
     }
 }
