@@ -36,11 +36,11 @@ public class DoctorController {
         return createSuccessResponse(response);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
-    @GetMapping(value = "/status")
+    @GetMapping(value = "/getStatus")
     public ResponseEntity<?> getDoctorStatusById() throws DoctorNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userDetails.getUsername();
-        DoctorStatus doctorStatusById = doctorService.getDoctorStatusById(id);
+        Boolean doctorStatusById = doctorService.getDoctorStatusById(id);
         return createSuccessResponse(doctorStatusById);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")

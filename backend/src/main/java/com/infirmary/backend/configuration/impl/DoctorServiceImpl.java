@@ -46,15 +46,15 @@ public class DoctorServiceImpl implements DoctorService {
         return new DoctorDTO(doctor.get());
     }
     @Override
-    public DoctorStatus getDoctorStatusById(String id) throws DoctorNotFoundException {
+    public Boolean getDoctorStatusById(String id) throws DoctorNotFoundException {
         if (Objects.isNull(id)) {
             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
-        DoctorStatus status = doctorStatusRepository.findByDoctor_DoctorEmail(id);
-        if (status == null) {
-            throw new IllegalArgumentException("Doctor Status Not Found for Id:" + id);
-        }
-        return status;
+        Doctor doctor = doctorRepository.findByDoctorEmail(id).orElseThrow(
+                () -> new IllegalArgumentException("Doctor Status Not Found for the Id: " + id)
+        );
+
+        return doctor.isStatus();
     }
     @Override
     public Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException {

@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public interface DoctorService {
     DoctorDTO getDoctorById(String id) throws DoctorNotFoundException;
-    DoctorStatus getDoctorStatusById(String id) throws DoctorNotFoundException;
+    Boolean getDoctorStatusById(String id) throws DoctorNotFoundException;
     Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException;
     HashMap<String, Long> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException;
     HashMap<LocalDate, Prescription> getPrescriptionHistory(String email);
