@@ -20,4 +20,6 @@ public class AppointmentQueueManager {
     public static boolean hasMoreAppointments() {
         return !appointmentQueue.isEmpty();
     }
+
+    public static Long getQueueSize() { return (long) appointmentQueue.size(); }
 }
