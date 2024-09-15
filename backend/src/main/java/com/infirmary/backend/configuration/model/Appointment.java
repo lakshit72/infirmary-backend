@@ -42,11 +42,19 @@ public class Appointment implements Serializable {
     @JoinColumn(name = "prescription_id", referencedColumnName = "prescription_id",nullable = true)
     private Prescription prescription;
 
+    @Column(name = "weight")
+    private Integer weight;
+
+    @Column(name = "temperature")
+    private float temperature;
+
     public Appointment(AppointmentDTO appointmentDTO) {
         this.patient = new Patient(appointmentDTO.getPatientDTO());
         this.doctor = new Doctor(appointmentDTO.getDoctorDTO());
         this.date = appointmentDTO.getDate();
         this.prescription = new Prescription(appointmentDTO.getPrescriptionDTO());
         this.tokenNo = appointmentDTO.getTokenNo();
+        this.temperature = appointmentDTO.getTemperature();
+        this.weight = appointmentDTO.getWeight();
     }
 }

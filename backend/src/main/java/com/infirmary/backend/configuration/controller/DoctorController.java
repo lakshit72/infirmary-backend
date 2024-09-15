@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.DoctorService;
 import org.springframework.http.ResponseEntity;
@@ -74,6 +75,8 @@ public class DoctorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPatient")
     public ResponseEntity<?> getPatient(){
-        return ResponseEntity.ok(doctorService.getPatient(getTokenClaims()));
+        Patient patient = doctorService.getPatient(getTokenClaims());
+        patient.setPassword("");
+        return ResponseEntity.ok(patient);
     }
 }

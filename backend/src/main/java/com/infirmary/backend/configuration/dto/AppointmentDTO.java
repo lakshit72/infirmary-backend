@@ -17,6 +17,8 @@ public class AppointmentDTO {
     private LocalDate date;
     private PrescriptionDTO prescriptionDTO;
     private Integer tokenNo;
+    private Integer weight;
+    private float temperature;
 
     public AppointmentDTO(Appointment appointment) {
         this.patientDTO = new PatientDTO(appointment.getPatient());
@@ -24,5 +26,7 @@ public class AppointmentDTO {
         this.date = appointment.getDate();
         this.prescriptionDTO = new PrescriptionDTO(appointment.getPrescription());
         this.tokenNo = appointment.getTokenNo();
+        this.temperature = appointment.getTemperature();
+        this.weight = appointment.getWeight();
     }
 }

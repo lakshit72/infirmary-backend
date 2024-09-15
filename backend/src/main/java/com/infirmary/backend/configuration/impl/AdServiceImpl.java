@@ -8,10 +8,15 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
+import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
+import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
@@ -22,6 +27,9 @@ import lombok.RequiredArgsConstructor;
 public class AdServiceImpl implements ADService{
     private final AppointmentRepository appointmentRepository;
     private final CurrentAppointmentRepository currentAppointmentRepository;
+    private final DoctorRepository doctorRepository;
+    private final AppointmentFormRepository appointmentFormRepository;
+    private final PrescriptionRepository prescriptionRepository;
     
     public ResponseEntity<?> getQueue(){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
@@ -77,6 +85,59 @@ public class AdServiceImpl implements ADService{
         }
 
         return ResponseEntity.ok(resp);
+    }
+
+    @Override
+    public String submitAppointment(AdSubmitReqDTO adSubmitReqDTO) {
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(adSubmitReqDTO.getPatEmail()).orElseThrow(() -> new ResourceNotFoundException("No appointment Found"));
+        
+        Doctor doctor = doctorRepository.findById(adSubmitReqDTO.getDoctorAss()).orElseThrow(() -> new ResourceNotFoundException("No Such doctor Exists"));
+
+        if(!doctor.isStatus()) throw new IllegalArgumentException("Doctor Already Assigned");
+
+        doctor.setStatus(false);
+        doctorRepository.save(doctor);
+        currentAppointment.setDoctor(doctor);
+        
+        Appointment appointment = appointmentRepository.findByAppointmentId(currentAppointment.getAppointment().getAppointmentId());
+        appointment.setDoctor(doctor);
+        appointment.setWeight(adSubmitReqDTO.getWeight());
+        appointment.setTemperature(adSubmitReqDTO.getTemperature());
+        appointmentRepository.save(appointment);
+
+        currentAppointmentRepository.save(currentAppointment);
+
+        AppointmentQueueManager.removeElement(currentAppointment.getAppointment().getAppointmentId());
+
+        return "Patient Assigned";
+    }
+
+    @Override
+    public String rejectAppointment(String email) {
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(email).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
+
+        if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Apointment Scheduled");
+
+        AppointmentQueueManager.removeElement(currentAppointment.getAppointment().getAppointmentId());
+
+        if(currentAppointment.getDoctor() != null){
+            Doctor doctor = doctorRepository.findById(currentAppointment.getDoctor().getDoctorId()).orElseThrow(()->new ResourceNotFoundException("No Such Doctor"));
+            doctor.setStatus(true);
+            doctorRepository.save(doctor);
+        }
+        currentAppointment.setDoctor(null);
+
+        if(currentAppointment.getAppointment().getPrescription() != null) prescriptionRepository.deleteById(currentAppointment.getAppointment().getPrescription().getPrescriptionId());
+           
+        if(currentAppointment.getAppointment().getAptForm() != null) appointmentFormRepository.deleteById(currentAppointment.getAppointment().getAptForm().getId());
+            
+        Long aptId = currentAppointment.getAppointment().getAppointmentId();
+        
+        currentAppointment.setAppointment(null);
+
+        appointmentRepository.deleteById(aptId);
+
+        return "Patient Appointment Rejected";
     }
 
 }

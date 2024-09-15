@@ -27,12 +27,14 @@ public class StockController {
         this.stockService = stockService;
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/byType")
     public ResponseEntity<?> getStockByType(@RequestParam List<String> type) throws StockNotFoundException {
         List<StockDTO> response = stockService.getStockByTypeIn(type);
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/before/ExpirationDate")
     public ResponseEntity<?> getStockBeforeExpirationDate(@RequestParam LocalDate expirationDate) throws
             StockNotFoundException {
@@ -40,6 +42,7 @@ public class StockController {
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/after/ExpirationDate")
     public ResponseEntity<?> getStockAfterExpirationDate(@RequestParam LocalDate expirationDate) throws
             StockNotFoundException {
@@ -47,6 +50,7 @@ public class StockController {
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/byQuantity")
     public ResponseEntity<?> getStockByQuantityGreaterThan() throws
             StockNotFoundException {
@@ -54,6 +58,7 @@ public class StockController {
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/companyNames")
     public ResponseEntity<?> getStockByCompanyNameIn(@RequestParam List<String> companyName) throws
             StockNotFoundException {
@@ -61,6 +66,7 @@ public class StockController {
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/byBatchNumber/{batch-number}")
     public ResponseEntity<?> getStockByBatchNumber(@PathVariable("batch-number") Long batchNumber)
             throws StockNotFoundException {
@@ -71,18 +77,21 @@ public class StockController {
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getNullStock")
     public ResponseEntity<?> getNullStock() throws StockNotFoundException {
         List<StockDTO> response = stockService.getNullStock();
         return createSuccessResponse(response);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/addStock")
     public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO) throws StockAlreadyExists {
         StockDTO dto = stockService.addStock(stockDTO);
         return createSuccessResponse(dto);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/export")
     public ResponseEntity<?> exportStocks() throws IOException {
         byte[] excelContent = stockService.exportStocksToExcel();

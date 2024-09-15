@@ -20,6 +20,10 @@ public class AppointmentQueueManager {
         return appointmentQueue.poll();
     }
 
+    public static void removeElement(Long id){
+        appointedQueue.remove(id);
+    }
+
     public static boolean hasMoreAppointments() {
         return !appointmentQueue.isEmpty();
     }
