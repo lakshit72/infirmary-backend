@@ -16,6 +16,10 @@ import java.io.Serializable;
 public class Doctor implements Serializable {
     
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "doctor_id")
+    private Long doctorId;
+
     @Column(name = "doctor_email",unique = true)
     private String doctorEmail;
     

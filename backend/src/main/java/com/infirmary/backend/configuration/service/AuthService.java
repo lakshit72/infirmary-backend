@@ -19,4 +19,8 @@ public interface AuthService {
     public ResponseEntity<?> signUpDat(DoctorDTO doctorDTO);
 
     public ResponseEntity<?> signUpAD(AdDTO adDTO);
+
+    public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO);
+
+    public ResponseEntity<?> loginServiceDat(LoginRequestDTO loginRequestDTO);
 }

@@ -1,13 +1,13 @@
-version: '3'
 services:
   postgres:
-    image: postgres:latest
     container_name: infirmary_db_container
+    build:
+      context: ./DB
+      dockerfile: Dockerfile.postgres
     restart: always
     env_file:
       - DB/secrets.env
     volumes:
-      - ./DB/migrations:/docker-entrypoint-initdb.d/init.sql
       - ./DB/pgData:/var/lib/postgresql/data
     ports:
       - 5432:5432
