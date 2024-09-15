@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
@@ -16,6 +17,7 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
 import lombok.RequiredArgsConstructor;
 
+@Service
 @RequiredArgsConstructor
 public class AdServiceImpl implements ADService{
     private final AppointmentRepository appointmentRepository;
