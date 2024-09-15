@@ -9,6 +9,8 @@ import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.PrescriptionService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     public void submitPrescription(PrescriptionDTO prescriptionDTO) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String sapEmail = userDetails.getUsername();
-        CurrentAppointment byDoctorEmail = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(sapEmail);
+        CurrentAppointment byDoctorEmail = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Appointment Scheduled"));
         Prescription prescription = new Prescription(prescriptionDTO);
         Prescription saved = prescriptionRepository.save(prescription);
         byDoctorEmail.getAppointment().setPrescription(saved);

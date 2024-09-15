@@ -48,7 +48,7 @@ public class DoctorController {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userDetails.getUsername();
         Doctor doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
-        return createSuccessResponse(doctorStatus);
+        return createSuccessResponse(doctorStatus.getName());
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/total-patient-count")
@@ -63,5 +63,10 @@ public class DoctorController {
     {
         HashMap<LocalDate, Prescription> prescriptionHistory = doctorService.getPrescriptionHistory(email);
         return createSuccessResponse(prescriptionHistory);
+    }
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/getPatient")
+    public ResponseEntity<?> getPatient(){
+        return null;
     }
 }

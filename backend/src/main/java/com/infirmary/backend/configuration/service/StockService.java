@@ -3,6 +3,8 @@ package com.infirmary.backend.configuration.service;
 import com.infirmary.backend.configuration.Exception.StockAlreadyExists;
 import com.infirmary.backend.configuration.Exception.StockNotFoundException;
 import com.infirmary.backend.configuration.dto.StockDTO;
+import com.infirmary.backend.configuration.model.Stock;
+
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,4 +21,5 @@ public interface StockService {
     List<StockDTO> getNullStock() throws StockNotFoundException;
     StockDTO addStock(StockDTO stockDTO) throws StockAlreadyExists;
     byte[] exportStocksToExcel() throws IOException;
+    List<Stock> getAllStocks();
 }

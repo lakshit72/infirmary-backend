@@ -141,6 +141,7 @@ public class PatientServiceImpl implements PatientService {
             currentAppointment.setPatient(patient.get());
             currentAppointment = currentAppointmentRepository.save(currentAppointment);
         }else{
+            if(appointmentForm.get().getAppointment().equals(null)) throw new IllegalArgumentException("Appointment Already queued");
             currentAppointment = appointmentForm.get();
         }
         AppointmentForm appointmentForm2 = new AppointmentForm(appointmentReqDTO);
@@ -151,7 +152,7 @@ public class PatientServiceImpl implements PatientService {
             appointmentForm2.setPrefDoctor(pref_doc.get());
         }
 
-        if(appointmentForm2.getIsFollowUp()){
+        if(!appointmentForm2.getPrefDoctor().equals(null)){
             Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(sapEmail);
             if(prevAppointment.isEmpty()) appointmentForm2.setIsFollowUp(false);
             appointmentForm2.setPrevAppointment(prevAppointment.isEmpty()?null:prevAppointment.get());

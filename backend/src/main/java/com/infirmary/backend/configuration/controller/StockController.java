@@ -8,6 +8,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -93,5 +94,11 @@ public class StockController {
         headers.setContentLength(excelContent.length);
 
         return createSuccessResponse(resource, headers);
+    }
+
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/")
+    public ResponseEntity<?> getAllStock(){
+        return ResponseEntity.ok(stockService.getAllStocks());
     }
 }
