@@ -141,11 +141,12 @@ public class PatientServiceImpl implements PatientService {
             currentAppointment.setPatient(patient.get());
             currentAppointment = currentAppointmentRepository.save(currentAppointment);
         }else{
+            if(appointmentForm.get().getAppointment() != null) throw new IllegalArgumentException("Appointment already Queued");
             currentAppointment = appointmentForm.get();
         }
         AppointmentForm appointmentForm2 = new AppointmentForm(appointmentReqDTO);
 
-        if(appointmentForm2.getIsFollowUp()){
+        if(appointmentReqDTO.getPreferredDoctor() != null){
             Optional<Doctor> pref_doc = doctorRepository.findById(appointmentReqDTO.getPreferredDoctor());
             if(pref_doc.isEmpty()) throw new ResourceNotFoundException("No Such Doctor Exists");
             appointmentForm2.setPrefDoctor(pref_doc.get());
@@ -159,7 +160,7 @@ public class PatientServiceImpl implements PatientService {
 
         appointmentForm2 = appointmentFormRepository.save(appointmentForm2);
 
-        Appointment appointment = new Appointment(null);
+        Appointment appointment = new Appointment();
         appointment.setPatient(patient.get());
         appointment.setDate(LocalDate.now());
         appointment.setAptForm(appointmentForm2);
@@ -174,14 +175,16 @@ public class PatientServiceImpl implements PatientService {
 
     public ResponseEntity<?> getStatus(String sapEmail) throws ResourceNotFoundException{
         Optional<CurrentAppointment> currApt = currentAppointmentRepository.findByPatient_Email(sapEmail);
-        Map<String,Object> resp = new HashMap<>();
+        Map<String,String> resp = new HashMap<>();
         if(currApt.isEmpty()){
             resp.put("Appointment", null);
             resp.put("Doctor", null);
+            resp.put("DoctorName", null);
             return ResponseEntity.ok(resp);
         } else{
-                resp.put("Appointment", currApt.get().getAppointment());
-                resp.put("Doctor", currApt.get().getDoctor());
+                resp.put("Appointment", currApt.get().getAppointment().getAppointmentId().toString());
+                resp.put("Doctor", currApt.get().getDoctor() == null ? null:currApt.get().getDoctor().getDoctorId().toString());
+                resp.put("DoctorName",currApt.get().getDoctor() == null?null:currApt.get().getDoctor().getName());
                 return ResponseEntity.ok(resp);
         }
     }

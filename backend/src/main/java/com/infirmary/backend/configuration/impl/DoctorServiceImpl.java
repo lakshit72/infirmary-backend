@@ -73,9 +73,7 @@ public class DoctorServiceImpl implements DoctorService {
         }
         HashMap<String, Long> dayMetrics = new HashMap<>();
         List<Appointment> byDate = appointmentRepository.findByDate(date);
-        if (byDate.isEmpty()) {
-            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
-        }
+        
         dayMetrics.put("Total_Appointment", (long) byDate.size());
         dayMetrics.put("In_Queue", AppointmentQueueManager.getQueueSize());
         dayMetrics.put("Patients_left", (long) byDate.size() - AppointmentQueueManager.getQueueSize());

@@ -43,7 +43,6 @@ public class Appointment implements Serializable {
     private Prescription prescription;
 
     public Appointment(AppointmentDTO appointmentDTO) {
-        this.appointmentId = appointmentDTO.getAppointmentId();
         this.patient = new Patient(appointmentDTO.getPatientDTO());
         this.doctor = new Doctor(appointmentDTO.getDoctorDTO());
         this.date = appointmentDTO.getDate();
