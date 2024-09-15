@@ -33,7 +33,6 @@ public class ADController {
 
         return null;
     }
-    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getAvailableDoctors")
     public ResponseEntity<?> getAllAvailableDoctors() throws DoctorNotFoundException {
         List<DoctorDTO> list = doctorService.getAvailableDoctors();

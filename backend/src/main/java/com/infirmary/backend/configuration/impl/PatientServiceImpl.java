@@ -90,20 +90,16 @@ public class PatientServiceImpl implements PatientService {
     public MedicalDetailsDTO updatePatientDetails(String email,
                                                   MedicalDetailsDTO medicalDetailsDTO)
             throws MedicalDetailsNotFoundException {
-
-        if (!FunctionUtil.isValidId(email)) {
-            throw new IllegalArgumentException("Invalid SAP EMAIL: " + email);
-        }
+        
         MedicalDetails existingMedicalDetails = medicalDetailsRepository.findByPatient_Email(
                 email
         );
         if (Objects.isNull(existingMedicalDetails)) {
-            throw new MedicalDetailsNotFoundException(
-                    "Medical details not found for the SAP ID: " + email
-            );
+            existingMedicalDetails = new MedicalDetails(medicalDetailsDTO);
+        }else{
+            existingMedicalDetails.updateFromMedicalDetailsDTO(medicalDetailsDTO);
         }
-        existingMedicalDetails.updateFromMedicalDetailsDTO(medicalDetailsDTO);
-
+        existingMedicalDetails.setPatient(patientRepository.findByEmail(email).get());
         MedicalDetails updatedMedicalDetails = medicalDetailsRepository.save(existingMedicalDetails);
 
         return new MedicalDetailsDTO(updatedMedicalDetails);
@@ -111,9 +107,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public PatientDetailsResponseDTO getAllDetails(String email) throws PatientNotFoundException, MedicalDetailsNotFoundException {
-        if (!FunctionUtil.isValidId(email)) {
-            throw new IllegalArgumentException("Invalid SAP EMAIL: " + email);
-        }
+
         Optional<Patient> patient = patientRepository.findByEmail(email);
         Patient currentPatient = patient.orElseThrow(() -> new PatientNotFoundException("Patient not found"));
 
