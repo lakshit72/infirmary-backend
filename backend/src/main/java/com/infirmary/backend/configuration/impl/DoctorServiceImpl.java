@@ -121,9 +121,9 @@ public class DoctorServiceImpl implements DoctorService {
     public Patient getPatient(String doctorEmail) {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(doctorEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Assigned"));
 
-        
+        Patient patient = currentAppointment.getAppointment().getPatient();
 
-        return null; 
+        return patient; 
 
     }
 }

@@ -25,6 +25,13 @@ public class DoctorController {
     public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
+
+    public static String getTokenClaims(){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String id = userDetails.getUsername();
+        return id;
+    }
+
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/byId")
     public ResponseEntity<?> getDoctorById() {
@@ -67,6 +74,6 @@ public class DoctorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPatient")
     public ResponseEntity<?> getPatient(){
-        return null;
+        return ResponseEntity.ok(doctorService.getPatient(getTokenClaims()));
     }
 }
