@@ -69,4 +69,9 @@ public class PatientController {
         return patientService.getToken(getTokenClaims());
     }
 
+    @GetMapping("/getPrescription")
+    public ResponseEntity<?> getPrescription(){
+        return null;
+    }
+
 }

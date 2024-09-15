@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.dto;
 
+import java.util.List;
+
 import com.infirmary.backend.configuration.model.Prescription;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ public class PrescriptionDTO {
     private PatientDTO patientDTO;
     private DoctorDTO doctorDTO;
     private String diagnosis;
-    private StockDTO stockDTO;
+    private List<Long> stockIds;
     private Long dosage;
     private Long duration;
     private String suggestion;
@@ -25,7 +27,6 @@ public class PrescriptionDTO {
         this.patientDTO = new PatientDTO(prescription.getPatient());
         this.doctorDTO = new DoctorDTO(prescription.getDoctor());
         this.diagnosis = prescription.getDiagnosis();
-        this.stockDTO = new StockDTO(prescription.getStock());
         this.dosage = prescription.getDosage();
         this.duration = prescription.getDuration();
         this.suggestion = prescription.getSuggestion();

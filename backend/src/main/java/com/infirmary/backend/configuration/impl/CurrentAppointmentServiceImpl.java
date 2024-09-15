@@ -10,6 +10,8 @@ import com.infirmary.backend.configuration.service.CurrentAppointmentService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -75,11 +77,7 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         if (Objects.isNull(docEmail)) {
             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
-        CurrentAppointment currAppointment = currentAppointmentRepository.
-                findByAppointment_Doctor_DoctorEmail(docEmail);
-        if (Objects.isNull(currAppointment)) {
-            throw new CurrentAppointmentNotFoundException(messageConfigUtil.getCurrentAppointmentNotFound());
-        }
+        CurrentAppointment currAppointment = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(docEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
         return new CurrentAppointmentDTO(currAppointment);
     }
 }

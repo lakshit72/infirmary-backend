@@ -158,4 +158,9 @@ public class StockServiceImpl implements StockService {
             return out.toByteArray();
         }
     }
+
+    @Override
+    public List<Stock> getAllStocks() {
+        return stockRepository.findAll();
+    }
 }
