@@ -5,11 +5,9 @@ import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.Doctor;
-import com.infirmary.backend.configuration.model.DoctorStatus;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
-import com.infirmary.backend.configuration.repository.DoctorStatusRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
@@ -27,13 +25,11 @@ import java.time.LocalDate;
 @Service
 public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
-    private final DoctorStatusRepository doctorStatusRepository;
     private final AppointmentRepository appointmentRepository;
     private final MessageConfigUtil messageConfigUtil;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository, DoctorStatusRepository doctorStatusRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil) {
+    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil) {
         this.doctorRepository = doctorRepository;
-        this.doctorStatusRepository = doctorStatusRepository;
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
     }
@@ -80,9 +76,9 @@ public class DoctorServiceImpl implements DoctorService {
         if (byDate.isEmpty()) {
             throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
         }
-        dayMetrics.put("Total Appointment", (long) byDate.size());
-        dayMetrics.put("In Queue", AppointmentQueueManager.getQueueSize());
-        dayMetrics.put("Patients left", (long) byDate.size() - AppointmentQueueManager.getQueueSize());
+        dayMetrics.put("Total_Appointment", (long) byDate.size());
+        dayMetrics.put("In_Queue", AppointmentQueueManager.getQueueSize());
+        dayMetrics.put("Patients_left", (long) byDate.size() - AppointmentQueueManager.getQueueSize());
 
         return dayMetrics;
     }

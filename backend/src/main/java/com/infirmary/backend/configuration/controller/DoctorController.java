@@ -4,10 +4,8 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.model.Doctor;
-import com.infirmary.backend.configuration.model.DoctorStatus;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.DoctorService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,11 +52,9 @@ public class DoctorController {
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/total-patient-count")
-    public ResponseEntity<?> getAppointmentCountByDate(@RequestParam("date")
-                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                       LocalDate date)
+    public ResponseEntity<?> getAppointmentCountByDate()
             throws AppointmentNotFoundException {
-        HashMap<String, Long> countByDate = doctorService.getAppointmentCountByDate(date);
+        HashMap<String, Long> countByDate = doctorService.getAppointmentCountByDate(LocalDate.now());
         return createSuccessResponse(countByDate);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
