@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DoctorDTO {
+    private Long doctorId;
     private String doctorEmail;
     private String name;
     private Boolean status;
@@ -16,6 +17,7 @@ public class DoctorDTO {
     private String password;
 
     public DoctorDTO(Doctor doctor) {
+        this.doctorId = doctor.getDoctorId();
         this.name = doctor.getName();
         this.status = doctor.isStatus();
         this.doctorEmail = doctor.getDoctorEmail();

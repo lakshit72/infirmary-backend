@@ -58,6 +58,7 @@ public class DoctorController {
         Doctor doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
         return createSuccessResponse(doctorStatus.getName());
     }
+    
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/total-patient-count")
     public ResponseEntity<?> getAppointmentCountByDate()

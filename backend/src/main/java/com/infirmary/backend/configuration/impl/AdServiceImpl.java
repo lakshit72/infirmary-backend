@@ -140,4 +140,11 @@ public class AdServiceImpl implements ADService{
         return "Patient Appointment Rejected";
     }
 
+    @Override
+    public String setDocStatus(Long docID, Boolean docStat) {
+        Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
+        doc.setStatus(docStat);
+        return "Status Changed";
+    }
+
 }
