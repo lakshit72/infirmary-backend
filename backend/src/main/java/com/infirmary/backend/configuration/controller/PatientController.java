@@ -63,4 +63,10 @@ public class PatientController {
     public ResponseEntity<?> getAppointmentStatus(){
         return patientService.getStatus(getTokenClaims());
     }
+
+    @GetMapping(value = "/getToken")
+    public ResponseEntity<?> getTokenNo(){
+        return patientService.getToken(getTokenClaims());
+    }
+
 }

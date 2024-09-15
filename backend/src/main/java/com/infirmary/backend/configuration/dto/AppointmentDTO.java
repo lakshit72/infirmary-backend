@@ -16,11 +16,7 @@ public class AppointmentDTO {
     private DoctorDTO doctorDTO;
     private LocalDate date;
     private PrescriptionDTO prescriptionDTO;
-    private String reason;
-    private Boolean isFollowUp;
-    private Appointment prevAppointment;
-    private String preferredDoctor;
-    private String reasonPrefDoctor;
+    private Integer tokenNo;
 
     public AppointmentDTO(Appointment appointment) {
         this.appointmentId = appointment.getAppointmentId();
@@ -28,5 +24,6 @@ public class AppointmentDTO {
         this.doctorDTO = new DoctorDTO(appointment.getDoctor());
         this.date = appointment.getDate();
         this.prescriptionDTO = new PrescriptionDTO(appointment.getPrescription());
+        this.tokenNo = appointment.getTokenNo();
     }
 }

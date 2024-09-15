@@ -100,5 +100,33 @@ public class AuthServiceImpl implements AuthService{
 
             return createSuccessResponse("AD created");
         }
+        @Override
+        public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO) {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.genrateJwtToken(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+
+            if(!roles.get(0).equals("ROLE_AD")) throw new SecurityException("Bad Credentials");
+
+            return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
+        }
+        @Override
+        public ResponseEntity<?> loginServiceDat(LoginRequestDTO loginRequestDTO) {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.genrateJwtToken(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+
+            if(!roles.get(0).equals("ROLE_DOCTOR")) throw new SecurityException("Bad Credentials");
+
+            return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
+        }
 
 }
