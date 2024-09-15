@@ -19,7 +19,6 @@ public class AppointmentDTO {
     private Integer tokenNo;
 
     public AppointmentDTO(Appointment appointment) {
-        this.appointmentId = appointment.getAppointmentId();
         this.patientDTO = new PatientDTO(appointment.getPatient());
         this.doctorDTO = new DoctorDTO(appointment.getDoctor());
         this.date = appointment.getDate();
