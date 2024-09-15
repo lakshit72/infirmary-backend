@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "prescription")
@@ -33,8 +33,7 @@ public class Prescription implements Serializable {
     private String diagnosis;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "batch_number", referencedColumnName = "batch_number")
-    private List<Stock> stock;
+    private Set<Stock> stock;
 
     @Column(name = "dosage")
     private Long dosage;

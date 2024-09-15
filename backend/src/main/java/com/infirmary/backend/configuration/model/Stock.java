@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -37,6 +38,9 @@ public class Stock implements Serializable{
 
     @Column(name = "company")
     private String company;
+
+    @ManyToMany
+    Set<Prescription> prescriptions;
 
     public Stock(StockDTO stockDTO) {
         this.batchNumber = stockDTO.getBatchNumber();
