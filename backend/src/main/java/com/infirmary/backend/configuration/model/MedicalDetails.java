@@ -36,12 +36,20 @@ public class MedicalDetails implements Serializable {
     @Column(name = "allergies", nullable = false)
     private String allergies;
 
+    @Column(name = "height", nullable = false)
+    private float height;
+
+    @Column(name = "weight", nullable = false)
+    private float weight;
+
     public MedicalDetails(MedicalDetailsDTO medicalDetailsDTO){
         this.id = medicalDetailsDTO.getId();
         this.currentAddress = medicalDetailsDTO.getCurrentAddress();
         this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
         this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();
         this.allergies = medicalDetailsDTO.getAllergies();
+        this.height = medicalDetailsDTO.getHeight();
+        this.weight = medicalDetailsDTO.getWeight();
     }
 
     public void updateFromMedicalDetailsDTO(MedicalDetailsDTO medicalDetailsDTO){
@@ -49,5 +57,7 @@ public class MedicalDetails implements Serializable {
         this.medicalHistory = medicalDetailsDTO.getMedicalHistory();
         this.familyMedicalHistory = medicalDetailsDTO.getFamilyMedicalHistory();
         this.allergies = medicalDetailsDTO.getAllergies();
+        this.height = medicalDetailsDTO.getHeight();
+        this.weight = medicalDetailsDTO.getWeight();
     }
 }

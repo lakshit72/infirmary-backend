@@ -36,4 +36,7 @@ public class AppointmentQueueManager {
     public static ArrayList<Long> getAppointedQueue(){
         return new ArrayList<>(appointedQueue);
     }
+  
+    public static Long getQueueSize() { return (long) appointmentQueue.size(); }
+
 }

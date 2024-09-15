@@ -31,7 +31,7 @@ public class AppointmentForm implements Serializable {
     private Appointment prevAppointment;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "pref_doc",referencedColumnName = "doctor_id")
+    @JoinColumn(name = "pref_doc",referencedColumnName = "doctor_email")
     private Doctor prefDoctor;
 
     @Column(name = "reason_for_pref")

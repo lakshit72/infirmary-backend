@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.infirmary.backend.configuration.model.AD;
 import com.infirmary.backend.configuration.repository.AdRepository;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class AdDetailsImpl implements UserDetailsService{
@@ -19,10 +18,8 @@ public class AdDetailsImpl implements UserDetailsService{
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
         AD ad = adRepository.findByAdEmail(username).orElseThrow(()-> new UsernameNotFoundException("Ad does not exists"));
-        
         return UserDetailsImpl.build(ad);
     }
 }

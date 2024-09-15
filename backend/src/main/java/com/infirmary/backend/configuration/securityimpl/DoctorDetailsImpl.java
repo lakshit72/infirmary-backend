@@ -9,12 +9,9 @@ import org.springframework.stereotype.Service;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 
-import jakarta.transaction.Transactional;
-
 
 @Slf4j
 @Service
-@Transactional
 public class DoctorDetailsImpl implements UserDetailsService{
     private DoctorRepository doctorRepository;
 

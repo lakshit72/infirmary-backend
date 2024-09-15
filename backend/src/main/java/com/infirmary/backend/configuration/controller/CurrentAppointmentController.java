@@ -1,9 +1,12 @@
 package com.infirmary.backend.configuration.controller;
 
+import com.infirmary.backend.configuration.Exception.CurrentAppointmentNotFoundException;
+import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.dto.CurrentAppointmentDTO;
 import com.infirmary.backend.configuration.service.CurrentAppointmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,17 +22,24 @@ public class CurrentAppointmentController {
     public CurrentAppointmentController(CurrentAppointmentService currentAppointmentService) {
         this.currentAppointmentService = currentAppointmentService;
     }
-
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") Long id) {
         CurrentAppointmentDTO currentAppointment = currentAppointmentService.getCurrentAppointmentById(id);
         return createSuccessResponse(currentAppointment);
     }
-
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/status/{id}")
     public ResponseEntity<?> getAppointmentDoctorStatusById(@PathVariable("id") Long id)
     {
         AppointmentResDTO appointmentStatusDoctorStatus = currentAppointmentService.getAppointmentStatusDoctorStatus(id);
         return createSuccessResponse(appointmentStatusDoctorStatus);
+    }
+    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    @GetMapping(value = "/currApp/{doctor-id}")
+    public ResponseEntity<?> getCurrentAppointmentByDoctorId(@PathVariable("doctor-id") String doctorId)
+    throws DoctorNotFoundException, CurrentAppointmentNotFoundException {
+        CurrentAppointmentDTO response = currentAppointmentService.getCurrAppByDoctorId(doctorId);
+        return createSuccessResponse(response);
     }
 }

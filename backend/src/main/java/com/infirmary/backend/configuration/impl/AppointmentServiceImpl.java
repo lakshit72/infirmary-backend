@@ -3,7 +3,9 @@ package com.infirmary.backend.configuration.impl;
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
+import com.infirmary.backend.configuration.Exception.PrescriptionNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentDTO;
+import com.infirmary.backend.configuration.dto.PrescriptionDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
@@ -31,7 +33,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
     }
-
+    @Override
     public AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException {
         Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
         if (Objects.isNull(appointment)) {
@@ -39,7 +41,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return new AppointmentDTO(appointment);
     }
-
+    @Override
     public List<AppointmentDTO> getAppointmentsByPatientId(String email) throws AppointmentNotFoundException,
             PatientNotFoundException {
         if (Objects.isNull(email)) {
@@ -52,7 +54,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
     }
-
+    @Override
     public List<AppointmentDTO> getAppointmentsByDoctorId(String doctorId) throws DoctorNotFoundException,
             AppointmentNotFoundException {
         if (Objects.isNull(doctorId)) {
@@ -65,32 +67,34 @@ public class AppointmentServiceImpl implements AppointmentService {
             return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
     }
-
-    public LocalDate getLastAppointmentDateByEmail(String patientEmail) {
-        Optional<Appointment> lastAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(patientEmail);
+    @Override
+    public LocalDate getLastAppointmentDateByEmail(String patientEmail) throws AppointmentNotFoundException {
+        Optional<Appointment> lastAppointment = appointmentRepository.
+                findFirstByPatient_EmailOrderByDateDesc(patientEmail);
+        if (lastAppointment.isEmpty()) {
+            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
+        }
         return lastAppointment.map(Appointment::getDate).orElse(null);
     }
-
-
+    @Override
     public void scheduleAppointment(Long appointmentId) {
         AppointmentQueueManager.addAppointmentToQueue(appointmentId);
     }
-
-    public Long getNextAppointment(){
+    @Override
+    public Long getNextAppointment() {
         boolean res = AppointmentQueueManager.hasMoreAppointments();
         if (res) {
             return AppointmentQueueManager.getNextAppointment();
         }
         throw new RuntimeException("Queue empty!");
     }
-
-    public AppointmentDTO getCurrentNextAppointment()throws AppointmentNotFoundException
-    {
+    @Override
+    public AppointmentDTO getCurrentNextAppointment() throws AppointmentNotFoundException {
         Long nextId = getNextAppointment();
         // no need to check as getAppointmentById will be checking for null
         return getAppointmentById(nextId);
     }
-
+    @Override
     public List<Prescription> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException {
         if (Objects.isNull(email)) {
             throw new PatientNotFoundException(messageConfigUtil.getPatientNotFound());
@@ -101,5 +105,18 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new RuntimeException("No prescriptions urls can be found for the Id");
         }
         return list;
+    }
+    @Override
+    public PrescriptionDTO getPrescriptionByAppointmentId(Long appointmentId) throws PatientNotFoundException ,
+            PrescriptionNotFoundException {
+        if (Objects.isNull(appointmentId)) {
+            throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
+        }
+        Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
+        Prescription prescription = appointment.getPrescription();
+        if (Objects.isNull(prescription)) {
+            throw new PrescriptionNotFoundException(messageConfigUtil.getPrescriptionNotFoundException());
+        }
+        return new PrescriptionDTO(prescription);
     }
 }

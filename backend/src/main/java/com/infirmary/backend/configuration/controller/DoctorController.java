@@ -3,6 +3,7 @@ package com.infirmary.backend.configuration.controller;
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
+import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.DoctorStatus;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.DoctorService;
@@ -35,20 +36,20 @@ public class DoctorController {
         return createSuccessResponse(response);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
-    @GetMapping(value = "/status")
+    @GetMapping(value = "/getStatus")
     public ResponseEntity<?> getDoctorStatusById() throws DoctorNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userDetails.getUsername();
-        DoctorStatus doctorStatusById = doctorService.getDoctorStatusById(id);
+        Boolean doctorStatusById = doctorService.getDoctorStatusById(id);
         return createSuccessResponse(doctorStatusById);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
-    @PostMapping(value = "/status")
+    @GetMapping(value = "/setStatus")
     public ResponseEntity<?> setDoctorStatus(@RequestParam("isDoctorCheckIn")
                                              Boolean isDoctorCheckIn) throws DoctorNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userDetails.getUsername();
-        DoctorStatus doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
+        Doctor doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
         return createSuccessResponse(doctorStatus);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
@@ -57,8 +58,8 @@ public class DoctorController {
                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                                        LocalDate date)
             throws AppointmentNotFoundException {
-        int count = doctorService.getAppointmentCountByDate(date);
-        return createSuccessResponse(count);
+        HashMap<String, Long> countByDate = doctorService.getAppointmentCountByDate(date);
+        return createSuccessResponse(countByDate);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/prescription/{email}")

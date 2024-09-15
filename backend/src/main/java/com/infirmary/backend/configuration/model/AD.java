@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.model;
 
+import java.io.Serializable;
+
 import com.infirmary.backend.configuration.dto.AdDTO;
 
 import jakarta.persistence.Column;
@@ -15,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "ad")
-public class AD {
+public class AD implements Serializable{
     @Id
     @Column(name = "ad_email",unique = true)
     private String adEmail;
