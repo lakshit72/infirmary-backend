@@ -1,6 +1,8 @@
 package com.infirmary.backend.configuration.dto;
 
 import com.infirmary.backend.configuration.model.Stock;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,7 +11,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@AllArgsConstructor
 public class StockDTO {
     private Long batchNumber;
     private String medicineName;
