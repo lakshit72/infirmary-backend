@@ -27,6 +27,15 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest){
         return authService.loginServicePat(loginRequest);
     }
+    @PostMapping("ad/signin")
+    public ResponseEntity<?> authenticateAd(@RequestBody LoginRequestDTO loginRequestDTO){
+        return authService.loginServiceAd(loginRequestDTO);
+    }
+    @PostMapping("doc/signin")
+    public ResponseEntity<?> authenticateDoc(@RequestBody LoginRequestDTO loginRequestDTO){
+        return authService.loginServiceDat(loginRequestDTO);
+    }
+
     @PostMapping("/patient/signup")
     public ResponseEntity<?> registerUser(@RequestBody PatientDTO patientDTO){
         return authService.signUpPat(patientDTO);

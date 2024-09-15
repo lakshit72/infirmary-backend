@@ -3,11 +3,11 @@ package com.infirmary.backend.configuration.service;
 import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
-import com.infirmary.backend.configuration.dto.AppointmentResDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -26,4 +26,6 @@ public interface PatientService {
     ResponseEntity<?> submitAppointment(String sapEmail,AppointmentReqDTO appointmentReqDTO);
 
     ResponseEntity<?> getStatus(String sapEmail);
+
+    ResponseEntity<?> getToken(String sapEmail) throws ResourceNotFoundException;
 }

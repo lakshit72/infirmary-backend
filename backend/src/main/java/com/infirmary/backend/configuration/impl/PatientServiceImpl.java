@@ -5,18 +5,19 @@ import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundExcep
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
 import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
-import com.infirmary.backend.configuration.dto.CurrentAppointmentDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
+import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
+import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.service.PatientService;
@@ -47,17 +48,19 @@ public class PatientServiceImpl implements PatientService {
     private final MessageConfigUtil messageConfigUtil;
     private final CurrentAppointmentRepository currentAppointmentRepository;
     private final AppointmentRepository appointmentRepository;
+    private final DoctorRepository doctorRepository;
     private final AppointmentFormRepository appointmentFormRepository;
 
-    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository) {
+    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository,DoctorRepository doctorRepository) {
         this.patientRepository = patientRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.medicalDetailsRepository = medicalDetailsRepository;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.appointmentRepository = appointmentRepository;
         this.appointmentFormRepository = appointmentFormRepository;
+        this.doctorRepository = doctorRepository;
     }
-
+    
     @Override
     public PatientDTO getPatientBySapEmail(String email) throws PatientNotFoundException {
         if (email == null || !FunctionUtil.isValidId(email)) {
@@ -146,20 +149,33 @@ public class PatientServiceImpl implements PatientService {
         }else{
             currentAppointment = appointmentForm.get();
         }
-
         AppointmentForm appointmentForm2 = new AppointmentForm(appointmentReqDTO);
+
+        if(appointmentForm2.getIsFollowUp()){
+            Optional<Doctor> pref_doc = doctorRepository.findById(appointmentReqDTO.getPreferredDoctor());
+            if(pref_doc.isEmpty()) throw new ResourceNotFoundException("No Such Doctor Exists");
+            appointmentForm2.setPrefDoctor(pref_doc.get());
+        }
+
+        if(appointmentForm2.getIsFollowUp()){
+            Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(sapEmail);
+            if(prevAppointment.isEmpty()) appointmentForm2.setIsFollowUp(false);
+            appointmentForm2.setPrevAppointment(prevAppointment.isEmpty()?null:prevAppointment.get());
+        }
+
         appointmentForm2 = appointmentFormRepository.save(appointmentForm2);
 
         Appointment appointment = new Appointment(null);
         appointment.setPatient(patient.get());
         appointment.setDate(LocalDate.now());
         appointment.setAptForm(appointmentForm2);
+        appointment.setTokenNo(appointmentRepository.countByDate(LocalDate.now())+1);
         appointmentRepository.save(appointment);
         currentAppointment.setAppointment(appointment);
 
         currentAppointment = currentAppointmentRepository.save(currentAppointment);
-        AppointmentQueueManager.addAppointmentToQueue(currentAppointment.getCurrentAppointmentId());
-        return ResponseEntity.ok("Some");
+        AppointmentQueueManager.addAppointmentToQueue(currentAppointment.getAppointment().getAppointmentId());
+        return ResponseEntity.ok("Appointment Submitted");
     }
 
     public ResponseEntity<?> getStatus(String sapEmail) throws ResourceNotFoundException{
@@ -174,5 +190,12 @@ public class PatientServiceImpl implements PatientService {
                 resp.put("Doctor", currApt.get().getDoctor());
                 return ResponseEntity.ok(resp);
         }
+    }
+
+    public ResponseEntity<?> getToken(String sapEmail) throws ResourceNotFoundException{
+        Optional<CurrentAppointment> appointment = currentAppointmentRepository.findByPatient_Email(sapEmail);
+        if(appointment.isEmpty()) throw new ResourceNotFoundException("No Appointment Available");
+        if(Objects.isNull(appointment.get().getAppointment())) throw new ResourceNotFoundException("No Current Appointment");
+        return ResponseEntity.ok(appointment.get().getAppointment().getTokenNo());
     }
 }

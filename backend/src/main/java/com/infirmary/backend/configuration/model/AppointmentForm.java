@@ -27,6 +27,10 @@ public class AppointmentForm implements Serializable {
     private Boolean isFollowUp;
 
     @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "prev_appointment",nullable = true)
+    private Appointment prevAppointment;
+
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pref_doc",referencedColumnName = "doctor_id")
     private Doctor prefDoctor;
 
@@ -36,7 +40,6 @@ public class AppointmentForm implements Serializable {
     public AppointmentForm(AppointmentReqDTO appointmentReqDTO){
         this.isFollowUp = appointmentReqDTO.getIsFollowUp();
         this.reason = appointmentReqDTO.getReason();
-        this.prefDoctor = appointmentReqDTO.getPreferredDoctor();
         this.reasonForPreference = appointmentReqDTO.getReasonPrefDoctor();
     }
 

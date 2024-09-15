@@ -35,6 +35,9 @@ public class Appointment implements Serializable {
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
+    @Column(name =  "token_no")
+    private Integer tokenNo;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "prescription_id", referencedColumnName = "prescription_id",nullable = true)
     private Prescription prescription;
@@ -45,5 +48,6 @@ public class Appointment implements Serializable {
         this.doctor = new Doctor(appointmentDTO.getDoctorDTO());
         this.date = appointmentDTO.getDate();
         this.prescription = new Prescription(appointmentDTO.getPrescriptionDTO());
+        this.tokenNo = appointmentDTO.getTokenNo();
     }
 }

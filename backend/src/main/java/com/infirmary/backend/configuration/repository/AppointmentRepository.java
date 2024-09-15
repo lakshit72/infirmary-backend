@@ -22,4 +22,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findByDate(LocalDate date);
 
+    Integer countByDate(LocalDate date);
 }

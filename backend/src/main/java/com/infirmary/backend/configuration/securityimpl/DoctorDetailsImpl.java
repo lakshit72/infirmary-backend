@@ -11,7 +11,6 @@ import com.infirmary.backend.configuration.repository.DoctorRepository;
 
 import jakarta.transaction.Transactional;
 
-import java.util.List;
 
 @Slf4j
 @Service
