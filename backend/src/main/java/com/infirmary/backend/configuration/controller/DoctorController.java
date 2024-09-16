@@ -3,6 +3,7 @@ package com.infirmary.backend.configuration.controller;
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
+import com.infirmary.backend.configuration.dto.PatientDetails;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.model.Prescription;
@@ -76,8 +77,8 @@ public class DoctorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPatient")
     public ResponseEntity<?> getPatient(){
-        Patient patient = doctorService.getPatient(getTokenClaims());
-        patient.setPassword("");
+        PatientDetails patient = doctorService.getPatient(getTokenClaims());
+        patient.getPatient().setPassword("");
         return ResponseEntity.ok(patient);
     }
 }

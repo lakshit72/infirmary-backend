@@ -14,6 +14,7 @@ import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
+import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
@@ -36,13 +37,15 @@ public class DoctorServiceImpl implements DoctorService {
     private final MessageConfigUtil messageConfigUtil;
     private final CurrentAppointmentRepository currentAppointmentRepository;
     private final MedicalDetailsRepository medicalDetailsRepository;
+    private final PrescriptionRepository prescriptionRepository;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository) {
+    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository, PrescriptionRepository prescriptionRepository) {
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.medicalDetailsRepository = medicalDetailsRepository;
+        this.prescriptionRepository = prescriptionRepository;
     }
     @Override
     public DoctorDTO getDoctorById(String id) throws DoctorNotFoundException {
@@ -121,7 +124,7 @@ public class DoctorServiceImpl implements DoctorService {
          return list.stream().map(DoctorDTO::new).toList();
      }
     @Override
-    public Patient getPatient(String doctorEmail) {
+    public PatientDetails getPatient(String doctorEmail) {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(doctorEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Assigned"));
 
         Patient patient = currentAppointment.getAppointment().getPatient();
@@ -133,7 +136,13 @@ public class DoctorServiceImpl implements DoctorService {
             new ResourceNotFoundException("No Medical Details Available")
         );
 
-        return patient; 
+        resp.setMedicalDetails(medicalDetails);
+
+        List<Prescription> presc = prescriptionRepository.findByPatient(patient);
+
+        resp.setPrescriptions(presc);
+
+        return resp; 
 
     }
 }
