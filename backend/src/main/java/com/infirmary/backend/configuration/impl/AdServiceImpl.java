@@ -144,6 +144,7 @@ public class AdServiceImpl implements ADService{
     public String setDocStatus(Long docID, Boolean docStat) {
         Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
         doc.setStatus(docStat);
+        doctorRepository.save(doc);
         return "Status Changed";
     }
 
