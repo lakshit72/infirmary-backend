@@ -94,12 +94,14 @@ public class PatientServiceImpl implements PatientService {
                                                   MedicalDetailsDTO medicalDetailsDTO)
             throws MedicalDetailsNotFoundException {
         
-        MedicalDetails existingMedicalDetails = medicalDetailsRepository.findByPatient_Email(
+        Optional<MedicalDetails> medCheck = medicalDetailsRepository.findByPatient_Email(
                 email
         );
-        if (Objects.isNull(existingMedicalDetails)) {
+        MedicalDetails existingMedicalDetails;
+        if (medCheck.isEmpty()) {
             existingMedicalDetails = new MedicalDetails(medicalDetailsDTO);
         }else{
+            existingMedicalDetails = medCheck.get();
             existingMedicalDetails.updateFromMedicalDetailsDTO(medicalDetailsDTO);
         }
         existingMedicalDetails.setPatient(patientRepository.findByEmail(email).get());
@@ -114,12 +116,12 @@ public class PatientServiceImpl implements PatientService {
         Optional<Patient> patient = patientRepository.findByEmail(email);
         Patient currentPatient = patient.orElseThrow(() -> new PatientNotFoundException("Patient not found"));
 
-        MedicalDetails medicalDetails = medicalDetailsRepository.findByPatient_Email(email);
-        if (Objects.isNull(medicalDetails)) {
+        Optional<MedicalDetails> medicalDetails = medicalDetailsRepository.findByPatient_Email(email);
+        if (medicalDetails.isEmpty()) {
             throw new MedicalDetailsNotFoundException("Medical Details not found for the user");
         }
 
-        return new PatientDetailsResponseDTO(new PatientDTO(currentPatient), new MedicalDetailsDTO(medicalDetails));
+        return new PatientDetailsResponseDTO(new PatientDTO(currentPatient), new MedicalDetailsDTO(medicalDetails.get()));
     }
 
     private void validateRequiredFields(PatientDTO patientDTO) {
@@ -152,9 +154,8 @@ public class PatientServiceImpl implements PatientService {
             appointmentForm2.setPrefDoctor(pref_doc.get());
         }
 
-        if(!appointmentForm2.getPrefDoctor().equals(null)){
+        if(appointmentReqDTO.getIsFollowUp()){
             Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(sapEmail);
-            if(prevAppointment.isEmpty()) appointmentForm2.setIsFollowUp(false);
             appointmentForm2.setPrevAppointment(prevAppointment.isEmpty()?null:prevAppointment.get());
         }
 

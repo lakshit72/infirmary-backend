@@ -42,7 +42,8 @@ public class AdServiceImpl implements ADService{
         for(Appointment apt:apptList){
             HashMap<String,String> dataMap = new HashMap<>();
             dataMap.put("name", apt.getPatient().getName());
-            dataMap.put("sapEmail", apt.getPatient().getSapId());
+            dataMap.put("sapEmail", apt.getPatient().getEmail());
+            dataMap.put("reason", apt.getAptForm().getReason());
             dataMap.put("reason", apt.getAptForm().getReason());
             resp.add(dataMap);
         }

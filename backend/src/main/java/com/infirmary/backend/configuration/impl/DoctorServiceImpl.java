@@ -3,14 +3,17 @@ package com.infirmary.backend.configuration.impl;
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
+import com.infirmary.backend.configuration.dto.PatientDetails;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
@@ -32,12 +35,14 @@ public class DoctorServiceImpl implements DoctorService {
     private final AppointmentRepository appointmentRepository;
     private final MessageConfigUtil messageConfigUtil;
     private final CurrentAppointmentRepository currentAppointmentRepository;
+    private final MedicalDetailsRepository medicalDetailsRepository;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository) {
+    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository) {
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.currentAppointmentRepository = currentAppointmentRepository;
+        this.medicalDetailsRepository = medicalDetailsRepository;
     }
     @Override
     public DoctorDTO getDoctorById(String id) throws DoctorNotFoundException {
@@ -120,6 +125,13 @@ public class DoctorServiceImpl implements DoctorService {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(doctorEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Assigned"));
 
         Patient patient = currentAppointment.getAppointment().getPatient();
+
+        PatientDetails resp = new PatientDetails();
+        resp.setPatient(patient);
+
+        MedicalDetails medicalDetails = medicalDetailsRepository.findByPatient_Email(patient.getEmail()).orElseThrow(()->
+            new ResourceNotFoundException("No Medical Details Available")
+        );
 
         return patient; 
 
