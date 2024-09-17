@@ -183,7 +183,7 @@ public class PatientServiceImpl implements PatientService {
             resp.put("DoctorName", null);
             return ResponseEntity.ok(resp);
         } else{
-                resp.put("Appointment", currApt.get().getAppointment().getAppointmentId().toString());
+                resp.put("Appointment", currApt.get().getAppointment() == null?null:currApt.get().getAppointment().getAppointmentId().toString());
                 resp.put("Doctor", currApt.get().getDoctor() == null ? null:currApt.get().getDoctor().getDoctorId().toString());
                 resp.put("DoctorName",currApt.get().getDoctor() == null?null:currApt.get().getDoctor().getName());
                 return ResponseEntity.ok(resp);

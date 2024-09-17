@@ -76,10 +76,12 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return lastAppointment.map(Appointment::getDate).orElse(null);
     }
+
     @Override
     public void scheduleAppointment(Long appointmentId) {
         AppointmentQueueManager.addAppointmentToQueue(appointmentId);
     }
+    
     @Override
     public Long getNextAppointment() {
         boolean res = AppointmentQueueManager.hasMoreAppointments();

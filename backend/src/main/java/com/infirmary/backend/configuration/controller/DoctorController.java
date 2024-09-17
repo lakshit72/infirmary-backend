@@ -67,6 +67,7 @@ public class DoctorController {
         HashMap<String, Long> countByDate = doctorService.getAppointmentCountByDate(LocalDate.now());
         return createSuccessResponse(countByDate);
     }
+    
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/prescription/{email}")
     public ResponseEntity<?> getPrescriptionByEmail(@PathVariable("email") String email)
