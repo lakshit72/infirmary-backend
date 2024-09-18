@@ -3,7 +3,10 @@ package com.infirmary.backend.configuration.impl;
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
+import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
+import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetails;
+import com.infirmary.backend.configuration.dto.PrescriptionDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
@@ -123,24 +126,32 @@ public class DoctorServiceImpl implements DoctorService {
          }
          return list.stream().map(DoctorDTO::new).toList();
      }
+    
+     
     @Override
     public PatientDetails getPatient(String doctorEmail) {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(doctorEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Assigned"));
 
+        if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Found");
+
         Patient patient = currentAppointment.getAppointment().getPatient();
 
         PatientDetails resp = new PatientDetails();
-        resp.setPatient(patient);
 
+        resp.setPatient(new PatientDTO(patient));
+        resp.getPatient().setPassword("");
         MedicalDetails medicalDetails = medicalDetailsRepository.findByPatient_Email(patient.getEmail()).orElseThrow(()->
             new ResourceNotFoundException("No Medical Details Available")
         );
 
-        resp.setMedicalDetails(medicalDetails);
+        resp.setMedicalDetails(new MedicalDetailsDTO(medicalDetails));
 
-        List<Prescription> presc = prescriptionRepository.findByPatient(patient);
+        List<PrescriptionDTO> presc = prescriptionRepository.findByPatient(patient).stream().map((pres)->new PrescriptionDTO(pres)).toList();
+
 
         resp.setPrescriptions(presc);
+
+        resp.setReason(currentAppointment.getAppointment().getAptForm().getReason());
 
         return resp; 
 

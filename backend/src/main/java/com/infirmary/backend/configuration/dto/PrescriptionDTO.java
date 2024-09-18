@@ -27,9 +27,6 @@ public class PrescriptionDTO {
         this.patientDTO = new PatientDTO(prescription.getPatient());
         this.doctorDTO = new DoctorDTO(prescription.getDoctor());
         this.diagnosis = prescription.getDiagnosis();
-        this.dosage = prescription.getDosage();
-        this.duration = prescription.getDuration();
-        this.suggestion = prescription.getSuggestion();
         this.dietaryRemarks = prescription.getDietaryRemarks();
         this.testNeeded = prescription.getTestNeeded();
     }

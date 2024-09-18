@@ -2,8 +2,6 @@ package com.infirmary.backend.configuration.dto;
 
 import java.util.List;
 
-import com.infirmary.backend.configuration.model.*;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,11 +10,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class PatientDetails {
-    private Patient patient;
-    private MedicalDetails medicalDetails;
-    private List<Prescription> prescriptions;
+    private PatientDTO patient;
+    private MedicalDetailsDTO medicalDetails;
+    private List<PrescriptionDTO> prescriptions;
+    private String reason;
 
-    public PatientDetails(Patient patient,MedicalDetails medicalDetails,List<Prescription> prescriptions){
+    public PatientDetails(PatientDTO patient,MedicalDetailsDTO medicalDetails,List<PrescriptionDTO> prescriptions){
         this.patient = patient;
         this.medicalDetails = medicalDetails;
         this.prescriptions = prescriptions;

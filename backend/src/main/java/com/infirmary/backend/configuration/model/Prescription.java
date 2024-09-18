@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.Set;
 
 @Entity
 @Table(name = "prescription")
@@ -32,18 +31,6 @@ public class Prescription implements Serializable {
     @Column(name = "diagnosis")
     private String diagnosis;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Stock> stock;
-
-    @Column(name = "dosage")
-    private Long dosage;
-
-    @Column(name = "duration")
-    private Long duration;
-
-    @Column(name = "suggestion")
-    private String suggestion;
-
     @Column(name = "dietary_remarks")
     private String dietaryRemarks;
 
@@ -51,12 +38,7 @@ public class Prescription implements Serializable {
     private String testNeeded;
 
     public Prescription(PrescriptionDTO prescriptionDTO) {
-        this.prescriptionId = prescriptionDTO.getPrescriptionId();
-        this.patient = new Patient(prescriptionDTO.getPatientDTO());
-        this.doctor = new Doctor(prescriptionDTO.getDoctorDTO());
         this.diagnosis = prescriptionDTO.getDiagnosis();
-        this.dosage = prescriptionDTO.getDosage();
-        this.suggestion = prescriptionDTO.getSuggestion();
         this.dietaryRemarks = prescriptionDTO.getDietaryRemarks();
         this.testNeeded = prescriptionDTO.getTestNeeded();
     }

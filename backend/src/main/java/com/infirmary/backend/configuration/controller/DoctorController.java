@@ -5,7 +5,6 @@ import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.PatientDetails;
 import com.infirmary.backend.configuration.model.Doctor;
-import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.DoctorService;
 import org.springframework.http.ResponseEntity;
@@ -79,7 +78,6 @@ public class DoctorController {
     @GetMapping(value = "/getPatient")
     public ResponseEntity<?> getPatient(){
         PatientDetails patient = doctorService.getPatient(getTokenClaims());
-        patient.getPatient().setPassword("");
         return ResponseEntity.ok(patient);
     }
 }

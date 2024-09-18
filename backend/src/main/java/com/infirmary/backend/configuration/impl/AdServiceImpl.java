@@ -52,13 +52,16 @@ public class AdServiceImpl implements ADService{
     }
 
     public ResponseEntity<?> getPatientFormDetails(String sapEmail){
-        CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointemnt Scheduled"));
+        System.out.println(sapEmail);
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointemnt Found"));
 
-        if(currentAppointment.getAppointment().equals(null)) throw new ResourceNotFoundException("No Appointment Scheduled");
+        if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");
 
         HashMap<String,Object> resp = new HashMap<>();
-        currentAppointment.getAppointment().getAptForm().getPrefDoctor().setDoctorEmail("");
-        currentAppointment.getAppointment().getAptForm().getPrefDoctor().setPassword("");
+        if(currentAppointment.getAppointment().getAptForm().getPrefDoctor() != null){
+            currentAppointment.getAppointment().getAptForm().getPrefDoctor().setDoctorEmail("");
+            currentAppointment.getAppointment().getAptForm().getPrefDoctor().setPassword("");
+        }
         resp.put("pref_doc", currentAppointment.getAppointment().getAptForm().getPrefDoctor());
         resp.put("doc_reason", currentAppointment.getAppointment().getAptForm().getReasonForPreference());
         resp.put("reason", currentAppointment.getAppointment().getAptForm().getReason());

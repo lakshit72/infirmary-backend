@@ -28,4 +28,8 @@ public interface PatientService {
     ResponseEntity<?> getStatus(String sapEmail);
 
     ResponseEntity<?> getToken(String sapEmail) throws ResourceNotFoundException;
+
+    ResponseEntity<?> getPrescriptions(String sapEmail);
+
+    ResponseEntity<?> getAppointment(String sapEmail);
 }

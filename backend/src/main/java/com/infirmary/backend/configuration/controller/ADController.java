@@ -3,7 +3,6 @@ package com.infirmary.backend.configuration.controller;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
-import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.configuration.service.DoctorService;
 
@@ -44,7 +43,7 @@ public class ADController {
 
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/getAptForm/{sapEmail}")
-    public ResponseEntity<?> getAptForm(@PathParam("sapEmail") String sapEmail){
+    public ResponseEntity<?> getAptForm(@PathVariable String sapEmail){
         return adService.getPatientFormDetails(sapEmail);
     }
     

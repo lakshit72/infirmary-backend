@@ -1,7 +1,6 @@
 package com.infirmary.backend.configuration.controller;
 
 import com.infirmary.backend.configuration.dto.PrescriptionDTO;
-import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.service.PrescriptionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,12 +14,9 @@ import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessRes
 @RequestMapping(value = "/api/prescription")
 public class PrescriptionController {
     private final PrescriptionService prescriptionService;
-    private final CurrentAppointmentRepository currentAppointmentRepository;
 
-    public PrescriptionController(PrescriptionService prescriptionService,
-                                  CurrentAppointmentRepository currentAppointmentRepository) {
+    public PrescriptionController(PrescriptionService prescriptionService) {
         this.prescriptionService = prescriptionService;
-        this.currentAppointmentRepository = currentAppointmentRepository;
     }
 
     @PostMapping(value = "/submit")
