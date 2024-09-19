@@ -63,7 +63,7 @@ public class DoctorController {
     @GetMapping(value = "/total-patient-count")
     public ResponseEntity<?> getAppointmentCountByDate()
             throws AppointmentNotFoundException {
-        HashMap<String, Long> countByDate = doctorService.getAppointmentCountByDate(LocalDate.now());
+        HashMap<String, Integer> countByDate = doctorService.getAppointmentCountByDate(LocalDate.now());
         return createSuccessResponse(countByDate);
     }
     

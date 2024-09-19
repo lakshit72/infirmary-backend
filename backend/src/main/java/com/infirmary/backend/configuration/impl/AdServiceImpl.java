@@ -10,14 +10,17 @@ import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.model.Appointment;
+import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.model.PrescriptionMeds;
 import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.ADService;
@@ -34,6 +37,7 @@ public class AdServiceImpl implements ADService{
     private final AppointmentFormRepository appointmentFormRepository;
     private final PrescriptionRepository prescriptionRepository;
     private final StockRepository stockRepository;
+    private final PrescriptionMedsRepository prescriptionMedsRepository;
     
     public ResponseEntity<?> getQueue(){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
@@ -49,6 +53,7 @@ public class AdServiceImpl implements ADService{
             dataMap.put("sapEmail", apt.getPatient().getEmail());
             dataMap.put("reason", apt.getAptForm().getReason());
             dataMap.put("aptId", apt.getAppointmentId().toString());
+            dataMap.put("Id",apt.getPatient().getSapId());
             resp.add(dataMap);
         }
 
@@ -85,8 +90,10 @@ public class AdServiceImpl implements ADService{
         for(Appointment apt:apptList){
             HashMap<String,Object> dataMap = new HashMap<>();
             dataMap.put("name", apt.getPatient().getName());
-            dataMap.put("sapEmail", apt.getPatient().getSapId());
+            dataMap.put("sapEmail", apt.getPatient().getEmail());
+            dataMap.put("Id",apt.getPatient().getSapId());
             dataMap.put("reason",apt.getAptForm().getReason());
+            dataMap.put("aptId", apt.getAppointmentId().toString());
             resp.add(dataMap);
         }
 
@@ -124,7 +131,8 @@ public class AdServiceImpl implements ADService{
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Apointment Scheduled");
 
-        AppointmentQueueManager.removeElement(currentAppointment.getAppointment().getAppointmentId());
+        if(currentAppointment.getAppointment().getDoctor() == null) AppointmentQueueManager.removeElement(currentAppointment.getAppointment().getAppointmentId());
+        else AppointmentQueueManager.removeApptEl(currentAppointment.getAppointment().getAppointmentId());
 
         if(currentAppointment.getDoctor() != null){
             Doctor doctor = doctorRepository.findById(currentAppointment.getDoctor().getDoctorId()).orElseThrow(()->new ResourceNotFoundException("No Such Doctor"));
@@ -133,16 +141,30 @@ public class AdServiceImpl implements ADService{
         }
         currentAppointment.setDoctor(null);
 
-        if(currentAppointment.getAppointment().getPrescription() != null) prescriptionRepository.deleteById(currentAppointment.getAppointment().getPrescription().getPrescriptionId());
-           
-        if(currentAppointment.getAppointment().getAptForm() != null) appointmentFormRepository.deleteById(currentAppointment.getAppointment().getAptForm().getId());
+        if(currentAppointment.getAppointment().getPrescription() != null){
+            Prescription prescription = prescriptionRepository.findById(currentAppointment.getAppointment().getPrescription().getPrescriptionId()).orElseThrow(()->new ResourceNotFoundException("No Prescription Found"));
             
-        Long aptId = currentAppointment.getAppointment().getAppointmentId();
+            if(currentAppointment.getAppointment().getPrescription().getMedicine() != null){
+                List<Long> delList = new ArrayList<>();
+                for(PrescriptionMeds med: currentAppointment.getAppointment().getPrescription().getMedicine()){
+                    delList.add(med.getMedId());
+                }
+                prescriptionMedsRepository.deleteAll(prescriptionMedsRepository.findAllById(delList));
+            }
+
+            prescriptionRepository.delete(prescription);
+            
+        } 
+        
+        if(currentAppointment.getAppointment().getAptForm() != null){
+            AppointmentForm appointmentForm = appointmentFormRepository.findById(currentAppointment.getAppointment().getAptForm().getId()).orElseThrow(()->new ResourceNotFoundException("No Appointment Form Found"));
+            appointmentFormRepository.delete(appointmentForm);
+        }
+        appointmentRepository.deleteById(currentAppointment.getAppointment().getAppointmentId());
         
         currentAppointment.setAppointment(null);
 
-        appointmentRepository.deleteById(aptId);
-
+        currentAppointmentRepository.save(currentAppointment);
         return "Patient Appointment Rejected";
     }
 

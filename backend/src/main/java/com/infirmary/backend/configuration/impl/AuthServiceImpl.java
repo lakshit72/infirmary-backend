@@ -2,13 +2,13 @@ package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +22,6 @@ import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.JwtResponse;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
-import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
 import com.infirmary.backend.configuration.model.AD;
@@ -68,26 +67,23 @@ public class AuthServiceImpl implements AuthService{
                 patientDTO
             );
 
-            byte[] data = Base64.getDecoder().decode(patientDTO.getImg());
+            byte[] data = Base64.getDecoder().decode(patientDTO.getImg().substring(patientDTO.getImg().indexOf(",")+1));
 
             String type = patientDTO.getImg().split(";")[0].split("/")[1];
 
+            String fileName = patientDTO.getEmail().replace(".", "_");
 
-            String filePath = "./build/resources/main/static/Profile/"+patientDTO.getEmail()+"."+type;
-            String flpth = "./src/main/resources/static/Profile/"+patientDTO.getEmail()+"."+type;
+            String filePath = "./build/resources/main/static/Profile/"+fileName+"."+type;
+            String flpth = "./src/main/resources/static/Profile/"+fileName+"."+type;
 
             try{
-                OutputStream stream = new FileOutputStream(filePath);
-                OutputStream strm = new FileOutputStream(flpth);
-                
-                stream.write(data);
-                strm.write(data);
-
-                stream.close();
-                strm.close();
+                FileUtils.writeByteArrayToFile(new File(filePath), data);
+                FileUtils.writeByteArrayToFile(new File(flpth), data);
             }catch (Exception e){
                 throw new IOException("Cannot create a file");
             }
+            
+            patient.setImageUrl("Profile/"+fileName+"."+type);
 
             patientRepository.save(patient);
 

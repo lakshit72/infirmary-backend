@@ -84,16 +84,16 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.save(doctor);
     }
     @Override
-    public HashMap<String, Long> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException {
+    public HashMap<String, Integer> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException {
         if (Objects.isNull(date)) {
             throw new IllegalArgumentException("Date not found");
         }
-        HashMap<String, Long> dayMetrics = new HashMap<>();
+        HashMap<String, Integer> dayMetrics = new HashMap<>();
         List<Appointment> byDate = appointmentRepository.findByDate(date);
         
-        dayMetrics.put("Total_Appointment", (long) byDate.size());
-        dayMetrics.put("In_Queue", AppointmentQueueManager.getQueueSize());
-        dayMetrics.put("Patients_left", (long) byDate.size() - AppointmentQueueManager.getQueueSize());
+        dayMetrics.put("Total_Appointment", byDate.size());
+        dayMetrics.put("In_Queue", (AppointmentQueueManager.getQueueSize() + AppointmentQueueManager.getAptSize()));
+        dayMetrics.put("Patients_left", byDate.size() - (AppointmentQueueManager.getQueueSize() + AppointmentQueueManager.getAptSize()));
 
         return dayMetrics;
     }

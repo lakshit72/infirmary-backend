@@ -17,7 +17,7 @@ public interface DoctorService {
     DoctorDTO getDoctorById(String id) throws DoctorNotFoundException;
     Boolean getDoctorStatusById(String id) throws DoctorNotFoundException;
     Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException;
-    HashMap<String, Long> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException;
+    HashMap<String, Integer> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException;
     HashMap<LocalDate, Prescription> getPrescriptionHistory(String email);
     List<DoctorDTO> getAvailableDoctors() throws DoctorNotFoundException;
     List<DoctorDTO> getAllDoctors() throws DoctorNotFoundException;

@@ -45,6 +45,8 @@ public class AppointmentQueueManager {
         appointedQueue.remove(aptId);
     }
   
-    public static Long getQueueSize() { return (long) appointmentQueue.size(); }
+    public static int getQueueSize() { return appointmentQueue.size(); }
+
+    public static int getAptSize() {return appointedQueue.size();}
 
 }
