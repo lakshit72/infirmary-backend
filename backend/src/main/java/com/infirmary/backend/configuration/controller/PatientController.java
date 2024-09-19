@@ -9,6 +9,7 @@ import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 import com.infirmary.backend.configuration.service.PatientService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -69,13 +70,20 @@ public class PatientController {
         return patientService.getToken(getTokenClaims());
     }
 
-    @GetMapping("/getPrescription")
-    public ResponseEntity<?> getPrescription(){
-        return patientService.getPrescriptions(getTokenClaims());
+    @GetMapping("/getPrescription/{id}")
+    public ResponseEntity<?> getPrescription(@PathVariable Long aptId){
+        return patientService.getPrescriptions(getTokenClaims(),aptId);
     }
 
     @GetMapping("/getAppointment")
     public ResponseEntity<?> getAppointment(){
         return patientService.getAppointment(getTokenClaims());
     }
+
+    @PostAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/getAppointmentPat/{id}")
+    public ResponseEntity<?> getAppointmentDocs(@PathVariable String id) {
+        return patientService.getAppointment(id);
+    }
+
 }

@@ -20,11 +20,11 @@ public class Appointment implements Serializable {
     @Column(name = "appointment_id")
     private Long appointmentId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email", nullable = false)
     private Patient patient;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_email", referencedColumnName = "doctor_email", nullable = true)
     private Doctor doctor;
 

@@ -13,4 +13,5 @@ public interface ADService {
     String submitAppointment(AdSubmitReqDTO adSubmitReqDTO);
     String rejectAppointment(String email);
     String setDocStatus(Long docID,Boolean docStat);
+    String completeAppointment(String sapEmail);
 }

@@ -8,6 +8,8 @@ import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
+import com.infirmary.backend.configuration.dto.PrescriptionDTO;
+import com.infirmary.backend.configuration.dto.PrescriptionRes;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
@@ -24,6 +26,9 @@ import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.PatientService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
+
+import io.jsonwebtoken.security.SecurityException;
+
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.FunctionUtil;
 import jakarta.transaction.Transactional;
@@ -200,10 +205,13 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public ResponseEntity<?> getPrescriptions(String sapEmail) {
-        Patient patient = patientRepository.findByEmail(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Patient Found"));
+    public ResponseEntity<?> getPrescriptions(String sapEmail,Long aptId) {
 
-        List<Prescription> presc = prescriptionRepository.findByPatient(patient);
+        Appointment appointment = appointmentRepository.findById(aptId).orElseThrow(()-> new ResourceNotFoundException("No prescription Found"));
+
+        if(sapEmail.equals(appointment.getPatient().getEmail())) throw new SecurityException("Unauthorized");
+
+        PrescriptionRes presc = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate());
 
         return ResponseEntity.ok(presc);
     }

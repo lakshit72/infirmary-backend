@@ -9,6 +9,7 @@ import com.infirmary.backend.configuration.dto.PrescriptionDTO;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -93,4 +94,5 @@ public class AppointmentController {
         LocalDate response = appointmentService.getLastAppointmentDateByEmail(email);
         return createSuccessResponse(response);
     }
+
 }

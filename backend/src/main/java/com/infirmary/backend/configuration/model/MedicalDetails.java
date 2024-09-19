@@ -20,7 +20,7 @@ public class MedicalDetails implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")
     private Patient patient;
 

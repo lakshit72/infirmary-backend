@@ -6,8 +6,6 @@ import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.configuration.service.DoctorService;
 
-import jakarta.websocket.server.PathParam;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,10 +75,18 @@ public class ADController {
     public ResponseEntity<?> rejectAppointment(@RequestParam("email") String email){
         return ResponseEntity.ok(adService.rejectAppointment(email));
     }
+    
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/setStatus/{docId}")
     public ResponseEntity<?> setDoctorStatusAD(@RequestParam("isDoctorCheckIn") Boolean isDoctorCheckIn,@PathVariable Long docId) throws DoctorNotFoundException {
         
         return createSuccessResponse(adService.setDocStatus(docId, isDoctorCheckIn));
     }
+
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/completeAppointment/{sapEmail}")
+    public ResponseEntity<?> completeAppointment(@PathVariable String sapEmail){
+        return ResponseEntity.ok(adService.completeAppointment(sapEmail));
+    }
+
 }

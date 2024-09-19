@@ -12,11 +12,14 @@ import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.PrescriptionMeds;
+import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
+import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
@@ -30,6 +33,7 @@ public class AdServiceImpl implements ADService{
     private final DoctorRepository doctorRepository;
     private final AppointmentFormRepository appointmentFormRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final StockRepository stockRepository;
     
     public ResponseEntity<?> getQueue(){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
@@ -44,7 +48,7 @@ public class AdServiceImpl implements ADService{
             dataMap.put("name", apt.getPatient().getName());
             dataMap.put("sapEmail", apt.getPatient().getEmail());
             dataMap.put("reason", apt.getAptForm().getReason());
-            dataMap.put("reason", apt.getAptForm().getReason());
+            dataMap.put("aptId", apt.getAppointmentId().toString());
             resp.add(dataMap);
         }
 
@@ -82,9 +86,7 @@ public class AdServiceImpl implements ADService{
             HashMap<String,Object> dataMap = new HashMap<>();
             dataMap.put("name", apt.getPatient().getName());
             dataMap.put("sapEmail", apt.getPatient().getSapId());
-            dataMap.put("DoctorId", apt.getDoctor().getDoctorId());
-            dataMap.put("DoctorName", apt.getDoctor().getGender());
-            dataMap.put("prescriptionId", apt.getPrescription().getPrescriptionId());
+            dataMap.put("reason",apt.getAptForm().getReason());
             resp.add(dataMap);
         }
 
@@ -150,6 +152,37 @@ public class AdServiceImpl implements ADService{
         doc.setStatus(docStat);
         doctorRepository.save(doc);
         return "Status Changed";
+    }
+
+    @Override
+    public String completeAppointment(String sapEmail) {
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Appointment Scheduled"));
+
+        if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");
+
+        List<PrescriptionMeds> medLst = currentAppointment.getAppointment().getPrescription().getMedicine();
+        
+        List<Stock> stocks = new ArrayList<>();
+
+        for(PrescriptionMeds meds:medLst){
+            Stock stock = stockRepository.findById(meds.getMedicine().getBatchNumber()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine Exists"));
+
+            if(stock.getQuantity() - (meds.getDuration()*meds.getDosage())<0) throw new IllegalArgumentException("Medicine Quantity Not Enough");
+
+            stock.setQuantity(stock.getQuantity() - (meds.getDuration()*meds.getDosage()));
+
+            stocks.add(stock);
+        }
+
+        stockRepository.saveAll(stocks);
+
+        AppointmentQueueManager.removeApptEl(currentAppointment.getAppointment().getAppointmentId());
+        
+        currentAppointment.setAppointment(null);
+
+        currentAppointmentRepository.save(currentAppointment);
+
+        return "Appointment Completed";
     }
 
 }

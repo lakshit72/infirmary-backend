@@ -1,12 +1,15 @@
 package com.infirmary.backend.configuration.model;
 
 import com.infirmary.backend.configuration.dto.PrescriptionDTO;
+import com.infirmary.backend.configuration.dto.PrescriptionReq;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "prescription")
@@ -20,11 +23,11 @@ public class Prescription implements Serializable {
     @Column(name = "prescription_id")
     private Long prescriptionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")
     private Patient patient;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "doctor_email", referencedColumnName = "doctor_email")
     private Doctor doctor;
 
@@ -37,7 +40,16 @@ public class Prescription implements Serializable {
     @Column(name = "test_needed")
     private String testNeeded;
 
+    @OneToMany
+    List<PrescriptionMeds> medicine;
+
     public Prescription(PrescriptionDTO prescriptionDTO) {
+        this.diagnosis = prescriptionDTO.getDiagnosis();
+        this.dietaryRemarks = prescriptionDTO.getDietaryRemarks();
+        this.testNeeded = prescriptionDTO.getTestNeeded();
+    }
+
+    public Prescription(PrescriptionReq prescriptionDTO) {
         this.diagnosis = prescriptionDTO.getDiagnosis();
         this.dietaryRemarks = prescriptionDTO.getDietaryRemarks();
         this.testNeeded = prescriptionDTO.getTestNeeded();

@@ -90,12 +90,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         throw new RuntimeException("Queue empty!");
     }
+
     @Override
     public AppointmentDTO getCurrentNextAppointment() throws AppointmentNotFoundException {
         Long nextId = getNextAppointment();
         // no need to check as getAppointmentById will be checking for null
         return getAppointmentById(nextId);
     }
+    
     @Override
     public List<Prescription> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException {
         if (Objects.isNull(email)) {

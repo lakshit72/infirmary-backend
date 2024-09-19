@@ -130,7 +130,7 @@ public class DoctorServiceImpl implements DoctorService {
      
     @Override
     public PatientDetails getPatient(String doctorEmail) {
-        CurrentAppointment currentAppointment = currentAppointmentRepository.findByAppointment_Doctor_DoctorEmail(doctorEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Assigned"));
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByDoctor_DoctorEmail(doctorEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Assigned"));
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Found");
 
@@ -146,7 +146,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         resp.setMedicalDetails(new MedicalDetailsDTO(medicalDetails));
 
-        List<PrescriptionDTO> presc = prescriptionRepository.findByPatient(patient).stream().map((pres)->new PrescriptionDTO(pres)).toList();
+        List<PrescriptionDTO> presc = prescriptionRepository.findByPatient(patient).stream().map((pres)->(new PrescriptionDTO(pres))).toList();
 
 
         resp.setPrescriptions(presc);

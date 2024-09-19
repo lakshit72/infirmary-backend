@@ -9,12 +9,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@Table(name = "prescription_medicine")
 public class PrescriptionMeds implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,12 +28,12 @@ public class PrescriptionMeds implements Serializable{
     @ManyToOne
     @JoinColumn(name = "medicine", referencedColumnName = "batch_number")
     private Stock medicine;
-    
+
     @Column(name = "dosage")
-    private Long dosage;
+    private int dosage;
 
     @Column(name = "duration")
-    private Long duration;
+    private int duration;
 
     @Column(name = "suggestion")
     private String suggestion; 

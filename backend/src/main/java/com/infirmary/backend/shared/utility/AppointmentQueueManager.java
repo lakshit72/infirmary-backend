@@ -21,7 +21,7 @@ public class AppointmentQueueManager {
     }
 
     public static void removeElement(Long id){
-        appointedQueue.remove(id);
+        appointmentQueue.remove(id);
     }
 
     public static boolean hasMoreAppointments() {
@@ -39,6 +39,10 @@ public class AppointmentQueueManager {
 
     public static ArrayList<Long> getAppointedQueue(){
         return new ArrayList<>(appointedQueue);
+    }
+
+    public static void removeApptEl(Long aptId){
+        appointedQueue.remove(aptId);
     }
   
     public static Long getQueueSize() { return (long) appointmentQueue.size(); }
