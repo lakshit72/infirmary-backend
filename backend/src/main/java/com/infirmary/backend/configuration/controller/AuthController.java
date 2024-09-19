@@ -1,16 +1,20 @@
 package com.infirmary.backend.configuration.controller;
 
 
+import java.io.IOException;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
 import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
+import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
@@ -37,7 +41,7 @@ public class AuthController {
     }
 
     @PostMapping("/patient/signup")
-    public ResponseEntity<?> registerUser(@RequestBody PatientDTO patientDTO){
+    public ResponseEntity<?> registerUser(@RequestBody PatientReqDTO patientDTO) throws UserAlreadyExists, IOException{
         return authService.signUpPat(patientDTO);
     }
     @PostMapping("/doctor/signup")

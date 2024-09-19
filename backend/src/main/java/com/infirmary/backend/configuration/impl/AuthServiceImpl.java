@@ -2,6 +2,10 @@ package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +23,7 @@ import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.JwtResponse;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
+import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
 import com.infirmary.backend.configuration.model.AD;
 import com.infirmary.backend.configuration.model.Doctor;
@@ -52,7 +57,7 @@ public class AuthServiceImpl implements AuthService{
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
     @Override
-    public ResponseEntity<?> signUpPat(PatientDTO patientDTO) throws UserAlreadyExists {
+    public ResponseEntity<?> signUpPat(PatientReqDTO patientDTO) throws UserAlreadyExists, IOException {
             if(patientRepository.existsByEmail(patientDTO.getEmail())){
                 throw new UserAlreadyExists("User Already Exists");
             }
@@ -62,7 +67,28 @@ public class AuthServiceImpl implements AuthService{
             Patient patient = new Patient(
                 patientDTO
             );
-            
+
+            byte[] data = Base64.getDecoder().decode(patientDTO.getImg());
+
+            String type = patientDTO.getImg().split(";")[0].split("/")[1];
+
+
+            String filePath = "./build/resources/main/static/Profile/"+patientDTO.getEmail()+"."+type;
+            String flpth = "./src/main/resources/static/Profile/"+patientDTO.getEmail()+"."+type;
+
+            try{
+                OutputStream stream = new FileOutputStream(filePath);
+                OutputStream strm = new FileOutputStream(flpth);
+                
+                stream.write(data);
+                strm.write(data);
+
+                stream.close();
+                strm.close();
+            }catch (Exception e){
+                throw new IOException("Cannot create a file");
+            }
+
             patientRepository.save(patient);
 
             return createSuccessResponse("Patient Created");
