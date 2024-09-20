@@ -33,7 +33,6 @@ import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.securityimpl.UserDetailsImpl;
 import com.infirmary.backend.configuration.service.AuthService;
 
-import io.jsonwebtoken.lang.Objects;
 import lombok.AllArgsConstructor;
 
 @Service

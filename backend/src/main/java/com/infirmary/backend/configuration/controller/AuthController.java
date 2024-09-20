@@ -3,7 +3,6 @@ package com.infirmary.backend.configuration.controller;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,10 +15,6 @@ import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.dto.PrescriptionReq;
-import com.infirmary.backend.configuration.model.PrescriptionMeds;
-import com.infirmary.backend.configuration.model.Stock;
-import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
-import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
@@ -27,11 +22,6 @@ import com.infirmary.backend.configuration.service.AuthService;
 @RequestMapping("/api/auth")
 public class AuthController {
     private AuthService authService;
-
-    @Autowired
-    private PrescriptionMedsRepository prescriptionMedsRepository;
-    @Autowired
-    private StockRepository stockRepository;
 
     public AuthController(AuthService authService){
         this.authService = authService;
