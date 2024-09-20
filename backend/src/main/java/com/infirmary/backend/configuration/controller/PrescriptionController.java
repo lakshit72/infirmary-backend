@@ -1,6 +1,5 @@
 package com.infirmary.backend.configuration.controller;
 
-import com.infirmary.backend.configuration.dto.PrescriptionDTO;
 import com.infirmary.backend.configuration.dto.PrescriptionReq;
 import com.infirmary.backend.configuration.service.PrescriptionService;
 import org.springframework.http.ResponseEntity;

@@ -93,7 +93,7 @@ public class DoctorServiceImpl implements DoctorService {
         
         dayMetrics.put("Total_Appointment", byDate.size());
         dayMetrics.put("In_Queue", (AppointmentQueueManager.getQueueSize() + AppointmentQueueManager.getAptSize()));
-        dayMetrics.put("Patients_left", byDate.size() - (AppointmentQueueManager.getQueueSize() + AppointmentQueueManager.getAptSize()));
+        dayMetrics.put("Patients_left", appointmentRepository.countByDateAndPrescriptionNotNull(date));
 
         return dayMetrics;
     }

@@ -146,6 +146,7 @@ public class PatientServiceImpl implements PatientService {
         CurrentAppointment currentAppointment = new CurrentAppointment();
         Optional<Patient> patient = patientRepository.findByEmail(sapEmail);
         if(patient.isEmpty()) throw new UsernameNotFoundException("User does not Exists");
+        if(medicalDetailsRepository.findByPatient_Email(sapEmail).isEmpty()) throw new IllegalArgumentException("Medical details Not Set");
         if(appointmentForm.isEmpty()){
             currentAppointment.setPatient(patient.get());
             currentAppointment = currentAppointmentRepository.save(currentAppointment);
@@ -209,7 +210,7 @@ public class PatientServiceImpl implements PatientService {
 
         Appointment appointment = appointmentRepository.findById(aptId).orElseThrow(()-> new ResourceNotFoundException("No prescription Found"));
 
-        if(sapEmail.equals(appointment.getPatient().getEmail())) throw new SecurityException("Unauthorized");
+        if(!sapEmail.equals(appointment.getPatient().getEmail())) throw new SecurityException("Unauthorized");
 
         PrescriptionRes presc = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate());
 

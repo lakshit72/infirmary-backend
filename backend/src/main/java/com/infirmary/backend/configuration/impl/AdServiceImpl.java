@@ -147,7 +147,7 @@ public class AdServiceImpl implements ADService{
             if(currentAppointment.getAppointment().getPrescription().getMedicine() != null){
                 List<Long> delList = new ArrayList<>();
                 for(PrescriptionMeds med: currentAppointment.getAppointment().getPrescription().getMedicine()){
-                    delList.add(med.getMedId());
+                    delList.add(med.getMedicineId());
                 }
                 prescriptionMedsRepository.deleteAll(prescriptionMedsRepository.findAllById(delList));
             }
@@ -182,7 +182,7 @@ public class AdServiceImpl implements ADService{
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");
 
-        List<PrescriptionMeds> medLst = currentAppointment.getAppointment().getPrescription().getMedicine();
+        List<PrescriptionMeds> medLst = new ArrayList<>(currentAppointment.getAppointment().getPrescription().getMedicine());
         
         List<Stock> stocks = new ArrayList<>();
 

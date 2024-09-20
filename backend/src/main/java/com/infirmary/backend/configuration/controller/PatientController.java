@@ -70,9 +70,9 @@ public class PatientController {
         return patientService.getToken(getTokenClaims());
     }
 
-    @GetMapping("/getPrescription/{id}")
-    public ResponseEntity<?> getPrescription(@PathVariable Long aptId){
-        return patientService.getPrescriptions(getTokenClaims(),aptId);
+    @GetMapping("/getPrescription/{Id}")
+    public ResponseEntity<?> getPrescription(@PathVariable Long Id){
+        return patientService.getPrescriptions(getTokenClaims(),Id);
     }
 
     @GetMapping("/getAppointment")

@@ -19,11 +19,11 @@ import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.PrescriptionService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-@Transactional
 public class PrescriptionServiceImpl implements PrescriptionService {
     private final PrescriptionRepository prescriptionRepository;
     private final CurrentAppointmentRepository currentAppointmentRepository;
@@ -69,13 +68,15 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             medicine.setDosage(pres.getDosage());
             medicine.setDuration(pres.getDuration());
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
-            if(currMed.getQuantity() < pres.getDosage()*pres.getDuration()) throw new IllegalArgumentException("Not enough Stock available");
-            medicine.setMedicine(currMed);
+            if(currMed.getQuantity() < (pres.getDosage()*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
+            currMed.setQuantity(currMed.getQuantity()-(pres.getDosage()*pres.getDuration()));
+            Stock medStock = stockRepository.save(currMed);
+            medicine.setMedicine(medStock);
             medicine.setSuggestion(pres.getSuggestion());
             meds.add(medicine);
         }
         meds = prescriptionMedsRepository.saveAll(meds);
-        prescription.setMedicine(meds);
+        prescription.setMedicine(new HashSet<>(meds));
         prescription.setDiagnosis(prescriptionDTO.getDiagnosis());
         prescription.setDietaryRemarks(prescriptionDTO.getDietaryRemarks());
         prescription.setTestNeeded(prescriptionDTO.getTestNeeded());
