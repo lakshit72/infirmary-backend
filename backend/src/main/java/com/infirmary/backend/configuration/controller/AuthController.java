@@ -4,7 +4,6 @@ package com.infirmary.backend.configuration.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,12 +64,6 @@ public class AuthController {
     }
     @PostMapping("/test")
     public ResponseEntity<?> test(@RequestBody PrescriptionReq inp){
-        PrescriptionMeds meds = new PrescriptionMeds();
-        Stock stock = stockRepository.findByBatchNumber(inp.getMeds().get(0).getMedicine()).orElseThrow(()-> new ResourceNotFoundException("No"));
-
-        meds.setMedicine(stock);
-        meds.setDosage(inp.getMeds().get(0).getDosage());
-        PrescriptionMeds lst = prescriptionMedsRepository.save(meds);
-        return ResponseEntity.ok(meds);
+        return ResponseEntity.ok("Service Up");
     }
 }
