@@ -14,7 +14,6 @@ import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
-import com.infirmary.backend.configuration.dto.PrescriptionReq;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
@@ -53,7 +52,7 @@ public class AuthController {
         return authService.signUpAD(adDTO);
     }
     @PostMapping("/test")
-    public ResponseEntity<?> test(@RequestBody PrescriptionReq inp){
+    public ResponseEntity<?> test(){
         return ResponseEntity.ok("Service Up");
     }
 }

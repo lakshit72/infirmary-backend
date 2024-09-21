@@ -14,6 +14,7 @@ public class PatientDetails {
     private MedicalDetailsDTO medicalDetails;
     private List<PrescriptionDTO> prescriptions;
     private String reason;
+    private String docName;
 
     public PatientDetails(PatientDTO patient,MedicalDetailsDTO medicalDetails,List<PrescriptionDTO> prescriptions){
         this.patient = patient;

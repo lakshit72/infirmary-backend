@@ -153,6 +153,8 @@ public class DoctorServiceImpl implements DoctorService {
 
         resp.setReason(currentAppointment.getAppointment().getAptForm().getReason());
 
+        resp.setDocName(currentAppointment.getDoctor().getName());
+
         return resp; 
 
     }
