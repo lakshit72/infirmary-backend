@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: infirmary-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: PORT
+        value: 8081
+    dockerCommand: docker
+  - type: pserv
+    name: infirmary-DB
+    runtime: docker
+    dockerfilePath: ./DB/Dockerfile.postgres
+    envVars:
+      - key: POSTGRES_DB
+        value: infirmary_DB
+      - key: POSTGRES_USER
+        value: admin
+      - key: POSTGRES_PASSWORD
+        value: admin
+      - key: PGDATA
+        value: /var/lib/postgresql/data
+    

@@ -5,7 +5,6 @@ import java.util.List;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.model.Prescription;
-import com.infirmary.backend.configuration.model.PrescriptionMeds;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

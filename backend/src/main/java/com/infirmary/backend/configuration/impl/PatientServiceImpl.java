@@ -16,14 +16,12 @@ import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
-import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
-import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.PatientService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 
@@ -58,9 +56,8 @@ public class PatientServiceImpl implements PatientService {
     private final AppointmentRepository appointmentRepository;
     private final DoctorRepository doctorRepository;
     private final AppointmentFormRepository appointmentFormRepository;
-    private final PrescriptionRepository prescriptionRepository;
 
-    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository,DoctorRepository doctorRepository, PrescriptionRepository prescriptionRepository) {
+    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository,DoctorRepository doctorRepository) {
         this.patientRepository = patientRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.medicalDetailsRepository = medicalDetailsRepository;
@@ -68,7 +65,6 @@ public class PatientServiceImpl implements PatientService {
         this.appointmentRepository = appointmentRepository;
         this.appointmentFormRepository = appointmentFormRepository;
         this.doctorRepository = doctorRepository;
-        this.prescriptionRepository = prescriptionRepository;
     }
     
     @Override

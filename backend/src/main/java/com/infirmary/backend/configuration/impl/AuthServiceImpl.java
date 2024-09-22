@@ -66,24 +66,26 @@ public class AuthServiceImpl implements AuthService{
             Patient patient = new Patient(
                 patientDTO
             );
+            if(patientDTO.getImg() != null){
 
-            byte[] data = Base64.getDecoder().decode(patientDTO.getImg().substring(patientDTO.getImg().indexOf(",")+1));
-
-            String type = patientDTO.getImg().split(";")[0].split("/")[1];
-
-            String fileName = patientDTO.getEmail().replace(".", "_");
-
-            String filePath = "./build/resources/main/static/Profile/"+fileName+"."+type;
-            String flpth = "./src/main/resources/static/Profile/"+fileName+"."+type;
-
-            try{
-                FileUtils.writeByteArrayToFile(new File(filePath), data);
-                FileUtils.writeByteArrayToFile(new File(flpth), data);
-            }catch (Exception e){
-                throw new IOException("Cannot create a file");
+                byte[] data = Base64.getDecoder().decode(patientDTO.getImg().substring(patientDTO.getImg().indexOf(",")+1));
+                
+                String type = patientDTO.getImg().split(";")[0].split("/")[1];
+                
+                String fileName = patientDTO.getEmail().replace(".", "_");
+                
+                String filePath = "./build/resources/main/static/Profile/"+fileName+"."+type;
+                String flpth = "./src/main/resources/static/Profile/"+fileName+"."+type;
+                
+                try{
+                    FileUtils.writeByteArrayToFile(new File(filePath), data);
+                    FileUtils.writeByteArrayToFile(new File(flpth), data);
+                }catch (Exception e){
+                    throw new IOException("Cannot create a file");
+                }
+                
+                patient.setImageUrl("Profile/"+fileName+"."+type);
             }
-            
-            patient.setImageUrl("Profile/"+fileName+"."+type);
 
             patientRepository.save(patient);
 

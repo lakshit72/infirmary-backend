@@ -3,8 +3,6 @@ package com.infirmary.backend.configuration.controller;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,11 +14,6 @@ import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
-import com.infirmary.backend.configuration.dto.PrescriptionReq;
-import com.infirmary.backend.configuration.model.PrescriptionMeds;
-import com.infirmary.backend.configuration.model.Stock;
-import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
-import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
@@ -28,11 +21,6 @@ import com.infirmary.backend.configuration.service.AuthService;
 @RequestMapping("/api/auth")
 public class AuthController {
     private AuthService authService;
-
-    @Autowired
-    private PrescriptionMedsRepository prescriptionMedsRepository;
-    @Autowired
-    private StockRepository stockRepository;
 
     public AuthController(AuthService authService){
         this.authService = authService;
@@ -64,13 +52,7 @@ public class AuthController {
         return authService.signUpAD(adDTO);
     }
     @PostMapping("/test")
-    public ResponseEntity<?> test(@RequestBody PrescriptionReq inp){
-        PrescriptionMeds meds = new PrescriptionMeds();
-        Stock stock = stockRepository.findByBatchNumber(inp.getMeds().get(0).getMedicine()).orElseThrow(()-> new ResourceNotFoundException("No"));
-
-        meds.setMedicine(stock);
-        meds.setDosage(inp.getMeds().get(0).getDosage());
-        PrescriptionMeds lst = prescriptionMedsRepository.save(meds);
-        return ResponseEntity.ok(meds);
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok("Service Up");
     }
 }

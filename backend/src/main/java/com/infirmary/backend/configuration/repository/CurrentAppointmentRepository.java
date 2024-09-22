@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.repository;
 
 import com.infirmary.backend.configuration.model.CurrentAppointment;
+import com.infirmary.backend.configuration.model.Doctor;
 
 import java.util.Optional;
 import java.util.List;
@@ -21,4 +22,6 @@ public interface CurrentAppointmentRepository extends JpaRepository<CurrentAppoi
     List<CurrentAppointment> findAllByAppointmentNotNullAndDoctorIsNull();
 
     Optional<CurrentAppointment> findByDoctor_DoctorEmail(String doctorEmail);
+
+    Optional<CurrentAppointment> findByDoctor(Doctor doctor);
 }

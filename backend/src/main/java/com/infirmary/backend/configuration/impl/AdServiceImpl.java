@@ -3,6 +3,7 @@ package com.infirmary.backend.configuration.impl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -171,6 +172,13 @@ public class AdServiceImpl implements ADService{
     @Override
     public String setDocStatus(Long docID, Boolean docStat) {
         Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
+
+        Optional<CurrentAppointment> currentAppointment = currentAppointmentRepository.findByDoctor(doc);
+
+        if(currentAppointment.isPresent()){
+            throw new IllegalArgumentException("an Appointment is Assigned");
+        }
+
         doc.setStatus(docStat);
         doctorRepository.save(doc);
         return "Status Changed";

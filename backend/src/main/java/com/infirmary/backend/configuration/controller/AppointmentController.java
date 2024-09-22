@@ -9,7 +9,6 @@ import com.infirmary.backend.configuration.dto.PrescriptionDTO;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.AppointmentService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -63,8 +62,6 @@ public class AppointmentController {
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/doctor/next-appointment")
     public ResponseEntity<?> getNextAppointmentForDoctor() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String sapEmail = userDetails.getUsername();
         AppointmentDTO currentNextAppointment = appointmentService.getCurrentNextAppointment();
         return createSuccessResponse(currentNextAppointment);
     }

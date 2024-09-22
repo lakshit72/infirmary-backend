@@ -19,7 +19,6 @@ import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
-import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +79,11 @@ public class DoctorServiceImpl implements DoctorService {
         if (Objects.isNull(doctor)) {
             throw new IllegalArgumentException("Doctor Status Not Found for the Id:" + id);
         }
+
+        Optional<CurrentAppointment> curs = currentAppointmentRepository.findByDoctor(doctor);
+
+        if(curs.isPresent()) throw new IllegalArgumentException("Appointment Assigned for the doctor");
+
         doctor.setStatus(isDoctorCheckIn);
         return doctorRepository.save(doctor);
     }
@@ -90,10 +94,11 @@ public class DoctorServiceImpl implements DoctorService {
         }
         HashMap<String, Integer> dayMetrics = new HashMap<>();
         List<Appointment> byDate = appointmentRepository.findByDate(date);
+        int cnt = appointmentRepository.countByDateAndPrescriptionNotNull(date);
         
         dayMetrics.put("Total_Appointment", byDate.size());
-        dayMetrics.put("In_Queue", (AppointmentQueueManager.getQueueSize() + AppointmentQueueManager.getAptSize()));
-        dayMetrics.put("Patients_left", appointmentRepository.countByDateAndPrescriptionNotNull(date));
+        dayMetrics.put("In_Queue", (byDate.size() - cnt));
+        dayMetrics.put("Patients_left", cnt);
 
         return dayMetrics;
     }
@@ -152,6 +157,8 @@ public class DoctorServiceImpl implements DoctorService {
         resp.setPrescriptions(presc);
 
         resp.setReason(currentAppointment.getAppointment().getAptForm().getReason());
+
+        resp.setDocName(currentAppointment.getDoctor().getName());
 
         return resp; 
 
