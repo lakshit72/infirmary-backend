@@ -7,7 +7,7 @@ services:
       - key: PORT
         value: 8081
     dockerCommand: docker
-  - type: web
+  - type: pserv
     name: infirmary-DB
     runtime: docker
     dockerfilePath: ./DB/Dockerfile.postgres
