@@ -22,4 +22,5 @@ public interface StockService {
     StockDTO addStock(StockDTO stockDTO) throws StockAlreadyExists;
     byte[] exportStocksToExcel() throws IOException;
     List<Stock> getAllStocks();
+    void deleteStock(Long batchNumber) throws StockNotFoundException;
 }
