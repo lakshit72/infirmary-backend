@@ -9,19 +9,21 @@ services:
       - DB/secrets.env
     volumes:
       - ./DB/pgData:/var/lib/postgresql/data
-    networks:
-     - devbridge
-  backend:
-   container_name: infirmary_backend_container
-   build:
-     context: ./backend
-     dockerfile: Dockerfile
-   ports:
-     - 8081:8081
-   networks:
-     - devbridge
-   env_file:
-     - backend/secrets.env
+    ports:
+      - 5432:5432
+  #   networks:
+  #    - devbridge
+  # backend:
+  #  container_name: infirmary_backend_container
+  #  build:
+  #    context: ./backend
+  #    dockerfile: Dockerfile
+  #  ports:
+  #    - 8081:8081
+  #  networks:
+  #    - devbridge
+  #  env_file:
+  #    - backend/secrets.env
 
 networks:
  devbridge:
