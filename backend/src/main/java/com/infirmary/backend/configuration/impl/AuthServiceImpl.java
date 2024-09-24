@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService{
                     FileUtils.writeByteArrayToFile(new File(filePath), data);
                     FileUtils.writeByteArrayToFile(new File(flpth), data);
                 }catch (Exception e){
-                    throw new IOException("Cannot create a file");
+                    throw new IOException(e);
                 }
                 
                 patient.setImageUrl("Profile/"+fileName+"."+type);
