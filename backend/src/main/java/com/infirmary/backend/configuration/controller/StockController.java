@@ -110,4 +110,12 @@ public class StockController {
     public ResponseEntity<?> getAllStock(){
         return ResponseEntity.ok(stockService.getAllStocks());
     }
+
+    @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
+    @DeleteMapping(value = "/{batch-number}")
+    public ResponseEntity<?> deleteStock(@PathVariable("batch-number") Long batchNumber) throws StockNotFoundException {
+        stockService.deleteStock(batchNumber);
+        return createSuccessResponse("Stock deleted successfully!");
+    }
+
 }
