@@ -74,8 +74,8 @@ public class AuthServiceImpl implements AuthService{
                 
                 String fileName = patientDTO.getEmail().replace(".", "_");
                 
-                String filePath = "infirmary/infirmary-backend/backend/build/resources/static/Profile/"+fileName+"."+type;
-                String flpth = "infirmary/infirmary-backend/backend/src/main/resources/static/Profile/"+fileName+"."+type;
+                String filePath = "./build/resources/main/static/Profile/"+fileName+"."+type;
+                String flpth = "./src/main/resources/static/Profile/"+fileName+"."+type;
                 
                 try{
                     FileUtils.writeByteArrayToFile(new File(filePath), data);
