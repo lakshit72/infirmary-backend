@@ -48,7 +48,7 @@ public class Patient implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private String gender;
   
     @Column(name = "sap_id")
@@ -64,20 +64,6 @@ public class Patient implements Serializable {
         this.emergencyContact = patientDTO.getEmergencyContact();
         this.bloodGroup = patientDTO.getBloodGroup();
         this.imageUrl = patientDTO.getImageUrl();
-        this.password = patientDTO.getPassword();
-        this.gender = patientDTO.getGender();
-        this.sapId = patientDTO.getSapID();
-    }
-
-    public Patient(PatientReqDTO patientDTO){
-        this.email = patientDTO.getEmail();
-        this.name = patientDTO.getName();
-        this.school = patientDTO.getSchool();
-        this.dateOfBirth = patientDTO.getDateOfBirth();
-        this.program = patientDTO.getProgram();
-        this.phoneNumber = patientDTO.getPhoneNumber();
-        this.emergencyContact = patientDTO.getEmergencyContact();
-        this.bloodGroup = patientDTO.getBloodGroup();
         this.password = patientDTO.getPassword();
         this.gender = patientDTO.getGender();
         this.sapId = patientDTO.getSapID();
