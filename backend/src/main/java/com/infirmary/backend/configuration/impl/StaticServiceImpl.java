@@ -9,9 +9,12 @@ import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.service.StaticService;
 
+import lombok.NoArgsConstructor;
+
 import java.io.IOException;
 
 @Service
+@NoArgsConstructor
 public class StaticServiceImpl implements StaticService{
 
     private String filePath = "./build/resources/main/static/Profile";

@@ -9,15 +9,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.infirmary.backend.configuration.service.StaticService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @RequestMapping(value = "/Profile")
+@AllArgsConstructor
 public class StaticFilesController {
     StaticService staticServiceImpl;
 
     @GetMapping(value = "/{filename}")
     ResponseEntity<byte[]> imageGet(@PathVariable String filename){
         byte[] img = staticServiceImpl.imageReturn(filename);
-        String type = filename.split(".")[1];
-        return ResponseEntity.ok().contentType(type.equals("png")? MediaType.IMAGE_PNG:MediaType.IMAGE_JPEG).body(img);
+        System.out.println();
+        return ResponseEntity.ok().contentType(filename.substring(filename.indexOf(".")+1).equals("png")?MediaType.IMAGE_PNG:MediaType.IMAGE_JPEG).body(img);
     }
 }
