@@ -23,4 +23,5 @@ public interface StockService {
     byte[] exportStocksToExcel() throws IOException;
     List<Stock> getAllStocks();
     void deleteStock(Long batchNumber) throws StockNotFoundException;
+    List<Stock> getAvailableStock();
 }

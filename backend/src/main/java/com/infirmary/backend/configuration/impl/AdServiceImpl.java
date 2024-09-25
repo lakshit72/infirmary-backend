@@ -132,6 +132,8 @@ public class AdServiceImpl implements ADService{
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Apointment Scheduled");
 
+        Appointment appointment = appointmentRepository.findByAppointmentId(currentAppointment.getAppointment().getAppointmentId());
+
         if(currentAppointment.getAppointment().getDoctor() == null) AppointmentQueueManager.removeElement(currentAppointment.getAppointment().getAppointmentId());
         else AppointmentQueueManager.removeApptEl(currentAppointment.getAppointment().getAppointmentId());
 
@@ -150,8 +152,11 @@ public class AdServiceImpl implements ADService{
                 for(PrescriptionMeds med: currentAppointment.getAppointment().getPrescription().getMedicine()){
                     delList.add(med.getMedicineId());
                 }
+                prescription.setMedicine(null);
                 prescriptionMedsRepository.deleteAll(prescriptionMedsRepository.findAllById(delList));
             }
+
+            appointment.setPrescription(null);
 
             prescriptionRepository.delete(prescription);
             
@@ -159,11 +164,12 @@ public class AdServiceImpl implements ADService{
         
         if(currentAppointment.getAppointment().getAptForm() != null){
             AppointmentForm appointmentForm = appointmentFormRepository.findById(currentAppointment.getAppointment().getAptForm().getId()).orElseThrow(()->new ResourceNotFoundException("No Appointment Form Found"));
+            appointment.setAptForm(null);
             appointmentFormRepository.delete(appointmentForm);
         }
-        appointmentRepository.deleteById(currentAppointment.getAppointment().getAppointmentId());
-        
         currentAppointment.setAppointment(null);
+        
+        appointmentRepository.deleteById(appointment.getAppointmentId());
 
         currentAppointmentRepository.save(currentAppointment);
         return "Patient Appointment Rejected";
