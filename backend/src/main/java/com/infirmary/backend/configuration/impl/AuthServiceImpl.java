@@ -53,6 +53,7 @@ public class AuthServiceImpl implements AuthService{
         String jwt = jwtUtils.genrateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+        if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Bad Credentials");
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
     @Override
