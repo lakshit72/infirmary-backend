@@ -171,7 +171,9 @@ public class StockServiceImpl implements StockService {
         if (batch.isEmpty()) {
             throw new StockNotFoundException(messageConfigUtil.getStockNotFound());
         }
-        stockRepository.delete(batch.get());
+        Stock newStock = batch.get();
+        newStock.setQuantity(Long.valueOf(0));
+        stockRepository.save(newStock);
     }
 
     @Override
