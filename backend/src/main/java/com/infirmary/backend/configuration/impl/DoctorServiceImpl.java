@@ -19,6 +19,7 @@ import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
+import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -91,11 +92,12 @@ public class DoctorServiceImpl implements DoctorService {
         }
         HashMap<String, Integer> dayMetrics = new HashMap<>();
         List<Appointment> byDate = appointmentRepository.findByDate(date);
-        int cnt = appointmentRepository.countByDateAndPrescriptionNotNull(date);
+        int count = currentAppointmentRepository.countByAppointmentNotNullAndDoctorNotNull();
+        int cnt = (AppointmentQueueManager.getAptSize() + AppointmentQueueManager.getQueueSize() + count);
         
         dayMetrics.put("Total_Appointment", byDate.size());
-        dayMetrics.put("In_Queue", (byDate.size() - cnt));
-        dayMetrics.put("Patients_left", cnt);
+        dayMetrics.put("In_Queue", cnt);
+        dayMetrics.put("Patients_left", (byDate.size() - cnt));
 
         return dayMetrics;
     }

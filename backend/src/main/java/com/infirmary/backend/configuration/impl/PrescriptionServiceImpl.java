@@ -22,6 +22,7 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -69,6 +70,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             medicine.setDuration(pres.getDuration());
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
             if(currMed.getQuantity() < (pres.getDosage()*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
+            if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
             medicine.setMedicine(currMed);
             medicine.setSuggestion(pres.getSuggestion());
             meds.add(medicine);

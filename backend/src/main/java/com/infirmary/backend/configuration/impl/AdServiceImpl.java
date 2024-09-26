@@ -62,7 +62,6 @@ public class AdServiceImpl implements ADService{
     }
 
     public ResponseEntity<?> getPatientFormDetails(String sapEmail){
-        System.out.println(sapEmail);
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointemnt Found"));
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");

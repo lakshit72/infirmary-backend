@@ -27,7 +27,6 @@ public class RecoveryComponent {
 
         for(CurrentAppointment crs:cursAPt){
             if(!crs.getAppointment().getDate().equals(LocalDate.now())){
-                System.out.println(crs.getAppointment().getDate());
                 Appointment apt = crs.getAppointment();
                 crs.setAppointment(null);
                 currentAppointmentRepository.save(crs);

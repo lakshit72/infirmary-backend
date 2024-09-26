@@ -41,7 +41,7 @@ public class Prescription implements Serializable {
     @Column(name = "test_needed")
     private String testNeeded;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = false)
     @JoinColumn(name = "medicine")
     private Set<PrescriptionMeds> medicine = new HashSet<>();
 
