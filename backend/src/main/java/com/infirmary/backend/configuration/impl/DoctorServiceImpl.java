@@ -76,9 +76,6 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepository.findByDoctorEmail(id).orElseThrow(
                 () -> new IllegalArgumentException("Doctor Status Not Found for the Id: " + id)
         );
-        if (Objects.isNull(doctor)) {
-            throw new IllegalArgumentException("Doctor Status Not Found for the Id:" + id);
-        }
 
         Optional<CurrentAppointment> curs = currentAppointmentRepository.findByDoctor(doctor);
 
