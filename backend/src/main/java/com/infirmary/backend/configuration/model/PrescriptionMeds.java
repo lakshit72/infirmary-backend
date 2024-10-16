@@ -25,10 +25,11 @@ import lombok.Setter;
 public class PrescriptionMeds implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "prescription_medicine_id")
-    private Long prescriptionMedicineId;
+    @Column(name = "pres_medicine_id")
+    private Long presMedicineId;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "medicine")
     private Stock medicine;
 
     @Column(name = "dosage")

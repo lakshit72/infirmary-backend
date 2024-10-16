@@ -149,7 +149,7 @@ public class AdServiceImpl implements ADService{
             if(currentAppointment.getAppointment().getPrescription().getMedicine() != null){
                 List<Long> delList = new ArrayList<>();
                 for(PrescriptionMeds med: currentAppointment.getAppointment().getPrescription().getMedicine()){
-                    delList.add(med.getMedicineId());
+                    delList.add(med.getPresMedicineId());
                 }
                 prescription.setMedicine(null);
                 prescriptionMedsRepository.deleteAll(prescriptionMedsRepository.findAllById(delList));
