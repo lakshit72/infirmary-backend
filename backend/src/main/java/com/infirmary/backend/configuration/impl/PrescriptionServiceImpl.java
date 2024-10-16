@@ -71,7 +71,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
             if(currMed.getQuantity() < (pres.getDosage()*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
             if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
-            medicine.setMedicine(currMed);
+            medicine.setMedicine(stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine")));
             medicine.setSuggestion(pres.getSuggestion());
             meds.add(prescriptionMedsRepository.save(medicine));
         }
