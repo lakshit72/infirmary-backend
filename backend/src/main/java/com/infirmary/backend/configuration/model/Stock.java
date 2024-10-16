@@ -16,26 +16,25 @@ import java.time.LocalDate;
 @Table(name = "stocks")
 public class Stock implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "batch_number")
     private Long batchNumber;
 
-    @Column(name = "medicine_name")
+    @Column(name = "medicine_name",nullable = false)
     private String medicineName;
 
-    @Column(name = "composition")
+    @Column(name = "composition",nullable = false)
     private String composition;
 
-    @Column(name = "quantity")
+    @Column(name = "quantity",nullable = false)
     private Long quantity;
 
-    @Column(name = "medicine_type")
+    @Column(name = "medicine_type",nullable = false)
     private String medicineType;
 
-    @Column(name = "expiration_date")
+    @Column(name = "expiration_date",nullable = false)
     private LocalDate expirationDate;
 
-    @Column(name = "company")
+    @Column(name = "company",nullable = false)
     private String company;
 
     public Stock(StockDTO stockDTO) {

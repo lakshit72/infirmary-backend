@@ -73,9 +73,8 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
             medicine.setMedicine(currMed);
             medicine.setSuggestion(pres.getSuggestion());
-            meds.add(medicine);
+            meds.add(prescriptionMedsRepository.save(medicine));
         }
-        meds = prescriptionMedsRepository.saveAll(meds);
         prescription.setMedicine(new HashSet<>(meds));
         prescription.setDiagnosis(prescriptionDTO.getDiagnosis());
         prescription.setDietaryRemarks(prescriptionDTO.getDietaryRemarks());
