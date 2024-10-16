@@ -29,7 +29,6 @@ public class PrescriptionMeds implements Serializable{
     private Long medicineId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "medicine")
     private Stock medicine;
 
     @Column(name = "dosage")
