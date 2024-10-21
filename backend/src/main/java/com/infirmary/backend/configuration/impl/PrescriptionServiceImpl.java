@@ -61,8 +61,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         
         Prescription prescription = new Prescription();
 
-        //get Medicine
-        List<PrescriptionMeds> meds = new ArrayList<>();
+        //set Medicine
         
         for(PrescriptionMedsDTO pres:prescriptionDTO.getMeds()){
             PrescriptionMeds medicine = new PrescriptionMeds();
@@ -71,11 +70,14 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
             if(currMed.getQuantity() < (pres.getDosage()*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
             if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
-            medicine.setMedicine(stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine")));
+            System.out.println(currMed.getBatchNumber()+"batch Number");
+            medicine.setMedicine(currMed);
             medicine.setSuggestion(pres.getSuggestion());
-            meds.add(prescriptionMedsRepository.save(medicine));
+            System.out.println(medicine.getPresMedicineId()+"prescription meds");
+            prescription.addPresMed(medicine);
+            System.out.println(1);
         }
-        prescription.setMedicine(new HashSet<>(meds));
+
         prescription.setDiagnosis(prescriptionDTO.getDiagnosis());
         prescription.setDietaryRemarks(prescriptionDTO.getDietaryRemarks());
         prescription.setTestNeeded(prescriptionDTO.getTestNeeded());
@@ -83,7 +85,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription.setDoctor(byDoctorEmail.getDoctor());
 
         prescription = prescriptionRepository.save(prescription);
-
+        System.out.println(1);
         // Set Prescription for appointment
         Appointment appointment = appointmentRepository.findByAppointmentId(byDoctorEmail.getAppointment().getAppointmentId());
         appointment.setPrescription(prescription);

@@ -11,6 +11,8 @@ services:
       - ./DB/pgData:/var/lib/postgresql/data
     networks:
      - devbridge
+    ports:
+      - 5432:5432
   backend:
    container_name: infirmary_backend_container
    build:

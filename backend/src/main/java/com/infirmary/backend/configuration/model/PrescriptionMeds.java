@@ -40,4 +40,8 @@ public class PrescriptionMeds implements Serializable{
 
     @Column(name = "suggestion")
     private String suggestion; 
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="prescription")
+    private Prescription prescription;
 }

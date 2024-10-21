@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "prescription")
@@ -41,9 +41,8 @@ public class Prescription implements Serializable {
     @Column(name = "test_needed")
     private String testNeeded;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = false)
-    @JoinColumn(name = "medicine")
-    private Set<PrescriptionMeds> medicine = new HashSet<>();
+    @OneToMany(mappedBy = "prescription",cascade = CascadeType.ALL,orphanRemoval = false)
+    private List<PrescriptionMeds> medicine = new ArrayList<>();
 
     public Prescription(PrescriptionDTO prescriptionDTO) {
         this.diagnosis = prescriptionDTO.getDiagnosis();
@@ -55,5 +54,10 @@ public class Prescription implements Serializable {
         this.diagnosis = prescriptionDTO.getDiagnosis();
         this.dietaryRemarks = prescriptionDTO.getDietaryRemarks();
         this.testNeeded = prescriptionDTO.getTestNeeded();
+    }
+
+    public void addPresMed(PrescriptionMeds prescriptionMeds){
+        prescriptionMeds.setPrescription(this);
+        medicine.add(prescriptionMeds);
     }
 }
