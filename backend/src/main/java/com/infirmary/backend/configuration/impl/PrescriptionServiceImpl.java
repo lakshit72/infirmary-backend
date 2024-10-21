@@ -13,7 +13,6 @@ import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
-import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.PrescriptionService;
@@ -21,10 +20,7 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -40,15 +36,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final AppointmentRepository appointmentRepository;
     private final StockRepository stockRepository;
     private final DoctorRepository doctorRepository;
-    private final PrescriptionMedsRepository prescriptionMedsRepository;
 
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, CurrentAppointmentRepository currentAppointmentRepository, AppointmentRepository appointmentRepository, StockRepository stockRepository, DoctorRepository doctorRepository, PrescriptionMedsRepository prescriptionMedsRepository) {
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, CurrentAppointmentRepository currentAppointmentRepository, AppointmentRepository appointmentRepository, StockRepository stockRepository, DoctorRepository doctorRepository) {
         this.prescriptionRepository = prescriptionRepository;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.appointmentRepository = appointmentRepository;
         this.stockRepository = stockRepository;
         this.doctorRepository = doctorRepository;
-        this.prescriptionMedsRepository = prescriptionMedsRepository;
     }
 
     public void submitPrescription(PrescriptionReq prescriptionDTO) {
