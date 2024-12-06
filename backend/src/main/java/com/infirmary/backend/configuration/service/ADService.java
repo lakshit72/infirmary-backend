@@ -7,9 +7,9 @@ import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 
 @Service
 public interface ADService {
-    ResponseEntity<?> getQueue();
+    ResponseEntity<?> getQueue(Double latitude, Double longitude);
     ResponseEntity<?> getPatientFormDetails(String sapEmail);
-    ResponseEntity<?> getCompletedQueue();
+    ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude);
     String submitAppointment(AdSubmitReqDTO adSubmitReqDTO);
     String rejectAppointment(String email);
     String setDocStatus(Long docID,Boolean docStat);

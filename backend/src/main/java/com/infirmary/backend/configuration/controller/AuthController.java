@@ -37,8 +37,8 @@ public class AuthController {
         return authService.loginServicePat(loginRequest);
     }
     @PostMapping("ad/signin")
-    public ResponseEntity<?> authenticateAd(@RequestBody LoginRequestDTO loginRequestDTO){
-        return authService.loginServiceAd(loginRequestDTO);
+    public ResponseEntity<?> authenticateAd(@RequestBody LoginRequestDTO loginRequestDTO,@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude){
+        return authService.loginServiceAd(loginRequestDTO,latitude,longitude);
     }
     @PostMapping("doc/signin")
     public ResponseEntity<?> authenticateDoc(@RequestBody LoginRequestDTO loginRequestDTO){

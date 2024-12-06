@@ -14,6 +14,7 @@ import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.model.PrescriptionMeds;
 import com.infirmary.backend.configuration.model.Stock;
@@ -21,11 +22,13 @@ import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
+import com.infirmary.backend.shared.utility.FunctionUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,14 +42,28 @@ public class AdServiceImpl implements ADService{
     private final PrescriptionRepository prescriptionRepository;
     private final StockRepository stockRepository;
     private final PrescriptionMedsRepository prescriptionMedsRepository;
+    private final LocationRepository locationRepository;
     
-    public ResponseEntity<?> getQueue(){
+    public ResponseEntity<?> getQueue(Double latitude,Double longitude){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
 
         ArrayList<Long> idQueue = AppointmentQueueManager.getQueue();
 
-        List<Appointment> apptList = appointmentRepository.findAllById(idQueue);
-
+        
+        List<Location> locations = locationRepository.findAll();
+        
+        Location presentLocation = null;
+        
+        for(Location location:locations){
+            if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                presentLocation = location;
+                break;
+            }
+        }
+        
+        if(presentLocation == null) throw new IllegalArgumentException("Be Available at the Infirmary to get the patient Queue");
+        
+        List<Appointment> apptList = appointmentRepository.findAllByAppointmentIdInAndLocation(idQueue,presentLocation);
         
         for(Appointment apt:apptList){
             HashMap<String,String> dataMap = new HashMap<>();
@@ -79,13 +96,24 @@ public class AdServiceImpl implements ADService{
     }
 
     @Override
-    public ResponseEntity<?> getCompletedQueue() {
+    public ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude) {
         ArrayList<HashMap<String,Object>> resp = new ArrayList<>();
 
         ArrayList<Long> idQueue = AppointmentQueueManager.getAppointedQueue();
-
-        List<Appointment> apptList = appointmentRepository.findAllById(idQueue);
-
+        List<Location> locations = locationRepository.findAll();
+        
+        Location presentLocation = null;
+        
+        for(Location location:locations){
+            if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                presentLocation = location;
+                break;
+            }
+        }
+        
+        if(presentLocation == null) throw new IllegalArgumentException("Be Available at the Infirmary to get the patient Queue");
+        
+        List<Appointment> apptList = appointmentRepository.findAllByAppointmentIdInAndLocation(idQueue,presentLocation);
         
         for(Appointment apt:apptList){
             HashMap<String,Object> dataMap = new HashMap<>();

@@ -23,7 +23,7 @@ public interface PatientService {
 
     PatientDetailsResponseDTO getAllDetails(String sapEmail) throws PatientNotFoundException, MedicalDetailsNotFoundException;
 
-    ResponseEntity<?> submitAppointment(String sapEmail,AppointmentReqDTO appointmentReqDTO);
+    ResponseEntity<?> submitAppointment(String sapEmail,AppointmentReqDTO appointmentReqDTO,Double latitude, Double longitude);
 
     ResponseEntity<?> getStatus(String sapEmail);
 

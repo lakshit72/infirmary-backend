@@ -56,8 +56,8 @@ public class PatientController {
     }
 
     @PostMapping(value = "/submitAppointment")
-    public ResponseEntity<?> submitAppointmnent(@RequestBody AppointmentReqDTO appointmentReqDTO) {
-        return patientService.submitAppointment(getTokenClaims(),appointmentReqDTO);
+    public ResponseEntity<?> submitAppointmnent(@RequestBody AppointmentReqDTO appointmentReqDTO,@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude) {
+        return patientService.submitAppointment(getTokenClaims(),appointmentReqDTO,latitude,longitude);
     }
 
     @GetMapping(value = "/getStatus")

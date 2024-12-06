@@ -37,6 +37,10 @@ public class Stock implements Serializable{
     @Column(name = "company",nullable = false)
     private String company;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location")
+    private Location location;
+
     public Stock(StockDTO stockDTO) {
         this.batchNumber = stockDTO.getBatchNumber();
         this.medicineName = stockDTO.getMedicineName();

@@ -16,10 +16,11 @@ import java.util.List;
 public interface DoctorService {
     DoctorDTO getDoctorById(String id) throws DoctorNotFoundException;
     Boolean getDoctorStatusById(String id) throws DoctorNotFoundException;
-    Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException;
+    Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn, Double latitude, Double longitude) throws DoctorNotFoundException;
     HashMap<String, Integer> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException;
     HashMap<LocalDate, Prescription> getPrescriptionHistory(String email);
-    List<DoctorDTO> getAvailableDoctors() throws DoctorNotFoundException;
+    List<DoctorDTO> getAvailableDoctors(Double latitude, Double longitude) throws DoctorNotFoundException;
     List<DoctorDTO> getAllDoctors() throws DoctorNotFoundException;
     PatientDetails getPatient(String doctorEmail);
+    Integer getCurrentTokenNo(String docEmail);
 }

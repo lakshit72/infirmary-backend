@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,8 +35,8 @@ public class ADController {
     }
 
     @GetMapping(value = "/getAvailableDoctors")
-    public ResponseEntity<?> getAllAvailableDoctors() throws DoctorNotFoundException {
-        List<DoctorDTO> list = doctorService.getAvailableDoctors();
+    public ResponseEntity<?> getAllAvailableDoctors(@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude) throws DoctorNotFoundException {
+        List<DoctorDTO> list = doctorService.getAvailableDoctors(latitude,longitude);
         return createSuccessResponse(list);
     }
 
@@ -54,14 +55,14 @@ public class ADController {
 
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/getPatientQueue")
-    public ResponseEntity<?> getPatientQueue(){
-        return adService.getQueue();
+    public ResponseEntity<?> getPatientQueue(@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude){
+        return adService.getQueue(latitude,longitude);
     }
 
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/getCompletedQueue")
-    public ResponseEntity<?> getCompletedQueue(){
-        return adService.getCompletedQueue();
+    public ResponseEntity<?> getCompletedQueue(@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude){
+        return adService.getCompletedQueue(latitude,longitude);
     }
 
     @PreAuthorize("hasRole('ROLE_AD')")
