@@ -12,6 +12,6 @@ public interface ADService {
     ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude);
     String submitAppointment(AdSubmitReqDTO adSubmitReqDTO);
     String rejectAppointment(String email);
-    String setDocStatus(Long docID,Boolean docStat);
+    String setDocStatus(Long docID,Boolean docStat,Double latitude,Double longitude);
     String completeAppointment(String sapEmail);
 }

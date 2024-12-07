@@ -203,13 +203,30 @@ public class AdServiceImpl implements ADService{
     }
 
     @Override
-    public String setDocStatus(Long docID, Boolean docStat) {
+    public String setDocStatus(Long docID, Boolean docStat,Double latitude, Double longitude) {
         Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
 
         Optional<CurrentAppointment> currentAppointment = currentAppointmentRepository.findByDoctor(doc);
 
         if(currentAppointment.isPresent()){
             throw new IllegalArgumentException("an Appointment is Assigned");
+        }
+
+        if(docStat){
+            List<Location> locations = locationRepository.findAll();
+            Location presentLocation = null;
+
+            for(Location location:locations){
+                if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                    presentLocation = location;
+                    break;
+                }
+            }
+
+            if(presentLocation == null) throw new IllegalArgumentException("Must be present on location to Check In");
+            doc.setLocation(presentLocation);
+        }else{
+            doc.setLocation(null);
         }
 
         doc.setStatus(docStat);

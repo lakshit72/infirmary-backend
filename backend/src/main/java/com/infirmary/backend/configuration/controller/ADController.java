@@ -79,9 +79,9 @@ public class ADController {
     
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/setStatus/{docId}")
-    public ResponseEntity<?> setDoctorStatusAD(@RequestParam("isDoctorCheckIn") Boolean isDoctorCheckIn,@PathVariable Long docId) throws DoctorNotFoundException {
+    public ResponseEntity<?> setDoctorStatusAD(@RequestParam("isDoctorCheckIn") Boolean isDoctorCheckIn,@PathVariable Long docId,@RequestHeader(name = "X-Latitude",required = false) Double latitude, @RequestHeader(name = "X-Longitude", required = false) Double longitude) throws DoctorNotFoundException {
         
-        return createSuccessResponse(adService.setDocStatus(docId, isDoctorCheckIn));
+        return createSuccessResponse(adService.setDocStatus(docId, isDoctorCheckIn,latitude,longitude));
     }
 
     @PreAuthorize("hasRole('ROLE_AD')")

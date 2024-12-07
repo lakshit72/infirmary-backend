@@ -5,7 +5,6 @@ import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Patient;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 

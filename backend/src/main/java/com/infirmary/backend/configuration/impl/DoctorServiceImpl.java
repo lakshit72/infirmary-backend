@@ -94,6 +94,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         if(curs.isPresent()) throw new IllegalArgumentException("Appointment already Assigned for the doctor");
 
+
         if(isDoctorCheckIn){
             List<Location> locations = locationRepository.findAll();
             Location presentLocation = null;
@@ -160,7 +161,7 @@ public class DoctorServiceImpl implements DoctorService {
             }
         }
 
-        if(presentLocation == null) throw new IllegalArgumentException("Must be present on location to Check In");
+        if(presentLocation == null) throw new IllegalArgumentException("Must be present in the location to get Available doctors");
 
 
         List<Doctor> byStatus = doctorRepository.findByStatusTrueAndLocation(presentLocation);
