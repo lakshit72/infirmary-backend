@@ -14,6 +14,7 @@ import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.model.PrescriptionMeds;
 import com.infirmary.backend.configuration.model.Stock;
@@ -21,11 +22,13 @@ import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
+import com.infirmary.backend.shared.utility.FunctionUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,14 +42,28 @@ public class AdServiceImpl implements ADService{
     private final PrescriptionRepository prescriptionRepository;
     private final StockRepository stockRepository;
     private final PrescriptionMedsRepository prescriptionMedsRepository;
+    private final LocationRepository locationRepository;
     
-    public ResponseEntity<?> getQueue(){
+    public ResponseEntity<?> getQueue(Double latitude,Double longitude){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
 
         ArrayList<Long> idQueue = AppointmentQueueManager.getQueue();
 
-        List<Appointment> apptList = appointmentRepository.findAllById(idQueue);
-
+        
+        List<Location> locations = locationRepository.findAll();
+        
+        Location presentLocation = null;
+        
+        for(Location location:locations){
+            if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                presentLocation = location;
+                break;
+            }
+        }
+        
+        if(presentLocation == null) throw new IllegalArgumentException("Be Available at the Infirmary to get the patient Queue");
+        
+        List<Appointment> apptList = appointmentRepository.findAllByAppointmentIdInAndLocation(idQueue,presentLocation);
         
         for(Appointment apt:apptList){
             HashMap<String,String> dataMap = new HashMap<>();
@@ -62,7 +79,6 @@ public class AdServiceImpl implements ADService{
     }
 
     public ResponseEntity<?> getPatientFormDetails(String sapEmail){
-        System.out.println(sapEmail);
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointemnt Found"));
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");
@@ -80,13 +96,24 @@ public class AdServiceImpl implements ADService{
     }
 
     @Override
-    public ResponseEntity<?> getCompletedQueue() {
+    public ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude) {
         ArrayList<HashMap<String,Object>> resp = new ArrayList<>();
 
         ArrayList<Long> idQueue = AppointmentQueueManager.getAppointedQueue();
-
-        List<Appointment> apptList = appointmentRepository.findAllById(idQueue);
-
+        List<Location> locations = locationRepository.findAll();
+        
+        Location presentLocation = null;
+        
+        for(Location location:locations){
+            if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                presentLocation = location;
+                break;
+            }
+        }
+        
+        if(presentLocation == null) throw new IllegalArgumentException("Be Available at the Infirmary to get the patient Queue");
+        
+        List<Appointment> apptList = appointmentRepository.findAllByAppointmentIdInAndLocation(idQueue,presentLocation);
         
         for(Appointment apt:apptList){
             HashMap<String,Object> dataMap = new HashMap<>();
@@ -132,6 +159,8 @@ public class AdServiceImpl implements ADService{
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Apointment Scheduled");
 
+        Appointment appointment = appointmentRepository.findByAppointmentId(currentAppointment.getAppointment().getAppointmentId());
+
         if(currentAppointment.getAppointment().getDoctor() == null) AppointmentQueueManager.removeElement(currentAppointment.getAppointment().getAppointmentId());
         else AppointmentQueueManager.removeApptEl(currentAppointment.getAppointment().getAppointmentId());
 
@@ -148,10 +177,13 @@ public class AdServiceImpl implements ADService{
             if(currentAppointment.getAppointment().getPrescription().getMedicine() != null){
                 List<Long> delList = new ArrayList<>();
                 for(PrescriptionMeds med: currentAppointment.getAppointment().getPrescription().getMedicine()){
-                    delList.add(med.getMedicineId());
+                    delList.add(med.getPresMedicineId());
                 }
+                prescription.setMedicine(null);
                 prescriptionMedsRepository.deleteAll(prescriptionMedsRepository.findAllById(delList));
             }
+
+            appointment.setPrescription(null);
 
             prescriptionRepository.delete(prescription);
             
@@ -159,24 +191,42 @@ public class AdServiceImpl implements ADService{
         
         if(currentAppointment.getAppointment().getAptForm() != null){
             AppointmentForm appointmentForm = appointmentFormRepository.findById(currentAppointment.getAppointment().getAptForm().getId()).orElseThrow(()->new ResourceNotFoundException("No Appointment Form Found"));
+            appointment.setAptForm(null);
             appointmentFormRepository.delete(appointmentForm);
         }
-        appointmentRepository.deleteById(currentAppointment.getAppointment().getAppointmentId());
-        
         currentAppointment.setAppointment(null);
+        
+        appointmentRepository.deleteById(appointment.getAppointmentId());
 
         currentAppointmentRepository.save(currentAppointment);
         return "Patient Appointment Rejected";
     }
 
     @Override
-    public String setDocStatus(Long docID, Boolean docStat) {
+    public String setDocStatus(Long docID, Boolean docStat,Double latitude, Double longitude) {
         Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
 
         Optional<CurrentAppointment> currentAppointment = currentAppointmentRepository.findByDoctor(doc);
 
         if(currentAppointment.isPresent()){
             throw new IllegalArgumentException("an Appointment is Assigned");
+        }
+
+        if(docStat){
+            List<Location> locations = locationRepository.findAll();
+            Location presentLocation = null;
+
+            for(Location location:locations){
+                if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                    presentLocation = location;
+                    break;
+                }
+            }
+
+            if(presentLocation == null) throw new IllegalArgumentException("Must be present on location to Check In");
+            doc.setLocation(presentLocation);
+        }else{
+            doc.setLocation(null);
         }
 
         doc.setStatus(docStat);

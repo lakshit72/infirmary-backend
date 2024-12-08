@@ -35,6 +35,10 @@ public class Doctor implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location")
+    private Location location;
+
     public Doctor(DoctorDTO doctorDTO) {
         this.doctorEmail = doctorDTO.getDoctorEmail();
         this.status = doctorDTO.getStatus();

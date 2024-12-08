@@ -24,4 +24,6 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
     List<Stock> findByQuantityNull();
 
     List<Stock> findByExpirationDateAfter(LocalDate expirationDate);
+    
+    List<Stock> findByQuantityGreaterThan(int quantity);
 }

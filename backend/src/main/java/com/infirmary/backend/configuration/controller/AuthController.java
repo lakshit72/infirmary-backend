@@ -3,9 +3,11 @@ package com.infirmary.backend.configuration.controller;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +16,7 @@ import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
+import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.AuthService;
 
 
@@ -21,6 +24,9 @@ import com.infirmary.backend.configuration.service.AuthService;
 @RequestMapping("/api/auth")
 public class AuthController {
     private AuthService authService;
+
+    @Autowired
+    PrescriptionRepository prescriptionRepository;
 
     public AuthController(AuthService authService){
         this.authService = authService;
@@ -31,8 +37,8 @@ public class AuthController {
         return authService.loginServicePat(loginRequest);
     }
     @PostMapping("ad/signin")
-    public ResponseEntity<?> authenticateAd(@RequestBody LoginRequestDTO loginRequestDTO){
-        return authService.loginServiceAd(loginRequestDTO);
+    public ResponseEntity<?> authenticateAd(@RequestBody LoginRequestDTO loginRequestDTO,@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude){
+        return authService.loginServiceAd(loginRequestDTO,latitude,longitude);
     }
     @PostMapping("doc/signin")
     public ResponseEntity<?> authenticateDoc(@RequestBody LoginRequestDTO loginRequestDTO){
@@ -52,7 +58,7 @@ public class AuthController {
         return authService.signUpAD(adDTO);
     }
     @PostMapping("/test")
-    public ResponseEntity<?> test(){
-        return ResponseEntity.ok("Service Up");
+    public ResponseEntity<?> test(@RequestHeader(name = "Location-Latitude") String latitude){
+        return ResponseEntity.ok(latitude);
     }
 }

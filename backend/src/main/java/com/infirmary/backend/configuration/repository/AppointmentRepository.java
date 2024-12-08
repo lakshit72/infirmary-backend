@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.repository;
 
 import com.infirmary.backend.configuration.model.Appointment;
+import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Patient;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +30,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findAllByPatient(Patient patient);
 
     List<Appointment> findAllByPatientAndPrescriptionNotNull(Patient patient);
+
+    List<Appointment> findAllByAppointmentIdInAndLocation(List<Long> ids,Location location);
 
     Integer countByDateAndPrescriptionNotNull(LocalDate date);
 }

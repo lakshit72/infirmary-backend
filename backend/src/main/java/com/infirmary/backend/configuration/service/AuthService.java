@@ -23,7 +23,7 @@ public interface AuthService {
 
     public ResponseEntity<?> signUpAD(AdDTO adDTO);
 
-    public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO);
+    public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO,Double latitude, Double longitude);
 
     public ResponseEntity<?> loginServiceDat(LoginRequestDTO loginRequestDTO);
 }

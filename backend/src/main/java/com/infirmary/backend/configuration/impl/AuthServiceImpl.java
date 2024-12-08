@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,12 +27,15 @@ import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
 import com.infirmary.backend.configuration.model.AD;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.repository.AdRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.securityimpl.UserDetailsImpl;
 import com.infirmary.backend.configuration.service.AuthService;
+import com.infirmary.backend.shared.utility.FunctionUtil;
 
 import lombok.AllArgsConstructor;
 
@@ -45,6 +49,7 @@ public class AuthServiceImpl implements AuthService{
     private JwtUtils jwtUtils;
     private AdRepository adRepository;
     private DoctorRepository doctorRepository;
+    private LocationRepository locationRepository;
     
     @Override
     public ResponseEntity<?> loginServicePat(LoginRequestDTO loginRequestDTO) {
@@ -53,6 +58,7 @@ public class AuthServiceImpl implements AuthService{
         String jwt = jwtUtils.genrateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+        if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Bad Credentials");
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
     @Override
@@ -125,7 +131,7 @@ public class AuthServiceImpl implements AuthService{
             return createSuccessResponse("AD created");
         }
         @Override
-        public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO) {
+        public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO,Double latitude, Double longitude) {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -135,6 +141,25 @@ public class AuthServiceImpl implements AuthService{
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
             if(!roles.get(0).equals("ROLE_AD")) throw new SecurityException("Bad Credentials");
+
+            Location presentLocation = null;
+
+            List<Location> locations = locationRepository.findAll();
+
+            for(Location location:locations){
+                if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                    presentLocation = location;
+                    break;
+                }
+            }
+
+            if(presentLocation == null) throw new IllegalArgumentException("Be Available at the Infirmary before Logging In");
+
+            AD ad = adRepository.findByAdEmail(loginRequestDTO.getEmail()).orElseThrow(()->new ResourceNotFoundException("No User Found"));
+
+            ad.setLocation(presentLocation);
+
+            adRepository.save(ad);
 
             return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
         }

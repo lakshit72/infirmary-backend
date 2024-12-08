@@ -10,21 +10,26 @@ import com.infirmary.backend.configuration.dto.PrescriptionDTO;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
+import com.infirmary.backend.shared.utility.AppointmentQueueManager;
+import com.infirmary.backend.shared.utility.FunctionUtil;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+import org.apache.logging.log4j.util.InternalException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -40,15 +45,19 @@ public class DoctorServiceImpl implements DoctorService {
     private final CurrentAppointmentRepository currentAppointmentRepository;
     private final MedicalDetailsRepository medicalDetailsRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final LocationRepository locationRepository;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository, PrescriptionRepository prescriptionRepository) {
+    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository, PrescriptionRepository prescriptionRepository, LocationRepository locationRepository) {
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.medicalDetailsRepository = medicalDetailsRepository;
         this.prescriptionRepository = prescriptionRepository;
+        this.locationRepository = locationRepository;
     }
+
+
     @Override
     public DoctorDTO getDoctorById(String id) throws DoctorNotFoundException {
         Optional<Doctor> doctor = doctorRepository.findByDoctorEmail(id);
@@ -57,6 +66,8 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return new DoctorDTO(doctor.get());
     }
+
+
     @Override
     public Boolean getDoctorStatusById(String id) throws DoctorNotFoundException {
         if (Objects.isNull(id)) {
@@ -68,25 +79,44 @@ public class DoctorServiceImpl implements DoctorService {
 
         return doctor.isStatus();
     }
+
+
     @Override
-    public Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn) throws DoctorNotFoundException {
+    public Doctor setDoctorStatus(String id, Boolean isDoctorCheckIn, Double latitude, Double longitude) throws DoctorNotFoundException {
         if (Objects.isNull(id)) {
             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
         Doctor doctor = doctorRepository.findByDoctorEmail(id).orElseThrow(
                 () -> new IllegalArgumentException("Doctor Status Not Found for the Id: " + id)
         );
-        if (Objects.isNull(doctor)) {
-            throw new IllegalArgumentException("Doctor Status Not Found for the Id:" + id);
-        }
 
         Optional<CurrentAppointment> curs = currentAppointmentRepository.findByDoctor(doctor);
 
-        if(curs.isPresent()) throw new IllegalArgumentException("Appointment Assigned for the doctor");
+        if(curs.isPresent()) throw new IllegalArgumentException("Appointment already Assigned for the doctor");
+
+
+        if(isDoctorCheckIn){
+            List<Location> locations = locationRepository.findAll();
+            Location presentLocation = null;
+
+            for(Location location:locations){
+                if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                    presentLocation = location;
+                    break;
+                }
+            }
+
+            if(presentLocation == null) throw new IllegalArgumentException("Must be present on location to Check In");
+            doctor.setLocation(presentLocation);
+        }else{
+            doctor.setLocation(null);
+        }
 
         doctor.setStatus(isDoctorCheckIn);
         return doctorRepository.save(doctor);
     }
+
+
     @Override
     public HashMap<String, Integer> getAppointmentCountByDate(LocalDate date) throws AppointmentNotFoundException {
         if (Objects.isNull(date)) {
@@ -94,14 +124,17 @@ public class DoctorServiceImpl implements DoctorService {
         }
         HashMap<String, Integer> dayMetrics = new HashMap<>();
         List<Appointment> byDate = appointmentRepository.findByDate(date);
-        int cnt = appointmentRepository.countByDateAndPrescriptionNotNull(date);
+        int count = currentAppointmentRepository.countByAppointmentNotNullAndDoctorNotNull();
+        int cnt = (AppointmentQueueManager.getAptSize() + AppointmentQueueManager.getQueueSize() + count);
         
         dayMetrics.put("Total_Appointment", byDate.size());
-        dayMetrics.put("In_Queue", (byDate.size() - cnt));
-        dayMetrics.put("Patients_left", cnt);
+        dayMetrics.put("In_Queue", cnt);
+        dayMetrics.put("Patients_left", (byDate.size() - cnt));
 
         return dayMetrics;
     }
+
+
     @Override
     public HashMap<LocalDate, Prescription> getPrescriptionHistory(String email)
     {
@@ -114,15 +147,32 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return mapOfPrescription;
     }
+
+
     @Override
-    public List<DoctorDTO> getAvailableDoctors() throws DoctorNotFoundException {
-        List<Doctor> byStatus = doctorRepository.findByStatusTrue();
+    public List<DoctorDTO> getAvailableDoctors(Double latitude, Double longitude) throws DoctorNotFoundException {
+        List<Location> locations = locationRepository.findAll();
+        Location presentLocation = null;
+
+        for(Location location:locations){
+            if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                presentLocation = location;
+                break;
+            }
+        }
+
+        if(presentLocation == null) throw new IllegalArgumentException("Must be present in the location to get Available doctors");
+
+
+        List<Doctor> byStatus = doctorRepository.findByStatusTrueAndLocation(presentLocation);
         List<DoctorDTO> dtoList = byStatus.stream().map(DoctorDTO::new).toList();
         if (dtoList.isEmpty()) {
             throw new DoctorNotFoundException(messageConfigUtil.getDoctorNotFoundException());
         }
         return dtoList;
     }
+
+    
     @Override
      public List<DoctorDTO> getAllDoctors() throws DoctorNotFoundException {
          List<Doctor> list = doctorRepository.findAll();
@@ -161,6 +211,21 @@ public class DoctorServiceImpl implements DoctorService {
         resp.setDocName(currentAppointment.getDoctor().getName());
 
         return resp; 
+
+    }
+
+
+    @Override
+    public Integer getCurrentTokenNo(String docEmail) throws InternalException {
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByDoctor_DoctorEmail(docEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointment Assigned"));
+
+        if(currentAppointment.getAppointment() == null){
+            currentAppointment.setDoctor(null);
+            currentAppointmentRepository.save(currentAppointment);
+            throw new InternalException("Doctor assigned without a Appointment");
+        }
+
+        return currentAppointment.getAppointment().getTokenNo();
 
     }
 }

@@ -20,7 +20,6 @@ public class StaticFilesController {
     @GetMapping(value = "/{filename}")
     ResponseEntity<byte[]> imageGet(@PathVariable String filename){
         byte[] img = staticServiceImpl.imageReturn(filename);
-        System.out.println();
         return ResponseEntity.ok().contentType(filename.substring(filename.indexOf(".")+1).equals("png")?MediaType.IMAGE_PNG:MediaType.IMAGE_JPEG).body(img);
     }
 }

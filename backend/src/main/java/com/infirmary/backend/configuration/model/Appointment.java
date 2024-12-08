@@ -42,6 +42,10 @@ public class Appointment implements Serializable {
     @JoinColumn(name = "prescription_id", referencedColumnName = "prescription_id",nullable = true)
     private Prescription prescription;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location")
+    private Location location;
+
     @Column(name = "weight")
     private Integer weight;
 

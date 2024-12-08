@@ -41,6 +41,7 @@ public class DoctorController {
         DoctorDTO response = doctorService.getDoctorById(id);
         return createSuccessResponse(response);
     }
+
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/getStatus")
     public ResponseEntity<?> getDoctorStatusById() throws DoctorNotFoundException {
@@ -49,13 +50,17 @@ public class DoctorController {
         Boolean doctorStatusById = doctorService.getDoctorStatusById(id);
         return createSuccessResponse(doctorStatusById);
     }
+
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/setStatus")
     public ResponseEntity<?> setDoctorStatus(@RequestParam("isDoctorCheckIn")
-                                             Boolean isDoctorCheckIn) throws DoctorNotFoundException {
+                                             Boolean isDoctorCheckIn, @RequestHeader(name = "X-Latitude",required = false) Double latitude, @RequestHeader(name = "X-Longitude", required = false) Double longitude) throws DoctorNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if((latitude == null || longitude == null) && isDoctorCheckIn){
+            throw new IllegalArgumentException("Check In request require coordinates");
+        }
         String id = userDetails.getUsername();
-        Doctor doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn);
+        Doctor doctorStatus = doctorService.setDoctorStatus(id, isDoctorCheckIn,latitude,longitude);
         return createSuccessResponse(doctorStatus.getName());
     }
     
@@ -74,10 +79,18 @@ public class DoctorController {
         HashMap<LocalDate, Prescription> prescriptionHistory = doctorService.getPrescriptionHistory(email);
         return createSuccessResponse(prescriptionHistory);
     }
+
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPatient")
     public ResponseEntity<?> getPatient(){
         PatientDetails patient = doctorService.getPatient(getTokenClaims());
         return ResponseEntity.ok(patient);
+    }
+
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/getCurrentToken")
+    public ResponseEntity<?> getCurrentToken(){
+        Integer tokenNo = doctorService.getCurrentTokenNo(getTokenClaims());
+        return createSuccessResponse(tokenNo);
     }
 }

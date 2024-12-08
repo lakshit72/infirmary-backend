@@ -163,12 +163,21 @@ public class StockServiceImpl implements StockService {
     public List<Stock> getAllStocks() {
         return stockRepository.findAll();
     }
+
+    
     @Override
     public void deleteStock(Long batchNumber) throws StockNotFoundException {
         Optional<Stock> batch = stockRepository.findByBatchNumber(batchNumber);
         if (batch.isEmpty()) {
             throw new StockNotFoundException(messageConfigUtil.getStockNotFound());
         }
-        stockRepository.delete(batch.get());
+        Stock newStock = batch.get();
+        newStock.setQuantity(Long.valueOf(0));
+        stockRepository.save(newStock);
+    }
+
+    @Override
+    public List<Stock> getAvailableStock() {
+        return stockRepository.findByQuantityGreaterThan(0);
     }
 }

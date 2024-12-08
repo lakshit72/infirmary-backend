@@ -36,7 +36,6 @@ public class AuthTokenFilter extends OncePerRequestFilter{
     }
 
     @Override
-    @SuppressWarnings("null")
     protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain) throws ServletException, IOException{
         String jwt = parseJwt(request);
 

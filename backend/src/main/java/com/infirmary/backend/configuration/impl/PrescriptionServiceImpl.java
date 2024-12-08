@@ -13,7 +13,6 @@ import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
-import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.PrescriptionService;
@@ -21,9 +20,7 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.time.LocalDate;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -39,15 +36,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final AppointmentRepository appointmentRepository;
     private final StockRepository stockRepository;
     private final DoctorRepository doctorRepository;
-    private final PrescriptionMedsRepository prescriptionMedsRepository;
 
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, CurrentAppointmentRepository currentAppointmentRepository, AppointmentRepository appointmentRepository, StockRepository stockRepository, DoctorRepository doctorRepository, PrescriptionMedsRepository prescriptionMedsRepository) {
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, CurrentAppointmentRepository currentAppointmentRepository, AppointmentRepository appointmentRepository, StockRepository stockRepository, DoctorRepository doctorRepository) {
         this.prescriptionRepository = prescriptionRepository;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.appointmentRepository = appointmentRepository;
         this.stockRepository = stockRepository;
         this.doctorRepository = doctorRepository;
-        this.prescriptionMedsRepository = prescriptionMedsRepository;
     }
 
     public void submitPrescription(PrescriptionReq prescriptionDTO) {
@@ -60,8 +55,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         
         Prescription prescription = new Prescription();
 
-        //get Medicine
-        List<PrescriptionMeds> meds = new ArrayList<>();
+        //set Medicine
         
         for(PrescriptionMedsDTO pres:prescriptionDTO.getMeds()){
             PrescriptionMeds medicine = new PrescriptionMeds();
@@ -69,14 +63,15 @@ public class PrescriptionServiceImpl implements PrescriptionService {
             medicine.setDuration(pres.getDuration());
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
             if(currMed.getQuantity() < (pres.getDosage()*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
-            currMed.setQuantity(currMed.getQuantity()-(pres.getDosage()*pres.getDuration()));
-            Stock medStock = stockRepository.save(currMed);
-            medicine.setMedicine(medStock);
+            if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
+            System.out.println(currMed.getBatchNumber()+"batch Number");
+            medicine.setMedicine(currMed);
             medicine.setSuggestion(pres.getSuggestion());
-            meds.add(medicine);
+            System.out.println(medicine.getPresMedicineId()+"prescription meds");
+            prescription.addPresMed(medicine);
+            System.out.println(1);
         }
-        meds = prescriptionMedsRepository.saveAll(meds);
-        prescription.setMedicine(new HashSet<>(meds));
+
         prescription.setDiagnosis(prescriptionDTO.getDiagnosis());
         prescription.setDietaryRemarks(prescriptionDTO.getDietaryRemarks());
         prescription.setTestNeeded(prescriptionDTO.getTestNeeded());
@@ -84,7 +79,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription.setDoctor(byDoctorEmail.getDoctor());
 
         prescription = prescriptionRepository.save(prescription);
-
+        System.out.println(1);
         // Set Prescription for appointment
         Appointment appointment = appointmentRepository.findByAppointmentId(byDoctorEmail.getAppointment().getAppointmentId());
         appointment.setPrescription(prescription);

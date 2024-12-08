@@ -14,6 +14,10 @@ import java.util.Objects;
 @Component
 public class FunctionUtil {
     private static final Long MIN_NAME_LENGTH = 2L;
+    
+    private static Integer radiusEarth = 6371000;
+
+    private static Integer radiusAllow = 200;
 
     public static <T> ResponseEntity<?> createSuccessResponse(T data, HttpHeaders... header) {
         if (header.length > 0) {
@@ -45,6 +49,24 @@ public class FunctionUtil {
             }
         }
         return false;
+    }
+
+    public static Boolean IsWithinRadius(Double loc_lat, Double loc_long, Double pat_lat, Double pat_long){
+        Double loc_lat_rads = Math.toRadians(loc_lat);
+        Double loc_long_rads = Math.toRadians(loc_long);
+
+        Double pat_lat_rads = Math.toRadians(pat_lat);
+        Double pat_long_rads = Math.toRadians(pat_long);
+
+        Double dlat = pat_lat_rads - loc_lat_rads;
+        Double dlong = pat_long_rads - loc_long_rads;
+
+        Double a = (Math.pow(Math.sin(dlat/2),2) + Math.cos(loc_lat_rads) * Math.cos(pat_lat_rads) * Math.pow(Math.sin(dlong/2),2));
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        Double dist = radiusEarth * c;
+
+        return dist<=radiusAllow;
     }
 
     @Bean
