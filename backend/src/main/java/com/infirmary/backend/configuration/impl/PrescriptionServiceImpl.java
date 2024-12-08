@@ -59,10 +59,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         
         for(PrescriptionMedsDTO pres:prescriptionDTO.getMeds()){
             PrescriptionMeds medicine = new PrescriptionMeds();
-            medicine.setDosage(pres.getDosage());
+            medicine.setDosageAfternoon(pres.getDosage().getA());
+            medicine.setDosageEvening(pres.getDosage().getE());
+            medicine.setDosageMorning(pres.getDosage().getM());
             medicine.setDuration(pres.getDuration());
+            Integer medQty = pres.getDosage().getA()+pres.getDosage().getM()+pres.getDosage().getE();
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
-            if(currMed.getQuantity() < (pres.getDosage()*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
+            if(currMed.getQuantity() < (medQty*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
             if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
             System.out.println(currMed.getBatchNumber()+"batch Number");
             medicine.setMedicine(currMed);

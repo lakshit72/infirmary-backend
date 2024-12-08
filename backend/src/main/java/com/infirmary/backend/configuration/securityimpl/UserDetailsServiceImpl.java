@@ -18,13 +18,15 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     private PatientDetailsImpl patientDetailsImpl;
     private DoctorDetailsImpl doctorDetailsImpl;
     private AdDetailsImpl adDetailsImpl;
+    private AdminDetailsImpl adminDetailsImpl;
 
     List<UserDetailsService> usrList;
 
-    public UserDetailsServiceImpl(PatientDetailsImpl patientDetailsImpl,DoctorDetailsImpl doctorDetailsImpl,AdDetailsImpl adDetailsImpl){
+    public UserDetailsServiceImpl(PatientDetailsImpl patientDetailsImpl,DoctorDetailsImpl doctorDetailsImpl,AdDetailsImpl adDetailsImpl,AdminDetailsImpl adminDetailsImpl){
         this.patientDetailsImpl = patientDetailsImpl;
         this.doctorDetailsImpl = doctorDetailsImpl;
         this.adDetailsImpl = adDetailsImpl;
+        this.adminDetailsImpl = adminDetailsImpl;
     }
 
     @PostConstruct
@@ -33,6 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
         new_ser.add(this.adDetailsImpl);
         new_ser.add(this.doctorDetailsImpl);
         new_ser.add(this.patientDetailsImpl);
+        new_ser.add(this.adminDetailsImpl);
         this.usrList = new_ser;
     }
 

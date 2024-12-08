@@ -8,6 +8,8 @@ import com.infirmary.backend.configuration.service.DoctorService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +34,12 @@ public class ADController {
         this.adService = adService;
 
         this.doctorService = doctorService;
+    }
+
+    private static String getTokenClaims(){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String id = userDetails.getUsername();
+        return id;
     }
 
     @GetMapping(value = "/getAvailableDoctors")
@@ -88,6 +96,12 @@ public class ADController {
     @GetMapping(value = "/completeAppointment/{sapEmail}")
     public ResponseEntity<?> completeAppointment(@PathVariable String sapEmail){
         return ResponseEntity.ok(adService.completeAppointment(sapEmail));
+    }
+
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/getTokenData")
+    public ResponseEntity<?> getTokenData(){
+        return adService.getTokenData(getTokenClaims());
     }
 
 }

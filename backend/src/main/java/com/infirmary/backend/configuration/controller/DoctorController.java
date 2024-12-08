@@ -27,7 +27,7 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-    public static String getTokenClaims(){
+    private static String getTokenClaims(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String id = userDetails.getUsername();
         return id;
@@ -92,5 +92,11 @@ public class DoctorController {
     public ResponseEntity<?> getCurrentToken(){
         Integer tokenNo = doctorService.getCurrentTokenNo(getTokenClaims());
         return createSuccessResponse(tokenNo);
+    }
+
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/releasePatient")
+    public ResponseEntity<?> releasePatient(){
+        return doctorService.releasePatient(getTokenClaims());
     }
 }
