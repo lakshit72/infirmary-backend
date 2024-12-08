@@ -34,4 +34,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     List<Appointment> findAllByAppointmentIdInAndLocation(List<Long> ids,Location location);
 
     Integer countByDateAndPrescriptionNotNull(LocalDate date);
+
+    Integer countByPrescriptionIsNull();
 }

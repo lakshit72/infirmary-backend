@@ -123,13 +123,13 @@ public class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("Date not found");
         }
         HashMap<String, Integer> dayMetrics = new HashMap<>();
-        List<Appointment> byDate = appointmentRepository.findByDate(date);
+        int byDate = appointmentRepository.countByPrescriptionIsNull();
         int count = currentAppointmentRepository.countByAppointmentNotNullAndDoctorNotNull();
         int cnt = (AppointmentQueueManager.getAptSize() + AppointmentQueueManager.getQueueSize() + count);
         
-        dayMetrics.put("Total_Appointment", byDate.size());
+        dayMetrics.put("Total_Appointment", byDate);
         dayMetrics.put("In_Queue", cnt);
-        dayMetrics.put("Patients_left", (byDate.size() - cnt));
+        dayMetrics.put("Patients_left", (byDate - cnt));
 
         return dayMetrics;
     }
