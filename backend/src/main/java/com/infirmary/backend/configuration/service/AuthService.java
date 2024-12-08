@@ -26,4 +26,6 @@ public interface AuthService {
     public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO,Double latitude, Double longitude);
 
     public ResponseEntity<?> loginServiceDat(LoginRequestDTO loginRequestDTO);
+
+    public ResponseEntity<?> loginServiceAdmin(LoginRequestDTO loginRequestDTO);
 }

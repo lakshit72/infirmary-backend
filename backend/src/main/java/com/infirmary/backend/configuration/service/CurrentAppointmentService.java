@@ -10,6 +10,6 @@ import org.springframework.stereotype.Service;
 public interface CurrentAppointmentService {
     CurrentAppointmentDTO getCurrentAppointmentById(Long currentAppointmentId);
     AppointmentResDTO getAppointmentStatusDoctorStatus(Long currentAppointmentId);
-    CurrentAppointmentDTO getCurrAppByDoctorId(String docEmail) throws CurrentAppointmentNotFoundException,
-            DoctorNotFoundException;
+    CurrentAppointmentDTO getCurrAppByDoctorId(String docEmail) throws CurrentAppointmentNotFoundException,DoctorNotFoundException;
+    
 }

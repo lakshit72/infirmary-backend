@@ -1,8 +1,11 @@
 package com.infirmary.backend.configuration.impl;
 
+import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -10,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
+import com.infirmary.backend.configuration.model.AD;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
@@ -18,6 +22,7 @@ import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.model.PrescriptionMeds;
 import com.infirmary.backend.configuration.model.Stock;
+import com.infirmary.backend.configuration.repository.AdRepository;
 import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
@@ -43,6 +48,7 @@ public class AdServiceImpl implements ADService{
     private final StockRepository stockRepository;
     private final PrescriptionMedsRepository prescriptionMedsRepository;
     private final LocationRepository locationRepository;
+    private final AdRepository adRepository;
     
     public ResponseEntity<?> getQueue(Double latitude,Double longitude){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
@@ -137,7 +143,7 @@ public class AdServiceImpl implements ADService{
         if(!doctor.isStatus()) throw new IllegalArgumentException("Doctor Already Assigned");
 
         doctor.setStatus(false);
-        doctorRepository.save(doctor);
+        doctor = doctorRepository.save(doctor);
         currentAppointment.setDoctor(doctor);
         
         Appointment appointment = appointmentRepository.findByAppointmentId(currentAppointment.getAppointment().getAppointmentId());
@@ -247,9 +253,11 @@ public class AdServiceImpl implements ADService{
         for(PrescriptionMeds meds:medLst){
             Stock stock = stockRepository.findById(meds.getMedicine().getBatchNumber()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine Exists"));
 
-            if(stock.getQuantity() - (meds.getDuration()*meds.getDosage())<0) throw new IllegalArgumentException("Medicine Quantity Not Enough");
+            Integer medQty = (meds.getDosageAfternoon()+meds.getDosageEvening()+meds.getDosageMorning());
 
-            stock.setQuantity(stock.getQuantity() - (meds.getDuration()*meds.getDosage()));
+            if(stock.getQuantity() - (meds.getDuration()*medQty)<0) throw new IllegalArgumentException("Medicine Quantity Not Enough");
+
+            stock.setQuantity(stock.getQuantity() - (meds.getDuration()*medQty));
 
             stocks.add(stock);
         }
@@ -263,6 +271,27 @@ public class AdServiceImpl implements ADService{
         currentAppointmentRepository.save(currentAppointment);
 
         return "Appointment Completed";
+    }
+
+
+    @Override
+    public ResponseEntity<?> getTokenData(String email) {
+        AD ad = adRepository.findByAdEmail(email).orElseThrow(()->new ResourceNotFoundException("No Such Ad exists"));
+
+        if(ad.getLocation() == null) throw new IllegalArgumentException("Must be present at Infirmary");
+
+        List<CurrentAppointment> currAppointments = currentAppointmentRepository.findAllByAppointmentNotNullAndDoctorNotNullAndAppointment_Location(ad.getLocation());
+
+        List<Map<String,String>> responseOut = new ArrayList<>();
+
+        for(CurrentAppointment currentAppointment:currAppointments){
+            Map<String,String> resp = new HashMap<>();
+            resp.put("doctorName",currentAppointment.getDoctor().getName());
+            resp.put("PatientToken", currentAppointment.getAppointment().getTokenNo().toString());
+            responseOut.add(resp);
+        }
+
+        return createSuccessResponse(responseOut);
     }
 
 }

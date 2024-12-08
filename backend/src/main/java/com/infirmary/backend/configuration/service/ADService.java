@@ -14,4 +14,5 @@ public interface ADService {
     String rejectAppointment(String email);
     String setDocStatus(Long docID,Boolean docStat,Double latitude,Double longitude);
     String completeAppointment(String sapEmail);
+    ResponseEntity<?> getTokenData(String email);
 }

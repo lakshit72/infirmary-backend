@@ -32,11 +32,17 @@ public class PrescriptionMeds implements Serializable{
     @JoinColumn(name = "medicine",referencedColumnName = "batch_number")
     private Stock medicine;
 
-    @Column(name = "dosage")
-    private int dosage;
+    @Column(name = "dosage_morning")
+    private Integer dosageMorning;
+
+    @Column(name = "dosage_afternoon")
+    private Integer dosageAfternoon;
+
+    @Column(name = "dosage_evening")
+    private Integer dosageEvening;
 
     @Column(name = "duration")
-    private int duration;
+    private Integer duration;
 
     @Column(name = "suggestion")
     private String suggestion; 

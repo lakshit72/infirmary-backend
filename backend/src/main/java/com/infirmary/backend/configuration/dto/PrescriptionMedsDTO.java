@@ -9,7 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PrescriptionMedsDTO {
     private Long medicine;
-    private int dosage;
+    private DosageDTO dosage;
     private int duration;
     private String suggestion; 
 }

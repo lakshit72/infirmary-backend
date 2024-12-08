@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
-import com.infirmary.backend.configuration.dto.AdDTO;
-import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
@@ -36,27 +34,27 @@ public class AuthController {
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequestDTO loginRequest){
         return authService.loginServicePat(loginRequest);
     }
+
     @PostMapping("ad/signin")
     public ResponseEntity<?> authenticateAd(@RequestBody LoginRequestDTO loginRequestDTO,@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude){
         return authService.loginServiceAd(loginRequestDTO,latitude,longitude);
     }
+
     @PostMapping("doc/signin")
     public ResponseEntity<?> authenticateDoc(@RequestBody LoginRequestDTO loginRequestDTO){
         return authService.loginServiceDat(loginRequestDTO);
+    }
+
+    @PostMapping("admin/signin")
+    public ResponseEntity<?> authenticateAdmin(@RequestBody LoginRequestDTO loginRequest){
+        return authService.loginServiceAdmin(loginRequest);
     }
 
     @PostMapping("/patient/signup")
     public ResponseEntity<?> registerUser(@RequestBody PatientReqDTO patientDTO) throws UserAlreadyExists, IOException{
         return authService.signUpPat(patientDTO);
     }
-    @PostMapping("/doctor/signup")
-    public ResponseEntity<?> registerDoc(@RequestBody DoctorDTO doctorDTO){
-        return authService.signUpDat(doctorDTO);
-    }
-    @PostMapping("/AD/signup")
-    public ResponseEntity<?> registerAD(@RequestBody AdDTO adDTO){
-        return authService.signUpAD(adDTO);
-    }
+
     @PostMapping("/test")
     public ResponseEntity<?> test(@RequestHeader(name = "Location-Latitude") String latitude){
         return ResponseEntity.ok(latitude);

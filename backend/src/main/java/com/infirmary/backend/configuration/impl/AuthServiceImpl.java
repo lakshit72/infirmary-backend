@@ -61,10 +61,17 @@ public class AuthServiceImpl implements AuthService{
         if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Bad Credentials");
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
+    
     @Override
     public ResponseEntity<?> signUpPat(PatientReqDTO patientDTO) throws UserAlreadyExists, IOException {
             if(patientRepository.existsByEmail(patientDTO.getEmail())){
                 throw new UserAlreadyExists("User Already Exists");
+            }
+
+            if(!patientDTO.getSchool().equals("Guest")){
+                if(patientRepository.existsBySapId(patientDTO.getSapID())){
+                    throw new UserAlreadyExists("User With SapId Already Exists");
+                }
             }
 
             patientDTO.setPassword(encoder.encode(patientDTO.getPassword()));
@@ -130,6 +137,7 @@ public class AuthServiceImpl implements AuthService{
 
             return createSuccessResponse("AD created");
         }
+
         @Override
         public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO,Double latitude, Double longitude) {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
@@ -163,6 +171,7 @@ public class AuthServiceImpl implements AuthService{
 
             return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
         }
+
         @Override
         public ResponseEntity<?> loginServiceDat(LoginRequestDTO loginRequestDTO) {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
@@ -176,6 +185,22 @@ public class AuthServiceImpl implements AuthService{
             if(!roles.get(0).equals("ROLE_DOCTOR")) throw new SecurityException("Bad Credentials");
 
             return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
+        }
+
+        @Override
+        public ResponseEntity<?> loginServiceAdmin(LoginRequestDTO loginRequestDTO){
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(),loginRequestDTO.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.genrateJwtToken(authentication);
+
+            UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetailsImpl.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+
+            if(!roles.get(0).equals("ROLE_ADMIN")) throw new SecurityException("Bad Credentials");
+
+            return createSuccessResponse(new JwtResponse(jwt,userDetailsImpl.getUsername(),roles));
+
         }
 
 }
