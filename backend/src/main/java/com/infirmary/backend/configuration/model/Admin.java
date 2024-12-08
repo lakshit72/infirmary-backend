@@ -15,9 +15,6 @@ import lombok.Setter;
 @Table(name="admin")
 public class Admin {
     @Id
-    @Column(name = "admin_id")
-    private Long adminId;
-
     @Column(name = "admin_email")
     private String adminEmail;
 

@@ -10,4 +10,5 @@ import com.infirmary.backend.configuration.model.Admin;
 @Repository
 public interface AdminRepository extends JpaRepository<Admin,Long>{
     Optional<Admin> findByAdminEmail(String adminEmail);
+    Boolean existsByAdminEmail(String adminEmail);
 }
