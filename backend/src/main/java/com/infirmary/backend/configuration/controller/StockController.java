@@ -86,8 +86,8 @@ public class StockController {
 
     @PreAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/addStock")
-    public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO) throws StockAlreadyExists {
-        StockDTO dto = stockService.addStock(stockDTO);
+    public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+        StockDTO dto = stockService.addStock(stockDTO,locId);
         return createSuccessResponse(dto);
     }
 

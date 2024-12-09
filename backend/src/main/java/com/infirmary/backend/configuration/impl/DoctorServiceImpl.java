@@ -126,13 +126,13 @@ public class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("Date not found");
         }
         HashMap<String, Integer> dayMetrics = new HashMap<>();
-        List<Appointment> byDate = appointmentRepository.findByDate(date);
-        int count = currentAppointmentRepository.countByAppointmentNotNullAndDoctorNotNull();
-        int cnt = (AppointmentQueueManager.getAptSize() + AppointmentQueueManager.getQueueSize() + count);
-        
-        dayMetrics.put("Total_Appointment", byDate.size());
-        dayMetrics.put("In_Queue", cnt);
-        dayMetrics.put("Patients_left", (byDate.size() - cnt));
+        Integer byDate = appointmentRepository.countByDate(date);
+        int count = currentAppointmentRepository.countByAppointmentNotNull();
+        int cnt = (byDate + currentAppointmentRepository.countByAppointmentNotNullAndAppointment_DateNot(date));
+
+        dayMetrics.put("Total_Appointment", (cnt));
+        dayMetrics.put("In_Queue", count);
+        dayMetrics.put("Patients_left", (cnt - count));
 
         return dayMetrics;
     }
@@ -243,7 +243,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         doctor.setStatus(true);
         doctor = doctorRepository.save(doctor);
-        currentAppointment.setDoctor(doctor);
+        currentAppointment.setDoctor(null);
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Found");
 
