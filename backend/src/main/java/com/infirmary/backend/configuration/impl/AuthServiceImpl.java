@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService{
                 }
             }
 
-            if(isValidPassword(patientDTO.getPassword())) throw new IllegalArgumentException("Password must satisfy conditions");
+            if(!(isValidPassword(patientDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
 
             patientDTO.setPassword(encoder.encode(patientDTO.getPassword()));
     
@@ -115,7 +115,7 @@ public class AuthServiceImpl implements AuthService{
                 throw new UserAlreadyExists("Doctor Already Exists");
             }
 
-            if(isValidPassword(doctorDTO.getPassword())) throw new IllegalArgumentException("Password must satisfy conditions");
+            if(!(isValidPassword(doctorDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
 
             doctorDTO.setPassword(encoder.encode(doctorDTO.getPassword()));
 
@@ -134,7 +134,7 @@ public class AuthServiceImpl implements AuthService{
                 throw new UserAlreadyExists("AD Already Exists");
             }
 
-            if(isValidPassword(adDTO.getPassword())) throw new IllegalArgumentException("Password must satisfy conditions");
+            if(!(isValidPassword(adDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
 
             adDTO.setPassword(encoder.encode(adDTO.getPassword()));
 
