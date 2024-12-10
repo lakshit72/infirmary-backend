@@ -2,22 +2,26 @@ package com.infirmary.backend.configuration.dto;
 
 import com.infirmary.backend.configuration.model.PrescriptionMeds;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class PrescriptionMedsDTORes {
     private StockDTO medicine;
-    private DosageDTO dosage;
+    private int dosageMorning;
+    private int dosageAfternoon;
+    private int dosageEvening;
     private int duration;
     private String suggestion; 
 
     public PrescriptionMedsDTORes(PrescriptionMeds prescriptionMeds){
         this.medicine = new StockDTO(prescriptionMeds.getMedicine());
-        this.dosage.setA(prescriptionMeds.getDosageAfternoon());
-        this.dosage.setE(prescriptionMeds.getDosageEvening());
-        this.dosage.setM(prescriptionMeds.getDosageMorning());
+        this.dosageAfternoon = prescriptionMeds.getDosageAfternoon();
+        this.dosageEvening = prescriptionMeds.getDosageEvening();
+        this.dosageMorning = prescriptionMeds.getDosageMorning();
         this.duration = prescriptionMeds.getDuration();
         this.suggestion = prescriptionMeds.getSuggestion();
     }

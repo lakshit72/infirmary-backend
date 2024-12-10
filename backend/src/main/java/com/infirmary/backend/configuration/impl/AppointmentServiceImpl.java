@@ -33,6 +33,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
     }
+
     @Override
     public AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException {
         Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
@@ -41,6 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return new AppointmentDTO(appointment);
     }
+
     @Override
     public List<AppointmentDTO> getAppointmentsByPatientId(String email) throws AppointmentNotFoundException,
             PatientNotFoundException {
@@ -54,6 +56,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
     }
+
     @Override
     public List<AppointmentDTO> getAppointmentsByDoctorId(String doctorId) throws DoctorNotFoundException,
             AppointmentNotFoundException {
@@ -67,6 +70,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             return appointmentList.stream().map(AppointmentDTO::new).toList();
         }
     }
+
     @Override
     public LocalDate getLastAppointmentDateByEmail(String patientEmail) throws AppointmentNotFoundException {
         Optional<Appointment> lastAppointment = appointmentRepository.
@@ -110,6 +114,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
         return list;
     }
+    
     @Override
     public PrescriptionDTO getPrescriptionByAppointmentId(Long appointmentId) throws PatientNotFoundException ,
             PrescriptionNotFoundException {

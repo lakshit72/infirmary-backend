@@ -19,7 +19,7 @@ public interface StockService {
     List<StockDTO> getStocksByCompanyNameIn(List<String> companyNames) throws StockNotFoundException;
     StockDTO getStockByBatchNumber(Long batchNumber) throws StockNotFoundException;
     List<StockDTO> getNullStock() throws StockNotFoundException;
-    StockDTO addStock(StockDTO stockDTO) throws StockAlreadyExists;
+    StockDTO addStock(StockDTO stockDTO,Long locId) throws StockAlreadyExists;
     byte[] exportStocksToExcel() throws IOException;
     List<Stock> getAllStocks();
     void deleteStock(Long batchNumber) throws StockNotFoundException;

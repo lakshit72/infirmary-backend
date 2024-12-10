@@ -5,6 +5,7 @@ import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Location;
 
 import java.util.Optional;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,7 +27,9 @@ public interface CurrentAppointmentRepository extends JpaRepository<CurrentAppoi
 
     Optional<CurrentAppointment> findByDoctor(Doctor doctor);
 
-    int countByAppointmentNotNullAndDoctorNotNull();
+    int countByAppointmentNotNullAndAppointment_DateNot(LocalDate date);
+
+    int countByAppointmentNotNull();
 
     List<CurrentAppointment> findAllByAppointmentNotNullAndDoctorNotNullAndAppointment_Location(Location location);
 }

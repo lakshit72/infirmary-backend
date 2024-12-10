@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
+import static com.infirmary.backend.shared.utility.FunctionUtil.isValidPassword;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,6 +75,8 @@ public class AuthServiceImpl implements AuthService{
                 }
             }
 
+            if(!(isValidPassword(patientDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
+
             patientDTO.setPassword(encoder.encode(patientDTO.getPassword()));
     
             Patient patient = new Patient(
@@ -112,6 +115,8 @@ public class AuthServiceImpl implements AuthService{
                 throw new UserAlreadyExists("Doctor Already Exists");
             }
 
+            if(!(isValidPassword(doctorDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
+
             doctorDTO.setPassword(encoder.encode(doctorDTO.getPassword()));
 
             Doctor doctor = new Doctor(
@@ -128,6 +133,8 @@ public class AuthServiceImpl implements AuthService{
             if(adRepository.existsById(adDTO.getEmail())){
                 throw new UserAlreadyExists("AD Already Exists");
             }
+
+            if(!(isValidPassword(adDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
 
             adDTO.setPassword(encoder.encode(adDTO.getPassword()));
 
