@@ -40,12 +40,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
-import java.util.List;
 
 @Slf4j
 @Transactional
@@ -180,7 +176,7 @@ public class PatientServiceImpl implements PatientService {
         }
 
         if(appointmentReqDTO.getIsFollowUp()){
-            Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(sapEmail);
+            Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByTimestampDesc(sapEmail);
             appointmentForm2.setPrevAppointment(prevAppointment.isEmpty()?null:prevAppointment.get());
         }
 
@@ -189,6 +185,7 @@ public class PatientServiceImpl implements PatientService {
         Appointment appointment = new Appointment();
         appointment.setPatient(patient.get());
         appointment.setDate(LocalDate.now());
+        appointment.setTimestamp(System.currentTimeMillis());
         appointment.setAptForm(appointmentForm2);
         appointment.setTokenNo(appointmentRepository.countByDate(LocalDate.now())+1);
         appointment.setLocation(presentLocation);
