@@ -21,6 +21,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     Optional<Appointment> findFirstByPatient_EmailOrderByTimestampDesc(String email);
 
+    Optional<Appointment> findFirstByPatient_EmailOrderByDateDesc(String email);
+
     List<Appointment> findByPatient_Email(@NonNull String email);
 
     List<Appointment> findByDate(LocalDate date);
