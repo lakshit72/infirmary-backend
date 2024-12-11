@@ -19,7 +19,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findByDoctor_DoctorEmail(String doctorEmail);
 
-    Optional<Appointment> findFirstByPatient_EmailOrderByDateDesc(String email);
+    Optional<Appointment> findFirstByPatient_EmailOrderByTimestampDesc(String email);
 
     List<Appointment> findByPatient_Email(@NonNull String email);
 
