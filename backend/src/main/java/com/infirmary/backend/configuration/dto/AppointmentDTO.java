@@ -17,7 +17,7 @@ public class AppointmentDTO {
     private LocalDate date;
     private PrescriptionDTO prescriptionDTO;
     private Integer tokenNo;
-    private Integer weight;
+    private float weight;
     private float temperature;
 
     public AppointmentDTO(Appointment appointment) {
