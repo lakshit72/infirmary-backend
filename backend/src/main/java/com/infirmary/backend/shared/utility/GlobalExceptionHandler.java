@@ -4,11 +4,13 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-//import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import io.jsonwebtoken.ExpiredJwtException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +25,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", ex);
     }
 
+    @ExceptionHandler(ExpiredJwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<?> handleExpiredJWT(Exception ex){
+        return buildResponse(HttpStatus.UNAUTHORIZED, "JWT Expired", ex);
+    }
+
     // Handle 401 Unauthorized
     @ExceptionHandler(SecurityException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -31,11 +39,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Handle 403 Forbidden
-//    @ExceptionHandler(AccessDeniedException.class)
-//    @ResponseStatus(HttpStatus.FORBIDDEN)
-//    public ResponseEntity<Object> handleForbidden(Exception ex) {
-//        return buildResponse(HttpStatus.FORBIDDEN, "Forbidden", ex);
-//    }
+   @ExceptionHandler(AccessDeniedException.class)
+   @ResponseStatus(HttpStatus.FORBIDDEN)
+   public ResponseEntity<Object> handleForbidden(Exception ex) {
+       return buildResponse(HttpStatus.FORBIDDEN, "Forbidden", ex);
+   }
 
     // Handle 404 Not Found
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -48,7 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> userNotFound(Exception ex){
         return buildResponse(HttpStatus.NOT_FOUND, "User Not Found", ex);
-    } 
+    }
 
     // Handle 500 Internal Server Error
     @ExceptionHandler(Exception.class)

@@ -7,14 +7,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.ProviderNotFoundException;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -22,72 +26,171 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.infirmary.backend.configuration.jwt.AuthEntryPointJwt;
 import com.infirmary.backend.configuration.jwt.AuthTokenFilter;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
-import com.infirmary.backend.configuration.securityimpl.UserDetailsServiceImpl;
+import com.infirmary.backend.configuration.securityimpl.AdDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.AdminDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.DoctorDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.PatientDetailsImpl;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private PatientDetailsImpl patientDetailsImpl;
+    private DoctorDetailsImpl doctorDetailsImpl;
+    private AdDetailsImpl adDetailsImpl;
+    private AdminDetailsImpl adminDetailsImpl;
     private AuthEntryPointJwt unauthorizedHandler;
     private JwtUtils jwtUtils;
 
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,AuthEntryPointJwt authEntryPointJwt,JwtUtils jwtUtils){
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
+    public WebSecurityConfig(AuthEntryPointJwt authEntryPointJwt,JwtUtils jwtUtils, PatientDetailsImpl patientDetailsImpl, DoctorDetailsImpl doctorDetailsImpl, AdDetailsImpl adDetailsImpl, AdminDetailsImpl adminDetailsImpl){
         this.unauthorizedHandler = authEntryPointJwt;
         this.jwtUtils = jwtUtils;
+        this.adDetailsImpl = adDetailsImpl;
+        this.adminDetailsImpl = adminDetailsImpl;
+        this.doctorDetailsImpl = doctorDetailsImpl;
+        this.patientDetailsImpl = patientDetailsImpl;
     }
 
     @Bean
-    public AuthTokenFilter authenticationJwTokenFilter(){
-        return new AuthTokenFilter(jwtUtils, userDetailsServiceImpl);
+    public AuthTokenFilter authenticatioTokenFilterPatient(){
+        return new AuthTokenFilter(jwtUtils,patientDetailsImpl,adminDetailsImpl,adDetailsImpl,doctorDetailsImpl);
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsImpl){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
-        authProvider.setUserDetailsService(userDetailsServiceImpl);
+        authProvider.setUserDetailsService(userDetailsImpl);
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
-        return authConfig.getAuthenticationManager();
+    public AuthenticationManager authenticationManager() {
+        List<AuthenticationProvider> providers = List.of(
+            authenticationProvider(patientDetailsImpl),
+            authenticationProvider(doctorDetailsImpl),
+            authenticationProvider(adDetailsImpl),
+            authenticationProvider(adminDetailsImpl)
+        );
+
+        return authentication -> {
+            // Get the current request from the SecurityContextHolder
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            if (attributes == null) {
+                throw new AuthenticationServiceException("Unable to determine request");
+            }
+
+            HttpServletRequest request = attributes.getRequest();
+            String requestURI = request.getRequestURI();
+
+            // Select the appropriate provider based on the request URI
+            AuthenticationProvider selectedProvider = null;
+            if ((requestURI.startsWith("/api/patient/")) || (requestURI.startsWith("/api/auth/patient/"))) {
+                selectedProvider = providers.stream().toList().get(0);
+            } else if ((requestURI.startsWith("/api/doctor/")) || (requestURI.startsWith("/api/auth/doctor/"))) {
+                selectedProvider = providers.stream().toList().get(1);
+            } else if ((requestURI.startsWith("/api/AD/")) || (requestURI.startsWith("/api/auth/ad/"))) {
+                selectedProvider = providers.stream().toList().get(2);
+            } else if (requestURI.startsWith("/api/admin/")) {
+                selectedProvider = providers.stream().toList().get(3);
+            }
+            // If no matching provider is found, throw an exception
+            if (selectedProvider == null) {
+                throw new ProviderNotFoundException("No authentication provider found for the request");
+            }
+
+            // Authenticate using the selected provider
+            return selectedProvider.authenticate(authentication);
+        };
     }
 
-    @Bean
     @Order(1)
-    public SecurityFilterChain filterChainSecurity(HttpSecurity http) throws Exception{
-        http.headers(headers -> headers.xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK)).contentSecurityPolicy(cps -> cps.policyDirectives("script-src 'self'"))).cors((cors) -> cors.configurationSource(corsConfigurationSource()));
+    @Bean
+     public SecurityFilterChain globalSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.headers(headers -> headers
+                .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
+                .contentSecurityPolicy(csp -> csp.policyDirectives("script-src 'self'"))
+            )
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable());
+    
+        return http.build();
+    }
+
+
+    @Order(2)
+    @Bean
+    public SecurityFilterChain doctorSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/api/doctor/**", "/api/auth/doctor/**")
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/doctor/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(authenticatioTokenFilterPatient(), UsernamePasswordAuthenticationFilter.class);
+
+            return http.build();
+    }
+
+    @Order(3)
+    @Bean
+    public SecurityFilterChain AdSecurityFilterChain(HttpSecurity http) throws Exception {
+         http
+            .securityMatcher("/api/AD/**", "/api/auth/ad/**")
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/AD/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(authenticatioTokenFilterPatient(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    @Order(4)
     @Bean
-    @Order(2)
-    public SecurityFilterChain filterChainDoctor(HttpSecurity http) throws Exception{
-        http.exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler)).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(auth -> auth.requestMatchers("/api/doctor/**").authenticated().requestMatchers("/api/auth/doctor/**").authenticated());
-
-        http.authenticationProvider(null);
-
-        http.addFilterBefore(null, UsernamePasswordAuthenticationFilter.class);
+    public SecurityFilterChain AdminSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/api/admin/**", "/api/auth/admin/**")
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/admin/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(authenticatioTokenFilterPatient(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
 
+
+    @Order(5)
+    @Bean
+    public SecurityFilterChain PatientSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/api/patient/**", "/api/auth/patient/**")
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/patient/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(authenticatioTokenFilterPatient(), UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.csrf(csrf -> csrf.disable()).cors((cors)->cors.configurationSource(corsConfigurationSource())).exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler)).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/location/**").permitAll().requestMatchers("/Profile/**").permitAll().requestMatchers("/api/**").authenticated().anyRequest().authenticated());
-
-        http.authenticationProvider(authenticationProvider());
-
-        http.addFilterBefore(authenticationJwTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
+        http.authorizeHttpRequests(auth -> auth.requestMatchers("/api/location/*").permitAll().requestMatchers("/Profile/*").permitAll().anyRequest().denyAll());
         return http.build();
     }
 

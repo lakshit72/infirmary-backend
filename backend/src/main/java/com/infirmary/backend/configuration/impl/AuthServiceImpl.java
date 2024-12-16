@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService{
         String jwt = jwtUtils.genrateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
-        if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Bad Credentials");
+        if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Unauthorized Not Patient");
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
     
@@ -155,7 +155,7 @@ public class AuthServiceImpl implements AuthService{
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-            if(!roles.get(0).equals("ROLE_AD")) throw new SecurityException("Bad Credentials");
+            if(!roles.get(0).equals("ROLE_AD")) throw new SecurityException("Unauthorized Not AD");
 
             Location presentLocation = null;
 
@@ -189,7 +189,7 @@ public class AuthServiceImpl implements AuthService{
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-            if(!roles.get(0).equals("ROLE_DOCTOR")) throw new SecurityException("Bad Credentials");
+            if(!roles.get(0).equals("ROLE_DOCTOR")) throw new SecurityException("Unauthorized Not A doctor");
 
             return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
         }
@@ -204,7 +204,7 @@ public class AuthServiceImpl implements AuthService{
             UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
             List<String> roles = userDetailsImpl.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-            if(!roles.get(0).equals("ROLE_ADMIN")) throw new SecurityException("Bad Credentials");
+            if(!roles.get(0).equals("ROLE_ADMIN")) throw new SecurityException("Unauthorized Not a Admin");
 
             return createSuccessResponse(new JwtResponse(jwt,userDetailsImpl.getUsername(),roles));
 

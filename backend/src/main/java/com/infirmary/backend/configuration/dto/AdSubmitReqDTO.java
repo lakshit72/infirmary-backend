@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Getter
 @Setter
 @AllArgsConstructor
 public class AdSubmitReqDTO {
+    
     private Integer weight;
-    private float temperature;
+    private Float temperature;
     private Long doctorAss;
     private String patEmail;
 }

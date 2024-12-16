@@ -50,6 +50,8 @@ public class AdServiceImpl implements ADService{
     private final LocationRepository locationRepository;
     private final AdRepository adRepository;
     
+
+    //Get The queue pending appointment of doctor
     public ResponseEntity<?> getQueue(Double latitude,Double longitude){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
 
@@ -84,6 +86,8 @@ public class AdServiceImpl implements ADService{
         return ResponseEntity.ok(resp);
     }
 
+
+    // Get Patient Submitted Form of the Patient which they initially submit
     public ResponseEntity<?> getPatientFormDetails(String sapEmail){
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointemnt Found"));
 
@@ -101,6 +105,8 @@ public class AdServiceImpl implements ADService{
         return ResponseEntity.ok(resp);
     }
 
+
+    //Get Queue of the Patient which have completed the doctor visit
     @Override
     public ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude) {
         ArrayList<HashMap<String,Object>> resp = new ArrayList<>();
@@ -134,6 +140,8 @@ public class AdServiceImpl implements ADService{
         return ResponseEntity.ok(resp);
     }
 
+
+    //Submit appointment form and assign doctor
     @Override
     public String submitAppointment(AdSubmitReqDTO adSubmitReqDTO) {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(adSubmitReqDTO.getPatEmail()).orElseThrow(() -> new ResourceNotFoundException("No appointment Found"));
@@ -159,6 +167,7 @@ public class AdServiceImpl implements ADService{
         return "Patient Assigned";
     }
 
+    //Reject appointment for a patient by AD
     @Override
     public String rejectAppointment(String email) {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(email).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
@@ -208,6 +217,7 @@ public class AdServiceImpl implements ADService{
         return "Patient Appointment Rejected";
     }
 
+    //Set Doctor status by AD
     @Override
     public String setDocStatus(Long docID, Boolean docStat,Double latitude, Double longitude) {
         Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
@@ -219,6 +229,9 @@ public class AdServiceImpl implements ADService{
         }
 
         if(docStat){
+
+            if(longitude == null || latitude == null) throw new IllegalArgumentException("No Location Mentioned");
+
             List<Location> locations = locationRepository.findAll();
             Location presentLocation = null;
 
@@ -240,6 +253,7 @@ public class AdServiceImpl implements ADService{
         return "Status Changed";
     }
 
+    //Complete a appointment for a patient
     @Override
     public String completeAppointment(String sapEmail) {
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Appointment Scheduled"));
@@ -273,7 +287,7 @@ public class AdServiceImpl implements ADService{
         return "Appointment Completed";
     }
 
-
+    //Get All the doctors and tokens assigned
     @Override
     public ResponseEntity<?> getTokenData(String email) {
         AD ad = adRepository.findByAdEmail(email).orElseThrow(()->new ResourceNotFoundException("No Such Ad exists"));

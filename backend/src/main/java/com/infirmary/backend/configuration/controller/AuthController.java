@@ -4,6 +4,7 @@ package com.infirmary.backend.configuration.controller;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +41,7 @@ public class AuthController {
         return authService.loginServiceAd(loginRequestDTO,latitude,longitude);
     }
 
-    @PostMapping("doc/signin")
+    @PostMapping("doctor/signin")
     public ResponseEntity<?> authenticateDoc(@RequestBody LoginRequestDTO loginRequestDTO){
         return authService.loginServiceDat(loginRequestDTO);
     }
@@ -57,6 +58,6 @@ public class AuthController {
 
     @PostMapping("/test")
     public ResponseEntity<?> test(@RequestHeader(name = "Location-Latitude") String latitude){
-        return ResponseEntity.ok(latitude);
+        throw new ResourceNotFoundException("Test Exceptiopn");
     }
 }

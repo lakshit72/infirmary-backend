@@ -1,8 +1,8 @@
 package com.infirmary.backend.configuration.securityimpl;
 
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.model.AD;
@@ -18,8 +18,8 @@ public class AdDetailsImpl implements UserDetailsService{
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        AD ad = adRepository.findByAdEmail(username).orElseThrow(()-> new UsernameNotFoundException("Ad does not exists"));
+    public UserDetails loadUserByUsername(String username) throws ResourceNotFoundException{
+        AD ad = adRepository.findByAdEmail(username).orElseThrow(()-> new ResourceNotFoundException("Ad does not exists"));
         return UserDetailsImpl.build(ad);
     }
 }

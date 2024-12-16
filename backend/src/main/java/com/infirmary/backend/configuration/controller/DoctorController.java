@@ -2,12 +2,21 @@ package com.infirmary.backend.configuration.controller;
 
 import com.infirmary.backend.configuration.Exception.AppointmentNotFoundException;
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
+import com.infirmary.backend.configuration.Exception.StockAlreadyExists;
+import com.infirmary.backend.configuration.Exception.StockNotFoundException;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.PatientDetails;
+import com.infirmary.backend.configuration.dto.PrescriptionReq;
+import com.infirmary.backend.configuration.dto.StockDTO;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.service.DoctorService;
+import com.infirmary.backend.configuration.service.PatientService;
+import com.infirmary.backend.configuration.service.PrescriptionService;
+import com.infirmary.backend.configuration.service.StockService;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,9 +31,15 @@ import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessRes
 @RequestMapping(value = "/api/doctor")
 public class DoctorController {
     private final DoctorService doctorService;
+    private final PrescriptionService prescriptionService;
+    private final StockService stockService;
+    private final PatientService patientService;
 
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, PrescriptionService prescriptionService, StockService stockService, PatientService patientService) {
         this.doctorService = doctorService;
+        this.prescriptionService = prescriptionService;
+        this.stockService = stockService;
+        this.patientService = patientService;
     }
 
     private static String getTokenClaims(){
@@ -33,7 +48,8 @@ public class DoctorController {
         return id;
     }
 
-    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    //Not Used
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/byId")
     public ResponseEntity<?> getDoctorById() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -42,7 +58,8 @@ public class DoctorController {
         return createSuccessResponse(response);
     }
 
-    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    //Not used
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getStatus")
     public ResponseEntity<?> getDoctorStatusById() throws DoctorNotFoundException {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -51,7 +68,8 @@ public class DoctorController {
         return createSuccessResponse(doctorStatusById);
     }
 
-    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    //Set Doctor Status By Doctor
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/setStatus")
     public ResponseEntity<?> setDoctorStatus(@RequestParam("isDoctorCheckIn")
                                              Boolean isDoctorCheckIn, @RequestHeader(name = "X-Latitude",required = false) Double latitude, @RequestHeader(name = "X-Longitude", required = false) Double longitude) throws DoctorNotFoundException {
@@ -64,15 +82,24 @@ public class DoctorController {
         return createSuccessResponse(doctorStatus.getName());
     }
     
-    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    //Get Patient Stats for doctor
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/total-patient-count")
     public ResponseEntity<?> getAppointmentCountByDate()
             throws AppointmentNotFoundException {
         HashMap<String, Integer> countByDate = doctorService.getAppointmentCountByDate(LocalDate.now());
         return createSuccessResponse(countByDate);
     }
+
+    //Get Prescription for Current ID
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/getPrescription/{id}")
+    public ResponseEntity<?> getAppointment(@PathVariable Long id) {
+        return prescriptionService.getPrescription(id);
+    }
     
-    @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
+    //Not Used
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/prescription/{email}")
     public ResponseEntity<?> getPrescriptionByEmail(@PathVariable("email") String email)
     {
@@ -80,6 +107,7 @@ public class DoctorController {
         return createSuccessResponse(prescriptionHistory);
     }
 
+    //Get Current Patient Assigned to Doctor
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPatient")
     public ResponseEntity<?> getPatient(){
@@ -87,6 +115,7 @@ public class DoctorController {
         return ResponseEntity.ok(patient);
     }
 
+    //Get Token of the Current Patient Assigned to the Doctor
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getCurrentToken")
     public ResponseEntity<?> getCurrentToken(){
@@ -94,9 +123,55 @@ public class DoctorController {
         return createSuccessResponse(tokenNo);
     }
 
+    //Release the patient back to the queue of unassigned patient
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/releasePatient")
     public ResponseEntity<?> releasePatient(){
         return doctorService.releasePatient(getTokenClaims());
+    }
+
+    //Get Stock For AD
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/stock/")
+    public ResponseEntity<?> getAllStock(){
+        return ResponseEntity.ok(stockService.getAllStocks());
+    }
+
+    //Add Stock for AD
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @PostMapping(value = "/stock/addStock")
+    public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+        StockDTO dto = stockService.addStock(stockDTO,locId);
+        return createSuccessResponse(dto);
+    }
+
+    //Delete Stock For AD
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @DeleteMapping(value = "/stock/{batch-number}")
+    public ResponseEntity<?> deleteStock(@PathVariable("batch-number") Long batchNumber) throws StockNotFoundException {
+        stockService.deleteStock(batchNumber);
+        return createSuccessResponse("Stock deleted successfully!");
+    }
+
+    //Submit the prescription for the patient
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @PostMapping(value = "/prescription/submit")
+    public ResponseEntity<?> submitPrescription(@RequestBody PrescriptionReq prescriptionDTO) {
+        prescriptionService.submitPrescription(prescriptionDTO);
+        return createSuccessResponse("Prescription submitted");
+    }
+
+    //Get Available Stock for Doctor
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/stock/available")
+    public ResponseEntity<?> getAvailableStock(){
+        return ResponseEntity.ok(stockService.getAvailableStock());
+    }
+
+    //Get All Prescriptions of a patient
+    @PostAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/getAppointmentPat/{id}")
+    public ResponseEntity<?> getAppointmentDocs(@PathVariable String id) {
+        return patientService.getAppointment(id);
     }
 }
