@@ -240,6 +240,15 @@ public class PatientServiceImpl implements PatientService {
 
         List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNull(patient);
 
-        return ResponseEntity.ok(aptList);
+        List<Map<String,String>> resp = new ArrayList<>();
+
+        for(Appointment curApt : aptList){
+            Map<String,String> apt = new HashMap<>();
+            apt.put("appointmentId",curApt.getAppointmentId().toString());
+            apt.put("date",curApt.getDate().toString());
+            resp.add(apt);
+        }
+
+        return ResponseEntity.ok(resp);
     }
 }
