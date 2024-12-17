@@ -4,7 +4,6 @@ package com.infirmary.backend.configuration.dto;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
