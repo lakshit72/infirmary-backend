@@ -83,7 +83,10 @@ public class PatientController {
     //Submit the appointment form
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @PostMapping(value = "/submitAppointment")
-    public ResponseEntity<?> submitAppointmnent(@RequestBody AppointmentReqDTO appointmentReqDTO,@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude) {
+    public ResponseEntity<?> submitAppointmnent(@Valid @RequestBody AppointmentReqDTO appointmentReqDTO, BindingResult bindingResult,@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude) {
+        if(bindingResult.hasErrors()){
+            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         return patientService.submitAppointment(getTokenClaims(),appointmentReqDTO,latitude,longitude);
     }
 

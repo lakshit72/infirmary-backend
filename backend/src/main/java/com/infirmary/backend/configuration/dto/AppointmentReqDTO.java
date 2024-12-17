@@ -14,7 +14,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AppointmentReqDTO {
-    @NotNull(message = "Please Provide reason for visit")
     @NotBlank(message = "Please Provide reason for visit")
     private String reason;
     private Boolean isFollowUp;
