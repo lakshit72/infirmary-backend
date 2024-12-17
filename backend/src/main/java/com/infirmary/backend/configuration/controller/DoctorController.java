@@ -15,11 +15,14 @@ import com.infirmary.backend.configuration.service.PatientService;
 import com.infirmary.backend.configuration.service.PrescriptionService;
 import com.infirmary.backend.configuration.service.StockService;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,6 +32,7 @@ import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessRes
 
 @RestController
 @RequestMapping(value = "/api/doctor")
+@Validated
 public class DoctorController {
     private final DoctorService doctorService;
     private final PrescriptionService prescriptionService;
@@ -44,8 +48,7 @@ public class DoctorController {
 
     private static String getTokenClaims(){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String id = userDetails.getUsername();
-        return id;
+        return userDetails.getUsername();
     }
 
     //Not Used
@@ -140,7 +143,10 @@ public class DoctorController {
     //Add Stock for AD
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/stock/addStock")
-    public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+    public ResponseEntity<?> addStock(@Valid @RequestBody StockDTO stockDTO, BindingResult bindingResult, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+        if(bindingResult.hasErrors()){
+            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         StockDTO dto = stockService.addStock(stockDTO,locId);
         return createSuccessResponse(dto);
     }
@@ -156,7 +162,10 @@ public class DoctorController {
     //Submit the prescription for the patient
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/prescription/submit")
-    public ResponseEntity<?> submitPrescription(@RequestBody PrescriptionReq prescriptionDTO) {
+    public ResponseEntity<?> submitPrescription(@Valid @RequestBody PrescriptionReq prescriptionDTO,BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         prescriptionService.submitPrescription(prescriptionDTO);
         return createSuccessResponse("Prescription submitted");
     }
