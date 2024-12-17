@@ -13,10 +13,14 @@ import com.infirmary.backend.configuration.service.AppointmentService;
 import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.configuration.service.PatientService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
@@ -28,6 +32,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/patient")
+@Validated
 public class PatientController {
 
     private final PatientService patientService;
@@ -57,8 +62,11 @@ public class PatientController {
     //Update medical details of the patient
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @PutMapping(value = "/update")
-    public ResponseEntity<?> updatePatient(@RequestBody MedicalDetailsDTO medicalDetailsDTO) throws
+    public ResponseEntity<?> updatePatient(@Valid @RequestBody MedicalDetailsDTO medicalDetailsDTO,BindingResult bindingResult) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
+        if(bindingResult.hasErrors()){
+            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
         MedicalDetailsDTO response = patientService.updatePatientDetails(getTokenClaims(), medicalDetailsDTO);
         return createSuccessResponse(response);
     }

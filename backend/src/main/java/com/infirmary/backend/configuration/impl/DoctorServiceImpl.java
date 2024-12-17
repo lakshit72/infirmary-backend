@@ -250,7 +250,7 @@ public class DoctorServiceImpl implements DoctorService {
         Appointment appointment = currentAppointment.getAppointment();
         appointment.setDoctor(null);
         appointment.setWeight(null);
-        appointment.setTemperature(0);
+        appointment.setTemperature(null);
         appointmentRepository.save(appointment);
 
         currentAppointment = currentAppointmentRepository.save(currentAppointment);

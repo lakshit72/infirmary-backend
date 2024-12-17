@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AdSubmitReqDTO {
-    private float weight;
-    private float temperature;
+    private Float weight;
+    private Float temperature;
     private Long doctorAss;
     private String patEmail;
 }

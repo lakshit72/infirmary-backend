@@ -96,7 +96,7 @@ public class WebSecurityConfig {
                 selectedProvider = providers.stream().toList().get(1);
             } else if ((requestURI.startsWith("/api/AD/")) || (requestURI.startsWith("/api/auth/ad/"))) {
                 selectedProvider = providers.stream().toList().get(2);
-            } else if (requestURI.startsWith("/api/admin/")) {
+            } else if (requestURI.startsWith("/api/admin/") || requestURI.startsWith("/api/auth/admin/")) {
                 selectedProvider = providers.stream().toList().get(3);
             }
             // If no matching provider is found, throw an exception

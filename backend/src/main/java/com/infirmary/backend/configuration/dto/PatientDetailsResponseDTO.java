@@ -10,8 +10,8 @@ public class PatientDetailsResponseDTO {
     private String medicalHistory;
     private String familyMedicalHistory;
     private String allergies;
-    private float height;
-    private float weight;
+    private Float height;
+    private Float weight;
     private String email;
     private String name;
     private String school;

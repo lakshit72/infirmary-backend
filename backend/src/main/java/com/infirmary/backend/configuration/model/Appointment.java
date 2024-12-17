@@ -47,10 +47,10 @@ public class Appointment implements Serializable {
     private Location location;
 
     @Column(name = "weight")
-    private float weight;
+    private Float weight;
 
     @Column(name = "temperature")
-    private float temperature;
+    private Float temperature;
 
     @Column(name = "timestamp")
     private long timestamp;
