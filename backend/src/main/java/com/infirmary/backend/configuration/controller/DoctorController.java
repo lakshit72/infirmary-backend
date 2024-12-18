@@ -145,9 +145,6 @@ public class DoctorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/stock/addStock")
     public ResponseEntity<?> addStock(@Valid @RequestBody StockDTO stockDTO, BindingResult bindingResult, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
-        if(bindingResult.hasErrors()){
-            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
-        }
         StockDTO dto = stockService.addStock(stockDTO,locId);
         return createSuccessResponse(dto);
     }
@@ -164,9 +161,6 @@ public class DoctorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PostMapping(value = "/prescription/submit")
     public ResponseEntity<?> submitPrescription(@Valid @RequestBody PrescriptionReq prescriptionDTO,BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
-        }
         prescriptionService.submitPrescription(prescriptionDTO);
         return createSuccessResponse("Prescription submitted");
     }
