@@ -1,6 +1,5 @@
 package com.infirmary.backend.configuration.impl;
 
-import com.infirmary.backend.configuration.Exception.InvalidDataException;
 import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
@@ -41,7 +40,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Stream;
 
 @Slf4j
 @Transactional
@@ -82,7 +80,6 @@ public class PatientServiceImpl implements PatientService {
             throw new IllegalArgumentException("Sap Id not found!");
         }
 
-        validateRequiredFields(patientDTO);
         if (FunctionUtil.isNameInvalid(patientDTO.getName())) {
             throw new IllegalArgumentException("Invalid name entered");
         }
@@ -125,15 +122,6 @@ public class PatientServiceImpl implements PatientService {
         }
 
         return new PatientDetailsResponseDTO(new PatientDTO(currentPatient), new MedicalDetailsDTO(medicalDetails.get()));
-    }
-
-    private void validateRequiredFields(PatientDTO patientDTO) {
-        if (Stream.of(patientDTO.getName(), patientDTO.getPhoneNumber(), patientDTO.getDateOfBirth(),
-                        patientDTO.getEmergencyContact(),
-                        patientDTO.getProgram(), patientDTO.getSchool())
-                .anyMatch(String::isEmpty)) {
-            throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
-        }
     }
 
     @Override
