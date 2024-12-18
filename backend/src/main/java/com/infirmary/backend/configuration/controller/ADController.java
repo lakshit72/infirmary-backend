@@ -131,6 +131,19 @@ public class ADController {
         return ResponseEntity.ok(adService.submitAppointment(adSubmitReqDTO));
     }
 
+    //Get patient and Doctor assigned
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/getAssignedPatient")
+    public ResponseEntity<?> getAssignedPatient(){
+        return createSuccessResponse(adService.getAssignedPatient(getTokenClaims()));
+    }
+
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/getAppointmentByDate")
+    public ResponseEntity<?> getAppointmentByDate(@RequestParam(value = "date") LocalDate date){
+        return createSuccessResponse(adService.getAppointmentByDate(date, getTokenClaims()));
+    }
+
     //Delete Stock For AD
     @PreAuthorize("hasRole('ROLE_AD')")
     @DeleteMapping(value = "/stock/{stock}")

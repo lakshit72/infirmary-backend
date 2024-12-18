@@ -234,6 +234,7 @@ public class PatientServiceImpl implements PatientService {
             Map<String,String> apt = new HashMap<>();
             apt.put("appointmentId",curApt.getAppointmentId().toString());
             apt.put("date",curApt.getDate().toString());
+            apt.put("token", curApt.getTokenNo().toString());
             resp.add(apt);
         }
 

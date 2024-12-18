@@ -2,6 +2,7 @@ package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -308,6 +309,51 @@ public class AdServiceImpl implements ADService{
         }
 
         return createSuccessResponse(responseOut);
+    }
+
+
+    //Get Patient Assigned to AD
+    @Override
+    public List<?> getAssignedPatient(String sapEmail) {
+        AD ad = adRepository.findByAdEmail(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Such Ad exists"));
+
+        if(ad.getLocation() == null) throw new IllegalArgumentException("Must be present at Infirmary");
+
+        List<CurrentAppointment> currAppointments = currentAppointmentRepository.findAllByAppointmentNotNullAndDoctorNotNullAndAppointment_Location(ad.getLocation());
+
+        List<Map<String,String>> responseOut = new ArrayList<>();
+
+        for(CurrentAppointment currentAppointment:currAppointments){
+            Map<String,String> resp = new HashMap<>();
+            resp.put("doctorName",currentAppointment.getDoctor().getName());
+            resp.put("PatientToken", currentAppointment.getAppointment().getTokenNo().toString());
+            resp.put("PatientName", currentAppointment.getPatient().getName());
+            responseOut.add(resp);
+        }
+
+        return responseOut;
+    }
+
+
+    @Override
+    public List<?> getAppointmentByDate(LocalDate date, String sapEmail) {
+        AD ad = adRepository.findByAdEmail(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Such Ad exists"));
+
+        if(ad.getLocation() == null) throw new IllegalArgumentException("Must be present at Infirmary");
+
+        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocation(date, ad.getLocation());
+
+        List<Map<String,String>> resp = new ArrayList<>();
+
+        for(Appointment curApt : allAppointments){
+            Map<String,String> apt = new HashMap<>();
+            apt.put("appointmentId",curApt.getAppointmentId().toString());
+            apt.put("PatientName",curApt.getPatient().getName());
+            apt.put("token", curApt.getTokenNo().toString());
+            resp.add(apt);
+        }
+
+        return resp;
     }
 
 }
