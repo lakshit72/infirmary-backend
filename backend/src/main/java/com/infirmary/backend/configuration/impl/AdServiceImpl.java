@@ -89,6 +89,8 @@ public class AdServiceImpl implements ADService{
 
     // Get Patient Submitted Form of the Patient which they initially submit
     public ResponseEntity<?> getPatientFormDetails(String sapEmail){
+        sapEmail = sapEmail.substring(0,sapEmail.indexOf("@")).concat(sapEmail.substring(sapEmail.indexOf("@")).replaceAll(",", "."));
+
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(() -> new ResourceNotFoundException("No Appointemnt Found"));
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");
