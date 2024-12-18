@@ -16,13 +16,7 @@ import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.MedicalDetails;
 import com.infirmary.backend.configuration.model.Patient;
-import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
-import com.infirmary.backend.configuration.repository.AppointmentRepository;
-import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
-import com.infirmary.backend.configuration.repository.DoctorRepository;
-import com.infirmary.backend.configuration.repository.LocationRepository;
-import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
-import com.infirmary.backend.configuration.repository.PatientRepository;
+import com.infirmary.backend.configuration.repository.*;
 import com.infirmary.backend.configuration.service.PatientService;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 
@@ -45,6 +39,7 @@ import java.util.*;
 @Transactional
 @Service
 public class PatientServiceImpl implements PatientService {
+    private final PrescriptionRepository prescriptionRepository;
     private final MedicalDetailsRepository medicalDetailsRepository;
     private final PatientRepository patientRepository;
     private final MessageConfigUtil messageConfigUtil;
@@ -54,7 +49,8 @@ public class PatientServiceImpl implements PatientService {
     private final AppointmentFormRepository appointmentFormRepository;
     private final LocationRepository locationRepository;
 
-    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository,DoctorRepository doctorRepository,LocationRepository locationRepository) {
+    public PatientServiceImpl(PatientRepository patientRepository, MessageConfigUtil messageConfigUtil, MedicalDetailsRepository medicalDetailsRepository,CurrentAppointmentRepository currentAppointmentRepository,AppointmentRepository appointmentRepository,AppointmentFormRepository appointmentFormRepository,DoctorRepository doctorRepository,LocationRepository locationRepository,
+                              PrescriptionRepository prescriptionRepository) {
         this.patientRepository = patientRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.medicalDetailsRepository = medicalDetailsRepository;
@@ -63,6 +59,7 @@ public class PatientServiceImpl implements PatientService {
         this.appointmentFormRepository = appointmentFormRepository;
         this.doctorRepository = doctorRepository;
         this.locationRepository = locationRepository;
+        this.prescriptionRepository = prescriptionRepository;
     }
     
     @Override
@@ -173,7 +170,7 @@ public class PatientServiceImpl implements PatientService {
         Appointment appointment = new Appointment();
         appointment.setPatient(patient.get());
         appointment.setDate(LocalDate.now());
-        appointment.setTimestamp(System.currentTimeMillis());
+        appointment.setTimestamp(String.valueOf(System.currentTimeMillis()));
         appointment.setAptForm(appointmentForm2);
         appointment.setTokenNo(appointmentRepository.countByDate(LocalDate.now())+1);
         appointment.setLocation(presentLocation);
@@ -217,7 +214,7 @@ public class PatientServiceImpl implements PatientService {
 
         if(!sapEmail.equals(appointment.getPatient().getEmail())) throw new SecurityException("Unauthorized");
 
-        PrescriptionRes presc = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate());
+        PrescriptionRes presc = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate(), appointment.getTimestamp());
 
         return ResponseEntity.ok(presc);
     }
@@ -225,8 +222,8 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public ResponseEntity<?> getAppointment(String sapEmail) {
         Patient patient = patientRepository.findByEmail(sapEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Found"));
-
-        List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNull(patient);
+        ArrayList<Long> appointedAppointments = new ArrayList<>(AppointmentQueueManager.getAppointedQueue());
+        List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNullAndAppointmentIdNotIn(patient, appointedAppointments);
 
         List<Map<String,String>> resp = new ArrayList<>();
 

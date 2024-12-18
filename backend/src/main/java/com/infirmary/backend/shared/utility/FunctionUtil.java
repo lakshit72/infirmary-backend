@@ -32,21 +32,13 @@ public class FunctionUtil {
                 || StringUtils.containsAny(name, "[!@#$%&*()+=|<>?{}\\[\\]~]");
     }
 
-    public static boolean isValidId(String email) {
-        if (email.contains("stu.upes.ac.in")) {
-            String[] parts = email.split("@");
-            if (parts.length > 0) {
-                String localPath = parts[0];
-                return localPath.matches("5\\d{8}") && !localPath.matches(".*[a-zA-Z].*");
-            }
+    public static boolean isValidId(String sapId) {
+        if (sapId.startsWith("5")) {
+                return sapId.matches("5\\d{8}") && !sapId.matches(".*[a-zA-Z].*");
         }
 
-        if (email.contains("ddn.upes.ac.in")) {
-            String[] parts = email.split("@");
-            if (parts.length > 0) {
-                String localPath = parts[0];
-                return localPath.matches("4\\d{8}") || localPath.matches(".*[a-zA-Z].*");
-            }
+        if (sapId.startsWith("4")) {
+                return sapId.matches("4\\d{7}") || !sapId.matches(".*[a-zA-Z].*");
         }
         return false;
     }

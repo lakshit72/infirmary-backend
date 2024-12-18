@@ -53,7 +53,7 @@ public class Appointment implements Serializable {
     private Float temperature;
 
     @Column(name = "timestamp")
-    private long timestamp;
+    private String timestamp;
 
     public Appointment(AppointmentDTO appointmentDTO) {
         this.patient = new Patient(appointmentDTO.getPatientDTO());
@@ -63,5 +63,6 @@ public class Appointment implements Serializable {
         this.tokenNo = appointmentDTO.getTokenNo();
         this.temperature = appointmentDTO.getTemperature();
         this.weight = appointmentDTO.getWeight();
+        this.timestamp = appointmentDTO.getTimestamp();
     }
 }

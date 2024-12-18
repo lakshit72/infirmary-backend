@@ -120,7 +120,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     public ResponseEntity<?> getPrescription(Long id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
 
-        PrescriptionRes prescriptionRes = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate());
+        PrescriptionRes prescriptionRes = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate(), appointment.getTimestamp());
 
         return ResponseEntity.ok(prescriptionRes);
     }

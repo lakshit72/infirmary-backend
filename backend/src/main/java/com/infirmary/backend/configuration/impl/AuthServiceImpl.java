@@ -1,8 +1,5 @@
 package com.infirmary.backend.configuration.impl;
 
-import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
-import static com.infirmary.backend.shared.utility.FunctionUtil.isValidPassword;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
@@ -40,6 +37,8 @@ import com.infirmary.backend.shared.utility.FunctionUtil;
 
 import lombok.AllArgsConstructor;
 
+import static com.infirmary.backend.shared.utility.FunctionUtil.*;
+
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService{
@@ -74,6 +73,8 @@ public class AuthServiceImpl implements AuthService{
                     throw new UserAlreadyExists("User With SapId Already Exists");
                 }
             }
+
+            if (!(isValidId(patientDTO.getSapID()))) throw new IllegalArgumentException(("Enter valid Sap ID"));
 
             if(!(isValidPassword(patientDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
 

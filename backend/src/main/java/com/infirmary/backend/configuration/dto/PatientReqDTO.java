@@ -50,6 +50,6 @@ public class PatientReqDTO {
     private String gender;
 
     @NotBlank(message = "Please Provide your sapID")
-    @Size(min = 9, max = 9,message = "Please Provide a Valid Sap ID")
+    @Size(min = 8, max = 9,message = "Please Provide a Valid Sap ID")
     private String sapID;
 }

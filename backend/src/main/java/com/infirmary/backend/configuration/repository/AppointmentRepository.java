@@ -9,6 +9,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,4 +39,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     Integer countByDateAndPrescriptionNotNull(LocalDate date);
 
     Integer countByPrescriptionNotNullAndDateNot(LocalDate date);
+
+    List<Appointment> findAllByPatientAndPrescriptionNotNullAndAppointmentIdNotIn(Patient patient, Collection<Long> appointmentIds);
 }

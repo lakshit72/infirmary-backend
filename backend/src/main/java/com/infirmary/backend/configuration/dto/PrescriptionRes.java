@@ -12,4 +12,5 @@ import java.time.LocalDate;
 public class PrescriptionRes {
     private PrescriptionDTO prescription;
     private LocalDate date;
+    private String timestamp;
 }

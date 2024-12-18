@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class AppointmentDTO {
     private Integer tokenNo;
     private Float weight;
     private Float temperature;
+    private String timeStamp;
 
     public AppointmentDTO(Appointment appointment) {
         this.patientDTO = new PatientDTO(appointment.getPatient());
@@ -28,5 +30,9 @@ public class AppointmentDTO {
         this.tokenNo = appointment.getTokenNo();
         this.temperature = appointment.getTemperature();
         this.weight = appointment.getWeight();
+    }
+
+    public String getTimestamp() {
+        return LocalTime.now().toString();
     }
 }
