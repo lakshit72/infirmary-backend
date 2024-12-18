@@ -2,6 +2,7 @@ package com.infirmary.backend.configuration.dto;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ public class AdSubmitReqDTO {
     @DecimalMin(value="1.0" , message = "Please enter temperature")
     private Float temperature;
 
-    @NotBlank(message = "Please assign doctor")
+    @NotNull(message = "Please assign doctor")
     private Long doctorAss;
 
     @NotBlank(message = "Please assign patient")

@@ -11,9 +11,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PrescriptionMedsDTORes {
     private StockDTO medicine;
-    private int dosageMorning;
-    private int dosageAfternoon;
-    private int dosageEvening;
+    private Float dosageMorning;
+    private Float dosageAfternoon;
+    private Float dosageEvening;
     private int duration;
     private String suggestion; 
 

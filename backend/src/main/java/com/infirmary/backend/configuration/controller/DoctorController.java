@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.UUID;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
@@ -153,9 +154,9 @@ public class DoctorController {
 
     //Delete Stock For AD
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    @DeleteMapping(value = "/stock/{batch-number}")
-    public ResponseEntity<?> deleteStock(@PathVariable("batch-number") Long batchNumber) throws StockNotFoundException {
-        stockService.deleteStock(batchNumber);
+    @DeleteMapping(value = "/stock/{stock}")
+    public ResponseEntity<?> deleteStock(@PathVariable("stock") UUID stock) throws StockNotFoundException {
+        stockService.deleteStock(stock);
         return createSuccessResponse("Stock deleted successfully!");
     }
 
@@ -173,8 +174,8 @@ public class DoctorController {
     //Get Available Stock for Doctor
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/stock/available")
-    public ResponseEntity<?> getAvailableStock(){
-        return ResponseEntity.ok(stockService.getAvailableStock());
+    public ResponseEntity<?> getAvailableStock(@RequestHeader(name = "X-Latitude",required = true) Double latitude, @RequestHeader(name = "X-Longitude", required = true) Double longitude){
+        return ResponseEntity.ok(stockService.getAvailableStock(longitude,latitude));
     }
 
     //Get All Prescriptions of a patient

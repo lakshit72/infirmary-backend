@@ -29,17 +29,17 @@ public class PrescriptionMeds implements Serializable{
     private Long presMedicineId;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "medicine",referencedColumnName = "batch_number")
+    @JoinColumn(name = "medicine",referencedColumnName = "stock_id")
     private Stock medicine;
 
     @Column(name = "dosage_morning")
-    private Integer dosageMorning;
+    private Float dosageMorning;
 
     @Column(name = "dosage_afternoon")
-    private Integer dosageAfternoon;
+    private Float dosageAfternoon;
 
     @Column(name = "dosage_evening")
-    private Integer dosageEvening;
+    private Float dosageEvening;
 
     @Column(name = "duration")
     private Integer duration;

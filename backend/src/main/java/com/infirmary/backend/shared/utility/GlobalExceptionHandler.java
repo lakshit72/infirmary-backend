@@ -1,22 +1,43 @@
 package com.infirmary.backend.shared.utility;
 
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    @SuppressWarnings("null")
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                HttpHeaders headers,
+                                                                HttpStatusCode status,
+                                                                WebRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", status.value());
+        response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        response.put("message", ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
+        response.put("details", "Invalid Arguments");
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 
     // Handle 400 Bad Request
     @ExceptionHandler(IllegalArgumentException.class)
@@ -25,9 +46,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, "Bad Request", ex);
     }
 
+    @ExceptionHandler(SQLException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<?> handleSqlError(Exception ex){
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Error", ex);
+    }
+
+    // Handle JWT Expiration
     @ExceptionHandler(ExpiredJwtException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<?> handleExpiredJWT(Exception ex){
+    public ResponseEntity<?> handleExpiredJWT(Exception ex) {
         return buildResponse(HttpStatus.UNAUTHORIZED, "JWT Expired", ex);
     }
 
@@ -39,11 +67,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // Handle 403 Forbidden
-   @ExceptionHandler(AccessDeniedException.class)
-   @ResponseStatus(HttpStatus.FORBIDDEN)
-   public ResponseEntity<Object> handleForbidden(Exception ex) {
-       return buildResponse(HttpStatus.FORBIDDEN, "Forbidden", ex);
-   }
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<Object> handleForbidden(Exception ex) {
+        return buildResponse(HttpStatus.FORBIDDEN, "Forbidden", ex);
+    }
 
     // Handle 404 Not Found
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -54,7 +82,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<?> userNotFound(Exception ex){
+    public ResponseEntity<?> userNotFound(Exception ex) {
         return buildResponse(HttpStatus.NOT_FOUND, "User Not Found", ex);
     }
 
@@ -76,4 +104,3 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, status);
     }
 }
-

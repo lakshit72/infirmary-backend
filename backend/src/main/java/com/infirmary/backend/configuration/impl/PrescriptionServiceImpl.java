@@ -21,6 +21,9 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -55,21 +58,37 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         
         Prescription prescription = new Prescription();
 
+        //Check Meds
+        Map<UUID,Integer> instance = new HashMap<>();
+
         //set Medicine
-        
         for(PrescriptionMedsDTO pres:prescriptionDTO.getMeds()){
             PrescriptionMeds medicine = new PrescriptionMeds();
             medicine.setDosageAfternoon(pres.getDosageAfternoon());
             medicine.setDosageEvening(pres.getDosageEvening());
             medicine.setDosageMorning(pres.getDosageMorning());
             medicine.setDuration(pres.getDuration());
-            Integer medQty = pres.getDosageAfternoon()+pres.getDosageMorning()+pres.getDosageEvening();
+
+            if(instance.get(pres.getMedicine()) != null) instance.put(pres.getMedicine(), instance.get(pres.getMedicine())+1);
+            else instance.put(pres.getMedicine(), 1);
+
+            if(pres.getDuration()<1) throw new IllegalArgumentException("Duration Should be atleast 1");
+
+            Float medQty = pres.getDosageAfternoon()+pres.getDosageMorning()+pres.getDosageEvening();
+
+            if(!(medQty>0)) throw new IllegalArgumentException("No medicine quantity defined");
+
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
             if(currMed.getQuantity() < (medQty*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
             if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
             medicine.setMedicine(currMed);
             medicine.setSuggestion(pres.getSuggestion());
             prescription.addPresMed(medicine);
+        }
+
+        //check for duplicates
+        for(UUID inst:instance.keySet()){
+            if(instance.get(inst)>1) throw new IllegalArgumentException("Must Assign only 1 instance of each medicine");
         }
 
         prescription.setDiagnosis(prescriptionDTO.getDiagnosis());

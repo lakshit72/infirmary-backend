@@ -64,9 +64,6 @@ public class PatientController {
     @PutMapping(value = "/update")
     public ResponseEntity<?> updatePatient(@Valid @RequestBody MedicalDetailsDTO medicalDetailsDTO,BindingResult bindingResult) throws
             PatientNotFoundException, MedicalDetailsNotFoundException {
-        if(bindingResult.hasErrors()){
-            throw new IllegalArgumentException(bindingResult.getAllErrors().get(0).getDefaultMessage());
-        }
         MedicalDetailsDTO response = patientService.updatePatientDetails(getTokenClaims(), medicalDetailsDTO);
         return createSuccessResponse(response);
     }

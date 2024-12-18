@@ -12,10 +12,14 @@ import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.configuration.service.PrescriptionService;
 import com.infirmary.backend.configuration.service.StockService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,11 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
 @RestController
 @RequestMapping("/api/AD")
+@Validated
 public class ADController {
     private final DoctorService doctorService;
     private final ADService adService;
@@ -113,7 +119,7 @@ public class ADController {
     //Add Stock for AD
     @PreAuthorize("hasRole('ROLE_AD')")
     @PostMapping(value = "/stock/addStock")
-    public ResponseEntity<?> addStock(@RequestBody StockDTO stockDTO, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+    public ResponseEntity<?> addStock(@Valid @RequestBody StockDTO stockDTO, BindingResult bindingResult, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
         StockDTO dto = stockService.addStock(stockDTO,locId);
         return createSuccessResponse(dto);
     }
@@ -121,15 +127,15 @@ public class ADController {
     //Assign a doctor for the patient 
     @PreAuthorize("hasRole('ROLE_AD')")
     @PostMapping(value = "/submitAppointment")
-    public ResponseEntity<?> submitAppointment(@RequestBody AdSubmitReqDTO adSubmitReqDTO){
+    public ResponseEntity<?> submitAppointment(@Valid @RequestBody AdSubmitReqDTO adSubmitReqDTO){
         return ResponseEntity.ok(adService.submitAppointment(adSubmitReqDTO));
     }
 
     //Delete Stock For AD
     @PreAuthorize("hasRole('ROLE_AD')")
-    @DeleteMapping(value = "/stock/{batch-number}")
-    public ResponseEntity<?> deleteStock(@PathVariable("batch-number") Long batchNumber) throws StockNotFoundException {
-        stockService.deleteStock(batchNumber);
+    @DeleteMapping(value = "/stock/{stock}")
+    public ResponseEntity<?> deleteStock(@PathVariable("stock") UUID stock) throws StockNotFoundException {
+        stockService.deleteStock(stock);
         return createSuccessResponse("Stock deleted successfully!");
     }
 

@@ -8,6 +8,7 @@ import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.StockService;
+import com.infirmary.backend.shared.utility.FunctionUtil;
 import com.infirmary.backend.shared.utility.MessageConfigUtil;
 import com.infirmary.backend.shared.utility.StockThreshold;
 import jakarta.transaction.Transactional;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -120,10 +122,6 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public StockDTO addStock(StockDTO stockDTO,Long locId) throws StockAlreadyExists {
-        Optional<Stock> byBatch = stockRepository.findByBatchNumber(stockDTO.getBatchNumber());
-        if (byBatch.isPresent()) {
-            throw new StockAlreadyExists(messageConfigUtil.getStockAlreadyExists());
-        }
         Stock stock = new Stock(stockDTO);
         
         Location location = locationRepository.findById(locId).orElseThrow(()-> new ResourceNotFoundException("No Location Found")); 
@@ -177,8 +175,8 @@ public class StockServiceImpl implements StockService {
 
     
     @Override
-    public void deleteStock(Long batchNumber) throws StockNotFoundException {
-        Optional<Stock> batch = stockRepository.findByBatchNumber(batchNumber);
+    public void deleteStock(UUID stockUuid) throws StockNotFoundException {
+        Optional<Stock> batch = stockRepository.findById(stockUuid);
         if (batch.isEmpty()) {
             throw new StockNotFoundException(messageConfigUtil.getStockNotFound());
         }
@@ -188,7 +186,21 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public List<Stock> getAvailableStock() {
-        return stockRepository.findByQuantityGreaterThan(0);
+    public List<Stock> getAvailableStock(Double longitude, Double latitude) {
+         if(longitude == null || latitude == null) throw new IllegalArgumentException("No Location Mentioned");
+
+            List<Location> locations = locationRepository.findAll();
+            Location presentLocation = null;
+
+            for(Location location:locations){
+                if(FunctionUtil.IsWithinRadius(location.getLatitude(), location.getLongitude(), latitude, longitude)){
+                    presentLocation = location;
+                    break;
+                }
+        }
+
+        if(presentLocation == null) throw new IllegalArgumentException("Must be present on location");
+        
+        return stockRepository.findByQuantityGreaterThanAndLocation(0,presentLocation);
     }
 }

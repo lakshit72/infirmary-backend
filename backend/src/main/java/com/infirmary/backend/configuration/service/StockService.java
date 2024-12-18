@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 @Service
 public interface StockService {
     List<StockDTO> getStockByTypeIn(List<String> type) throws StockNotFoundException;
@@ -22,6 +23,6 @@ public interface StockService {
     StockDTO addStock(StockDTO stockDTO,Long locId) throws StockAlreadyExists;
     byte[] exportStocksToExcel() throws IOException;
     List<Stock> getAllStocks();
-    void deleteStock(Long batchNumber) throws StockNotFoundException;
-    List<Stock> getAvailableStock();
+    void deleteStock(UUID stockUuid) throws StockNotFoundException;
+    List<Stock> getAvailableStock(Double longitude, Double latitude);
 }

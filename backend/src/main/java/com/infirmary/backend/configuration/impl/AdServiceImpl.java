@@ -265,9 +265,9 @@ public class AdServiceImpl implements ADService{
         List<Stock> stocks = new ArrayList<>();
 
         for(PrescriptionMeds meds:medLst){
-            Stock stock = stockRepository.findById(meds.getMedicine().getBatchNumber()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine Exists"));
+            Stock stock = stockRepository.findById(meds.getMedicine().getId()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine Exists"));
 
-            Integer medQty = (meds.getDosageAfternoon()+meds.getDosageEvening()+meds.getDosageMorning());
+            Integer medQty = (int) Math.ceil((meds.getDosageAfternoon()+meds.getDosageEvening()+meds.getDosageMorning()));
 
             if(stock.getQuantity() - (meds.getDuration()*medQty)<0) throw new IllegalArgumentException("Medicine Quantity Not Enough");
 
