@@ -12,9 +12,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AdSubmitReqDTO {
+    @NotNull(message = "Please Assign weight")
     @DecimalMin(value="1.0" , message = "Please enter weight")
     private Float weight;
 
+    @NotNull(message = "Please Assign temperature")
     @DecimalMin(value="1.0" , message = "Please enter temperature")
     private Float temperature;
 

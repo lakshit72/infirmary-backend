@@ -32,7 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", status.value());
         response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-        response.put("message", ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage());
+        response.put("message", ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage().substring(ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage().indexOf(":")));
         response.put("details", "Invalid Arguments");
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

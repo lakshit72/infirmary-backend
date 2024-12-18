@@ -5,6 +5,7 @@ import com.infirmary.backend.configuration.model.MedicalDetails;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,10 +28,12 @@ public class MedicalDetailsDTO {
     @NotBlank(message = "Please Provide your medical allergies, if none write none")
     private String allergies;
     
-    @DecimalMin(value = "1.0",message = "Please Provide your height")
+    @NotNull(message = "Please provide your height")
+    @DecimalMin(value = "1.0",message = "Please Provide correct height")
     private Float height;
     
-    @DecimalMin(value = "1.0",message = "Please Provide your weight")
+    @NotNull(message = "Please provide your weight")
+    @DecimalMin(value = "1.0",message = "Please Provide correct weight")
     private Float weight;
 
     public MedicalDetailsDTO(MedicalDetails medicalDetails) {
