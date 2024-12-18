@@ -1,9 +1,10 @@
 package com.infirmary.backend.configuration.securityimpl;
 
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.model.Doctor;
@@ -20,8 +21,8 @@ public class DoctorDetailsImpl implements UserDetailsService{
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
-        Doctor doctor = doctorRepository.findByDoctorEmail(username).orElseThrow(()-> new UsernameNotFoundException("Doctor Does not Exists"));
+    public UserDetails loadUserByUsername(String username) throws ResourceNotFoundException{
+        Doctor doctor = doctorRepository.findByDoctorEmail(username).orElseThrow(()-> new ResourceNotFoundException("Doctor Does not Exists"));
 
         return UserDetailsImpl.build(doctor);
     }

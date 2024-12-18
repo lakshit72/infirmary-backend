@@ -51,6 +51,39 @@ public class FunctionUtil {
         return false;
     }
 
+    public static boolean isValidPassword(String str) {
+        // Check if the string has at least 8 characters
+        if (str.length() < 8) {
+            return false;
+        }
+
+        boolean hasUppercase = false;
+        boolean hasLowercase = false;
+        boolean hasNumber = false;
+        boolean hasSpecialChar = false;
+
+        // Check each character
+        for (char c : str.toCharArray()) {
+            if (Character.isUpperCase(c)) {
+                hasUppercase = true;
+            } else if (Character.isLowerCase(c)) {
+                hasLowercase = true;
+            } else if (Character.isDigit(c)) {
+                hasNumber = true;
+            } else if (!Character.isLetterOrDigit(c)) {
+                hasSpecialChar = true;
+            }
+
+            // If all conditions are met, return true early
+            if (hasUppercase && hasLowercase && hasNumber && hasSpecialChar) {
+                return true;
+            }
+        }
+
+        // Check if all conditions are met
+        return hasUppercase && hasLowercase && hasNumber && hasSpecialChar;
+    }
+
     public static Boolean IsWithinRadius(Double loc_lat, Double loc_long, Double pat_lat, Double pat_long){
         Double loc_lat_rads = Math.toRadians(loc_lat);
         Double loc_long_rads = Math.toRadians(loc_long);

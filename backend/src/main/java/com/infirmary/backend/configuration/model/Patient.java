@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 
 @Entity
@@ -28,7 +29,7 @@ public class Patient implements Serializable {
     private String school;
 
     @Column(name = "date_of_birth", nullable = false)
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "program", nullable = false)
     private String program;

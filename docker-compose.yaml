@@ -12,22 +12,22 @@ services:
     networks:
      - devbridge
     ports:
-       - 5432:5432
-  # backend:
-  #  container_name: infirmary_backend_container
-  #  restart: always
-  #  build:
-  #    context: ./backend
-  #    dockerfile: Dockerfile
-  #  ports:
-  #    - 8081:8081
-  #  networks:
-  #    - devbridge
-  #  env_file:
-  #    - backend/secrets.env
-  #  volumes:
-  #    - ./backend/build/resources/main/static/Profile:/opt/app/build/resources/main/static/Profile
-  #    - ./backend/src/main/resources/static/Profile:/opt/app/src/main/resources/static/Profile
+      - 5432:5432
+  backend:
+   container_name: infirmary_backend_container
+   restart: always
+   build:
+     context: ./backend
+     dockerfile: Dockerfile
+   ports:
+     - 8081:8081
+   networks:
+     - devbridge
+   env_file:
+     - backend/secrets.env
+   volumes:
+     - ./backend/build/resources/main/static/Profile:/opt/app/build/resources/main/static/Profile
+     - ./backend/src/main/resources/static/Profile:/opt/app/src/main/resources/static/Profile
 
 networks:
  devbridge:

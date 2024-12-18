@@ -47,10 +47,13 @@ public class Appointment implements Serializable {
     private Location location;
 
     @Column(name = "weight")
-    private Integer weight;
+    private Float weight;
 
     @Column(name = "temperature")
-    private float temperature;
+    private Float temperature;
+
+    @Column(name = "timestamp")
+    private long timestamp;
 
     public Appointment(AppointmentDTO appointmentDTO) {
         this.patient = new Patient(appointmentDTO.getPatientDTO());

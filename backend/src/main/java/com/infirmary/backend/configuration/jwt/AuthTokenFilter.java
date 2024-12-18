@@ -9,7 +9,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.infirmary.backend.configuration.securityimpl.UserDetailsServiceImpl;
+import com.infirmary.backend.configuration.securityimpl.AdDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.AdminDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.DoctorDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.PatientDetailsImpl;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,11 +21,17 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public class AuthTokenFilter extends OncePerRequestFilter{
     private JwtUtils jwtUtils;
-    private UserDetailsServiceImpl userDetailsServiceImpl;
+    private PatientDetailsImpl patientDetailsImpl;
+    private AdminDetailsImpl adminDetailsImpl;
+    private AdDetailsImpl adDetailsImpl;
+    private DoctorDetailsImpl doctorDetailsImpl;
 
-    public AuthTokenFilter(JwtUtils jwtUtils,UserDetailsServiceImpl userDetailsServiceImpl){
+    public AuthTokenFilter(JwtUtils jwtUtils, PatientDetailsImpl patientDetailsImpl, AdminDetailsImpl adminDetailsImpl, AdDetailsImpl adDetailsImpl, DoctorDetailsImpl doctorDetailsImpl){
         this.jwtUtils = jwtUtils;
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.patientDetailsImpl = patientDetailsImpl;
+        this.adDetailsImpl = adDetailsImpl;
+        this.adminDetailsImpl = adminDetailsImpl;
+        this.doctorDetailsImpl = doctorDetailsImpl;
     }
 
     private String parseJwt(HttpServletRequest request){
@@ -35,14 +44,29 @@ public class AuthTokenFilter extends OncePerRequestFilter{
         return null;
     }
 
+    @SuppressWarnings("null")
     @Override
     protected void doFilterInternal(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain) throws ServletException, IOException{
         String jwt = parseJwt(request);
 
         if(jwt != null && jwtUtils.validateToken(jwt)){
             String username = jwtUtils.getUserNameFromJwtToken(jwt);
-                        
-            UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+
+            String requestURI = request.getRequestURI();
+
+            UserDetails userDetails = null;
+            
+            if ((requestURI.startsWith("/api/patient/")) || (requestURI.startsWith("/api/auth/patient/"))) {
+                userDetails = patientDetailsImpl.loadUserByUsername(username);
+            } else if ((requestURI.startsWith("/api/doctor/")) || (requestURI.startsWith("/api/auth/doctor/"))) {
+                userDetails = doctorDetailsImpl.loadUserByUsername(username);
+            } else if ((requestURI.startsWith("/api/AD/")) || (requestURI.startsWith("/api/auth/ad/"))) {
+                userDetails = adDetailsImpl.loadUserByUsername(username);
+            } else if (requestURI.startsWith("/api/admin/")) {
+                userDetails = adminDetailsImpl.loadUserByUsername(username);
+            }
+
+            if(userDetails == null) throw new IllegalArgumentException("No valid Endpoint exists");
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,userDetails.getAuthorities());
 

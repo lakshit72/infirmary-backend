@@ -37,10 +37,10 @@ public class MedicalDetails implements Serializable {
     private String allergies;
 
     @Column(name = "height", nullable = false)
-    private float height;
+    private Float height;
 
     @Column(name = "weight", nullable = false)
-    private float weight;
+    private Float weight;
 
     public MedicalDetails(MedicalDetailsDTO medicalDetailsDTO){
         this.id = medicalDetailsDTO.getId();

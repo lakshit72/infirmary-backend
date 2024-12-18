@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -16,6 +17,10 @@ import java.time.LocalDate;
 @Table(name = "stocks")
 public class Stock implements Serializable{
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "stock_id")
+    private UUID Id;
+
     @Column(name = "batch_number")
     private Long batchNumber;
 

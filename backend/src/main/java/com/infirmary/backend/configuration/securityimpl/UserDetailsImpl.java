@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.infirmary.backend.configuration.enums.EnumRoles;
 import com.infirmary.backend.configuration.model.AD;
+import com.infirmary.backend.configuration.model.Admin;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Patient;
 
@@ -52,6 +53,7 @@ public class UserDetailsImpl implements UserDetails {
             authorities
         );
     }
+
     public static UserDetailsImpl build(Doctor doctor){
         // Initiate Doctor roles
         List<EnumRoles> roles = new ArrayList<>();
@@ -62,6 +64,15 @@ public class UserDetailsImpl implements UserDetails {
             doctor.getPassword(),
             authorities
         );
+    }
+
+    public static UserDetailsImpl build(Admin admin){
+        //Initiate Admin roles
+        List<EnumRoles> roles = new ArrayList<>();
+        roles.add(EnumRoles.ROLE_ADMIN);
+        List<GrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
+
+        return new UserDetailsImpl(admin.getAdminEmail(), admin.getPassword(), authorities);
     }
 
     @Override

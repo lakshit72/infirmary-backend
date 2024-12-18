@@ -6,6 +6,8 @@ import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.PatientDetails;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Prescription;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -23,4 +25,6 @@ public interface DoctorService {
     List<DoctorDTO> getAllDoctors() throws DoctorNotFoundException;
     PatientDetails getPatient(String doctorEmail);
     Integer getCurrentTokenNo(String docEmail);
+    ResponseEntity<?> releasePatient(String email);
+
 }

@@ -1,6 +1,5 @@
 package com.infirmary.backend.configuration.impl;
 
-import com.infirmary.backend.configuration.Exception.InvalidDataException;
 import com.infirmary.backend.configuration.Exception.MedicalDetailsNotFoundException;
 import com.infirmary.backend.configuration.Exception.PatientNotFoundException;
 import com.infirmary.backend.configuration.Exception.SapIdExistException;
@@ -40,12 +39,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Transactional
@@ -86,7 +80,6 @@ public class PatientServiceImpl implements PatientService {
             throw new IllegalArgumentException("Sap Id not found!");
         }
 
-        validateRequiredFields(patientDTO);
         if (FunctionUtil.isNameInvalid(patientDTO.getName())) {
             throw new IllegalArgumentException("Invalid name entered");
         }
@@ -131,15 +124,6 @@ public class PatientServiceImpl implements PatientService {
         return new PatientDetailsResponseDTO(new PatientDTO(currentPatient), new MedicalDetailsDTO(medicalDetails.get()));
     }
 
-    private void validateRequiredFields(PatientDTO patientDTO) {
-        if (Stream.of(patientDTO.getName(), patientDTO.getPhoneNumber(), patientDTO.getDateOfBirth(),
-                        patientDTO.getEmergencyContact(),
-                        patientDTO.getProgram(), patientDTO.getSchool())
-                .anyMatch(String::isEmpty)) {
-            throw new InvalidDataException(messageConfigUtil.getInvalidDataException());
-        }
-    }
-
     @Override
     public ResponseEntity<?> submitAppointment(String sapEmail, AppointmentReqDTO appointmentReqDTO, Double latitude, Double longitude) throws UsernameNotFoundException {
         
@@ -180,7 +164,7 @@ public class PatientServiceImpl implements PatientService {
         }
 
         if(appointmentReqDTO.getIsFollowUp()){
-            Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByDateDesc(sapEmail);
+            Optional<Appointment> prevAppointment = appointmentRepository.findFirstByPatient_EmailOrderByTimestampDesc(sapEmail);
             appointmentForm2.setPrevAppointment(prevAppointment.isEmpty()?null:prevAppointment.get());
         }
 
@@ -189,6 +173,7 @@ public class PatientServiceImpl implements PatientService {
         Appointment appointment = new Appointment();
         appointment.setPatient(patient.get());
         appointment.setDate(LocalDate.now());
+        appointment.setTimestamp(System.currentTimeMillis());
         appointment.setAptForm(appointmentForm2);
         appointment.setTokenNo(appointmentRepository.countByDate(LocalDate.now())+1);
         appointment.setLocation(presentLocation);
@@ -243,6 +228,15 @@ public class PatientServiceImpl implements PatientService {
 
         List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNull(patient);
 
-        return ResponseEntity.ok(aptList);
+        List<Map<String,String>> resp = new ArrayList<>();
+
+        for(Appointment curApt : aptList){
+            Map<String,String> apt = new HashMap<>();
+            apt.put("appointmentId",curApt.getAppointmentId().toString());
+            apt.put("date",curApt.getDate().toString());
+            resp.add(apt);
+        }
+
+        return ResponseEntity.ok(resp);
     }
 }

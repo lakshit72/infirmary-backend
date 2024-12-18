@@ -1,7 +1,9 @@
 package com.infirmary.backend.configuration.dto;
 
+
 import com.infirmary.backend.configuration.model.AppointmentForm;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AppointmentReqDTO {
+    @NotBlank(message = "Please Provide reason for visit")
     private String reason;
     private Boolean isFollowUp;
     private Long preferredDoctor;

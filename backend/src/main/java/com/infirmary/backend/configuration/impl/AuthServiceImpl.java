@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
+import static com.infirmary.backend.shared.utility.FunctionUtil.isValidPassword;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,14 +59,23 @@ public class AuthServiceImpl implements AuthService{
         String jwt = jwtUtils.genrateJwtToken(authentication);
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
-        if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Bad Credentials");
+        if(!roles.get(0).equals("ROLE_PATIENT")) throw new SecurityException("Unauthorized Not Patient");
         return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
     }
+    
     @Override
     public ResponseEntity<?> signUpPat(PatientReqDTO patientDTO) throws UserAlreadyExists, IOException {
             if(patientRepository.existsByEmail(patientDTO.getEmail())){
                 throw new UserAlreadyExists("User Already Exists");
             }
+
+            if(!patientDTO.getSchool().equals("Guest")){
+                if(patientRepository.existsBySapId(patientDTO.getSapID())){
+                    throw new UserAlreadyExists("User With SapId Already Exists");
+                }
+            }
+
+            if(!(isValidPassword(patientDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
 
             patientDTO.setPassword(encoder.encode(patientDTO.getPassword()));
     
@@ -105,6 +115,8 @@ public class AuthServiceImpl implements AuthService{
                 throw new UserAlreadyExists("Doctor Already Exists");
             }
 
+            if(!(isValidPassword(doctorDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
+
             doctorDTO.setPassword(encoder.encode(doctorDTO.getPassword()));
 
             Doctor doctor = new Doctor(
@@ -122,6 +134,8 @@ public class AuthServiceImpl implements AuthService{
                 throw new UserAlreadyExists("AD Already Exists");
             }
 
+            if(!(isValidPassword(adDTO.getPassword()))) throw new IllegalArgumentException("Password must satisfy conditions");
+
             adDTO.setPassword(encoder.encode(adDTO.getPassword()));
 
             AD ad = new AD(adDTO);
@@ -130,6 +144,7 @@ public class AuthServiceImpl implements AuthService{
 
             return createSuccessResponse("AD created");
         }
+
         @Override
         public ResponseEntity<?> loginServiceAd(LoginRequestDTO loginRequestDTO,Double latitude, Double longitude) {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
@@ -140,7 +155,7 @@ public class AuthServiceImpl implements AuthService{
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-            if(!roles.get(0).equals("ROLE_AD")) throw new SecurityException("Bad Credentials");
+            if(!roles.get(0).equals("ROLE_AD")) throw new SecurityException("Unauthorized Not AD");
 
             Location presentLocation = null;
 
@@ -163,6 +178,7 @@ public class AuthServiceImpl implements AuthService{
 
             return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
         }
+
         @Override
         public ResponseEntity<?> loginServiceDat(LoginRequestDTO loginRequestDTO) {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
@@ -173,9 +189,25 @@ public class AuthServiceImpl implements AuthService{
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-            if(!roles.get(0).equals("ROLE_DOCTOR")) throw new SecurityException("Bad Credentials");
+            if(!roles.get(0).equals("ROLE_DOCTOR")) throw new SecurityException("Unauthorized Not A doctor");
 
             return ResponseEntity.ok(new JwtResponse(jwt,userDetails.getUsername(),roles));
+        }
+
+        @Override
+        public ResponseEntity<?> loginServiceAdmin(LoginRequestDTO loginRequestDTO){
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(),loginRequestDTO.getPassword()));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.genrateJwtToken(authentication);
+
+            UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetailsImpl.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+
+            if(!roles.get(0).equals("ROLE_ADMIN")) throw new SecurityException("Unauthorized Not a Admin");
+
+            return createSuccessResponse(new JwtResponse(jwt,userDetailsImpl.getUsername(),roles));
+
         }
 
 }

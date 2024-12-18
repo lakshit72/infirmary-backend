@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.dto;
 
+import java.time.LocalDate;
+
 import com.infirmary.backend.configuration.model.Patient;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,7 @@ public class PatientDTO {
     private String email;
     private String name;
     private String school;
-    private String dateOfBirth;
+    private LocalDate dateOfBirth;
     private String program;
     private String phoneNumber;
     private String emergencyContact;

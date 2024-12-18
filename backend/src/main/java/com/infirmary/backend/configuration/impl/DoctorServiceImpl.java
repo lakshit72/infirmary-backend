@@ -31,7 +31,10 @@ import java.util.*;
 
 import org.apache.logging.log4j.util.InternalException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
 import java.time.LocalDate;
 
@@ -123,13 +126,13 @@ public class DoctorServiceImpl implements DoctorService {
             throw new IllegalArgumentException("Date not found");
         }
         HashMap<String, Integer> dayMetrics = new HashMap<>();
-        int byDate = appointmentRepository.countByPrescriptionIsNull();
-        int count = currentAppointmentRepository.countByAppointmentNotNullAndDoctorNotNull();
-        int cnt = (AppointmentQueueManager.getAptSize() + AppointmentQueueManager.getQueueSize() + count);
-        
-        dayMetrics.put("Total_Appointment", byDate);
-        dayMetrics.put("In_Queue", cnt);
-        dayMetrics.put("Patients_left", (byDate - cnt));
+        Integer byDate = appointmentRepository.countByDate(date);
+        int count = currentAppointmentRepository.countByAppointmentNotNull();
+        int cnt = (byDate + currentAppointmentRepository.countByAppointmentNotNullAndAppointment_DateNot(date));
+
+        dayMetrics.put("Total_Appointment", (cnt));
+        dayMetrics.put("In_Queue", count);
+        dayMetrics.put("Patients_left", (cnt - count));
 
         return dayMetrics;
     }
@@ -226,6 +229,35 @@ public class DoctorServiceImpl implements DoctorService {
         }
 
         return currentAppointment.getAppointment().getTokenNo();
+
+    }
+
+
+    @Override
+    public ResponseEntity<?> releasePatient(String email) {
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByDoctor_DoctorEmail(email).orElseThrow(()->new ResourceNotFoundException("No Appointment Found"));
+
+        if(currentAppointment.getDoctor() == null) throw new ResourceNotFoundException("No Such Doctor exists");
+
+        Doctor doctor = currentAppointment.getDoctor();
+
+        doctor.setStatus(true);
+        doctor = doctorRepository.save(doctor);
+        currentAppointment.setDoctor(null);
+
+        if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Found");
+
+        Appointment appointment = currentAppointment.getAppointment();
+        appointment.setDoctor(null);
+        appointment.setWeight(null);
+        appointment.setTemperature(null);
+        appointmentRepository.save(appointment);
+
+        currentAppointment = currentAppointmentRepository.save(currentAppointment);
+
+        AppointmentQueueManager.addAppointmentToQueue(currentAppointment.getAppointment().getAppointmentId());
+
+        return createSuccessResponse("Patient Released");
 
     }
 }
