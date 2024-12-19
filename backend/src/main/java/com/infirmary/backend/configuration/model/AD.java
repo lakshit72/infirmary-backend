@@ -31,6 +31,9 @@ public class AD implements Serializable{
     @Column(name = "password")
     private String password;
 
+    @Column(name = "designation")
+    private String designation;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "location")
     private Location location;
@@ -39,5 +42,6 @@ public class AD implements Serializable{
         this.adEmail = adDTO.getEmail();
         this.name = adDTO.getName();
         this.password = adDTO.getPassword();
+        this.designation = adDTO.getDesignation();
     }
 }

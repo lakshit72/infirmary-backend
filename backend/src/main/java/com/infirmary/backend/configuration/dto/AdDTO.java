@@ -13,6 +13,7 @@ public class AdDTO {
     private String email;
     private String password;
     private String name;
+    private String designation;
 
     public AdDTO(AD ad){
         this.email = ad.getAdEmail();

@@ -15,6 +15,7 @@ public class DoctorDTO {
     private Boolean status;
     private String gender;
     private String password;
+    private String designation;
 
     public DoctorDTO(Doctor doctor) {
         this.doctorId = doctor.getDoctorId();

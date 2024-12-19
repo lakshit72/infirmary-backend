@@ -24,6 +24,9 @@ public class MedicalDetails implements Serializable {
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")
     private Patient patient;
 
+    @Column(name = "residence_type")
+    private String residenceType;
+
     @Column(name = "current_address", nullable = false)
     private String currentAddress;
 
@@ -50,6 +53,7 @@ public class MedicalDetails implements Serializable {
         this.allergies = medicalDetailsDTO.getAllergies();
         this.height = medicalDetailsDTO.getHeight();
         this.weight = medicalDetailsDTO.getWeight();
+        this.residenceType = medicalDetailsDTO.getResidenceType();
     }
 
     public void updateFromMedicalDetailsDTO(MedicalDetailsDTO medicalDetailsDTO){
@@ -59,5 +63,6 @@ public class MedicalDetails implements Serializable {
         this.allergies = medicalDetailsDTO.getAllergies();
         this.height = medicalDetailsDTO.getHeight();
         this.weight = medicalDetailsDTO.getWeight();
+        this.residenceType = medicalDetailsDTO.getResidenceType();
     }
 }

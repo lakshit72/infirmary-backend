@@ -35,6 +35,9 @@ public class Doctor implements Serializable {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "designation")
+    private String designation;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "location")
     private Location location;
@@ -45,5 +48,6 @@ public class Doctor implements Serializable {
         this.name = doctorDTO.getName();
         this.gender = doctorDTO.getGender();
         this.password = doctorDTO.getPassword();
+        this.designation = doctorDTO.getDesignation();
     }
 }

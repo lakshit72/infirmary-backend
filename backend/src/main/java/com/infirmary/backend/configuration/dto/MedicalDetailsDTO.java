@@ -27,6 +27,9 @@ public class MedicalDetailsDTO {
 
     @NotBlank(message = "Please Provide your medical allergies, if none write none")
     private String allergies;
+
+    @NotBlank(message = "Please Provide a residence type")
+    private String residenceType;
     
     @NotNull(message = "Please provide your height")
     @DecimalMin(value = "1.0",message = "Please Provide correct height")
