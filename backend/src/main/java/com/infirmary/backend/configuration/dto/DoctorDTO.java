@@ -1,6 +1,8 @@
 package com.infirmary.backend.configuration.dto;
 
 import com.infirmary.backend.configuration.model.Doctor;
+import com.infirmary.backend.configuration.model.Location;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +18,7 @@ public class DoctorDTO {
     private String gender;
     private String password;
     private String designation;
+    private Location location;
 
     public DoctorDTO(Doctor doctor) {
         this.doctorId = doctor.getDoctorId();
@@ -24,5 +27,6 @@ public class DoctorDTO {
         this.doctorEmail = doctor.getDoctorEmail();
         this.gender = doctor.getGender();
         this.password = doctor.getPassword();
+        this.location = doctor.getLocation();
     }
 }

@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
 @Slf4j
@@ -206,12 +207,25 @@ public class DoctorServiceImpl implements DoctorService {
 
         List<PrescriptionDTO> presc = prescriptionRepository.findByPatient(patient).stream().map((pres)->(new PrescriptionDTO(pres))).toList();
 
-
         resp.setPrescriptions(presc);
+
+        resp.getMedicalDetails().setWeight(currentAppointment.getAppointment().getWeight());
+
+        resp.setDate(currentAppointment.getAppointment().getDate());
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
+
+        Date date = new Date(currentAppointment.getAppointment().getTimestamp());
+
+        resp.setTime(simpleDateFormat.format(date));
 
         resp.setReason(currentAppointment.getAppointment().getAptForm().getReason());
 
         resp.setDocName(currentAppointment.getDoctor().getName());
+
+        resp.setDesignation(currentAppointment.getDoctor().getDesignation());
+
+        resp.setTemp(currentAppointment.getAppointment().getTemperature());
 
         return resp; 
 

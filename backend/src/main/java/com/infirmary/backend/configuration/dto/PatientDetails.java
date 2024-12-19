@@ -1,5 +1,6 @@
 package com.infirmary.backend.configuration.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.Getter;
@@ -15,6 +16,11 @@ public class PatientDetails {
     private List<PrescriptionDTO> prescriptions;
     private String reason;
     private String docName;
+    private String time;
+    private LocalDate date;
+    private Float temp;
+    private String designation;
+
 
     public PatientDetails(PatientDTO patient,MedicalDetailsDTO medicalDetails,List<PrescriptionDTO> prescriptions){
         this.patient = patient;
