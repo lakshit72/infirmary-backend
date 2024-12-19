@@ -3,6 +3,7 @@ package com.infirmary.backend.configuration.dto;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Location;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,11 +13,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DoctorDTO {
     private Long doctorId;
+    @NotBlank(message = "Email must not be empty")
     private String doctorEmail;
+    @NotBlank(message = "Name must not be empty")
     private String name;
     private Boolean status;
+    @NotBlank(message = "Gender must not be empty")
     private String gender;
+    @NotBlank(message = "Password must not be empty")
     private String password;
+    @NotBlank(message = "Designation must not be empty")
     private String designation;
     private Location location;
 
