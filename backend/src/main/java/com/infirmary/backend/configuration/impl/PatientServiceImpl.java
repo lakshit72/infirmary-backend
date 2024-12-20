@@ -220,7 +220,6 @@ public class PatientServiceImpl implements PatientService {
 
        PrescriptionRes prescriptionRes = new PrescriptionRes();
 
-        appointment.getPatient().setPassword("");
 
         prescriptionRes.setPrescription(new PrescriptionDTO(appointment.getPrescription()));
 
@@ -236,6 +235,9 @@ public class PatientServiceImpl implements PatientService {
 
         prescriptionRes.setResidenceType(medicalDetailsRepository.findByPatient_Email(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Patient Found")).getResidenceType());
         
+        prescriptionRes.getPrescription().getDoctor().setPassword("");
+        prescriptionRes.getPrescription().getPatient().setPassword("");
+
         return ResponseEntity.ok(prescriptionRes);
     }
 

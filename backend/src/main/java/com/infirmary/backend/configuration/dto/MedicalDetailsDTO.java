@@ -47,5 +47,6 @@ public class MedicalDetailsDTO {
         this.allergies = medicalDetails.getAllergies();
         this.height = medicalDetails.getHeight();
         this.weight = medicalDetails.getWeight();
+        this.residenceType = medicalDetails.getResidenceType();
     }
 }
