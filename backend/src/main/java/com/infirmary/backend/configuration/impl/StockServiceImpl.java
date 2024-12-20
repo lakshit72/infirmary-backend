@@ -211,7 +211,7 @@ public class StockServiceImpl implements StockService {
     public String editStock(StockDTO stockDTO,Long locId) {
         Stock stock = stockRepository.findById(stockDTO.getId()).orElseThrow(() -> new ResourceNotFoundException("Stock Not Found"));
 
-        if(prescriptionMedsRepository.existsByStock(stock)){
+        if(prescriptionMedsRepository.existsByMedicine(stock)){
             if(stockDTO.getCompany() != stock.getCompany() || stockDTO.getComposition() != stockDTO.getComposition() || stockDTO.getMedicineName() != stock.getMedicineName() || stockDTO.getMedicineType() != stock.getMedicineType()) throw new IllegalArgumentException("The Stock has been prescribed");
         }
         stock.setBatchNumber(stockDTO.getBatchNumber());

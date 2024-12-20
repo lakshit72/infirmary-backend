@@ -10,5 +10,5 @@ import com.infirmary.backend.configuration.model.Stock;
 
 @Repository
 public interface PrescriptionMedsRepository extends JpaRepository<PrescriptionMeds,UUID>{
-    Boolean existsByStock(Stock stock);
+    Boolean existsByMedicine(Stock stock);
 }
