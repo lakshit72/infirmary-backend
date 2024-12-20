@@ -342,7 +342,7 @@ public class AdServiceImpl implements ADService{
 
         if(ad.getLocation() == null) throw new IllegalArgumentException("Must be present at Infirmary");
 
-        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocation(date, ad.getLocation());
+        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocationAndAppointmentIdNotIn(date, ad.getLocation(),AppointmentQueueManager.getAppointedQueue());
 
         List<Map<String,String>> resp = new ArrayList<>();
 

@@ -31,7 +31,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findAllByPatient(Patient patient);
 
-    List<Appointment> findAllByPatientAndPrescriptionNotNull(Patient patient);
+    List<Appointment> findAllByPatientAndPrescriptionNotNullAndAppointmentNotIn(Patient patient,List<Long> ids);
 
     List<Appointment> findAllByAppointmentIdInAndLocation(List<Long> ids,Location location);
 
@@ -39,5 +39,5 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     Integer countByPrescriptionNotNullAndDateNot(LocalDate date);
 
-    List<Appointment> findAllByDateAndLocation(LocalDate localDate, Location location);
+    List<Appointment> findAllByDateAndLocationAndAppointmentIdNotIn(LocalDate localDate, Location location,List<Long> ids);
 }

@@ -234,9 +234,6 @@ public class PatientServiceImpl implements PatientService {
         prescriptionRes.setTime(simpleDateFormat.format(date));
 
         prescriptionRes.setResidenceType(medicalDetailsRepository.findByPatient_Email(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Patient Found")).getResidenceType());
-        
-        prescriptionRes.getPrescription().getDoctor().setPassword("");
-        prescriptionRes.getPrescription().getPatient().setPassword("");
 
         return ResponseEntity.ok(prescriptionRes);
     }
@@ -245,7 +242,7 @@ public class PatientServiceImpl implements PatientService {
     public ResponseEntity<?> getAppointment(String sapEmail) {
         Patient patient = patientRepository.findByEmail(sapEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Found"));
 
-        List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNull(patient);
+        List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNullAndAppointmentNotIn(patient,AppointmentQueueManager.getAppointedQueue());
 
         List<Map<String,String>> resp = new ArrayList<>();
 
