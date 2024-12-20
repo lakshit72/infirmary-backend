@@ -38,6 +38,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -217,9 +218,25 @@ public class PatientServiceImpl implements PatientService {
 
         if(!sapEmail.equals(appointment.getPatient().getEmail())) throw new SecurityException("Unauthorized");
 
-        PrescriptionRes presc = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate());
+       PrescriptionRes prescriptionRes = new PrescriptionRes();
 
-        return ResponseEntity.ok(presc);
+        appointment.getPatient().setPassword("");
+
+        prescriptionRes.setPrescription(new PrescriptionDTO(appointment.getPrescription()));
+
+        prescriptionRes.setDate(appointment.getDate());
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+
+        Date date = new Date(appointment.getTimestamp());
+
+        prescriptionRes.setTime(simpleDateFormat.format(date));
+
+        prescriptionRes.setResidenceType(medicalDetailsRepository.findByPatient_Email(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Patient Found")).getResidenceType());
+        
+        return ResponseEntity.ok(prescriptionRes);
     }
 
     @Override

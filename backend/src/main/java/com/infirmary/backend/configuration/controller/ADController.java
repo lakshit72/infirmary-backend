@@ -124,6 +124,13 @@ public class ADController {
         return createSuccessResponse(dto);
     }
 
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @PostMapping(value = "/stock/editStock")
+    public ResponseEntity<?> editStock(@Valid @RequestBody StockDTO stockDTO, BindingResult bindingResult, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+        String dto = stockService.editStock(stockDTO,locId);
+        return createSuccessResponse(dto);
+    }
+
     //Assign a doctor for the patient 
     @PreAuthorize("hasRole('ROLE_AD')")
     @PostMapping(value = "/submitAppointment")

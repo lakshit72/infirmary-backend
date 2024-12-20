@@ -149,6 +149,13 @@ public class DoctorController {
         return createSuccessResponse(dto);
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @PostMapping(value = "/stock/editStock")
+    public ResponseEntity<?> editStock(@Valid @RequestBody StockDTO stockDTO, BindingResult bindingResult, @RequestHeader(value = "X-Location",required = true) Long locId) throws StockAlreadyExists {
+        String dto = stockService.editStock(stockDTO,locId);
+        return createSuccessResponse(dto);
+    }
+
     //Delete Stock For AD
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @DeleteMapping(value = "/stock/{stock}")

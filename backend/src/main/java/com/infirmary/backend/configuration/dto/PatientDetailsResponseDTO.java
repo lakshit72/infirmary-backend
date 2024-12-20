@@ -11,6 +11,7 @@ public class PatientDetailsResponseDTO {
     private String currentAddress;
     private String medicalHistory;
     private String familyMedicalHistory;
+    private String residenceType;
     private String allergies;
     private Float height;
     private Float weight;
@@ -44,5 +45,6 @@ public class PatientDetailsResponseDTO {
         this.allergies = medicalDetails.getAllergies();
         this.height = medicalDetails.getHeight();
         this.weight = medicalDetails.getWeight();
+        this.residenceType = medicalDetails.getResidenceType();
     }
 }

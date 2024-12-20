@@ -11,11 +11,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class StockDTO {
+    private UUID id;
     @NotNull(message = "Must assign a batch number")
     private Long batchNumber;
 

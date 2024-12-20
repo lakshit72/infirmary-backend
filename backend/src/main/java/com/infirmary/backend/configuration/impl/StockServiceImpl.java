@@ -6,6 +6,7 @@ import com.infirmary.backend.configuration.dto.StockDTO;
 import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.LocationRepository;
+import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.StockService;
 import com.infirmary.backend.shared.utility.FunctionUtil;
@@ -34,11 +35,13 @@ public class StockServiceImpl implements StockService {
     private final StockRepository stockRepository;
     private final MessageConfigUtil messageConfigUtil;
     private final LocationRepository locationRepository;
+    private final PrescriptionMedsRepository prescriptionMedsRepository;
 
-    public StockServiceImpl(StockRepository stockRepository, MessageConfigUtil messageConfigUtil, LocationRepository locationRepository) {
+    public StockServiceImpl(StockRepository stockRepository, MessageConfigUtil messageConfigUtil, LocationRepository locationRepository, PrescriptionMedsRepository prescriptionMedsRepository ) {
         this.stockRepository = stockRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.locationRepository = locationRepository;
+        this.prescriptionMedsRepository = prescriptionMedsRepository;
     }
 
     @Override
@@ -202,5 +205,27 @@ public class StockServiceImpl implements StockService {
         if(presentLocation == null) throw new IllegalArgumentException("Must be present on location");
         
         return stockRepository.findByQuantityGreaterThanAndLocation(0,presentLocation);
+    }
+
+    @Override
+    public String editStock(StockDTO stockDTO,Long locId) {
+        Stock stock = stockRepository.findById(stockDTO.getId()).orElseThrow(() -> new ResourceNotFoundException("Stock Not Found"));
+
+        if(prescriptionMedsRepository.existsByStock(stock)){
+            if(stockDTO.getCompany() != stock.getCompany() || stockDTO.getComposition() != stockDTO.getComposition() || stockDTO.getMedicineName() != stock.getMedicineName() || stockDTO.getMedicineType() != stock.getMedicineType()) throw new IllegalArgumentException("The Stock has been prescribed");
+        }
+        stock.setBatchNumber(stockDTO.getBatchNumber());
+        stock.setCompany(stockDTO.getCompany());
+        stock.setComposition(stockDTO.getComposition());
+        stock.setExpirationDate(stockDTO.getExpirationDate());
+        stock.setLocation(locationRepository.findById(locId).orElseThrow(()->new ResourceNotFoundException("No location found")));
+        stock.setMedicineName(stockDTO.getMedicineName());
+        stock.setMedicineType(stockDTO.getMedicineType());
+        stock.setQuantity(stockDTO.getQuantity());
+
+        stockRepository.save(stock);
+
+        return "Stock Edited Successfully";
+
     }
 }

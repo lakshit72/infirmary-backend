@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -193,7 +194,7 @@ public class AdServiceImpl implements ADService{
             Prescription prescription = prescriptionRepository.findById(currentAppointment.getAppointment().getPrescription().getPrescriptionId()).orElseThrow(()->new ResourceNotFoundException("No Prescription Found"));
             
             if(currentAppointment.getAppointment().getPrescription().getMedicine() != null){
-                List<Long> delList = new ArrayList<>();
+                List<UUID> delList = new ArrayList<>();
                 for(PrescriptionMeds med: currentAppointment.getAppointment().getPrescription().getMedicine()){
                     delList.add(med.getPresMedicineId());
                 }

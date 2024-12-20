@@ -25,4 +25,5 @@ public interface StockService {
     List<Stock> getAllStocks();
     void deleteStock(UUID stockUuid) throws StockNotFoundException;
     List<Stock> getAvailableStock(Double longitude, Double latitude);
+    String editStock(StockDTO stockDTO,Long locId);
 }

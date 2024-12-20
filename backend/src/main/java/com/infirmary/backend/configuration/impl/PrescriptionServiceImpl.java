@@ -13,6 +13,7 @@ import com.infirmary.backend.configuration.model.Stock;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
+import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
 import com.infirmary.backend.configuration.service.PrescriptionService;
@@ -20,9 +21,12 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -39,13 +43,15 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     private final AppointmentRepository appointmentRepository;
     private final StockRepository stockRepository;
     private final DoctorRepository doctorRepository;
+    private final MedicalDetailsRepository medicalDetailsRepository;
 
-    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, CurrentAppointmentRepository currentAppointmentRepository, AppointmentRepository appointmentRepository, StockRepository stockRepository, DoctorRepository doctorRepository) {
+    public PrescriptionServiceImpl(PrescriptionRepository prescriptionRepository, CurrentAppointmentRepository currentAppointmentRepository, AppointmentRepository appointmentRepository, StockRepository stockRepository, DoctorRepository doctorRepository, MedicalDetailsRepository medicalDetailsRepository) {
         this.prescriptionRepository = prescriptionRepository;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.appointmentRepository = appointmentRepository;
         this.stockRepository = stockRepository;
         this.doctorRepository = doctorRepository;
+        this.medicalDetailsRepository = medicalDetailsRepository;
     }
 
     public void submitPrescription(PrescriptionReq prescriptionDTO) {
@@ -120,7 +126,23 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     public ResponseEntity<?> getPrescription(Long id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
 
-        PrescriptionRes prescriptionRes = new PrescriptionRes(new PrescriptionDTO(appointment.getPrescription()), appointment.getDate());
+        PrescriptionRes prescriptionRes = new PrescriptionRes();
+
+        appointment.getPatient().setPassword("");
+
+        prescriptionRes.setPrescription(new PrescriptionDTO(appointment.getPrescription()));
+
+        prescriptionRes.setDate(appointment.getDate());
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+
+        Date date = new Date(appointment.getTimestamp());
+
+        prescriptionRes.setTime(simpleDateFormat.format(date));
+        
+        prescriptionRes.setResidenceType(medicalDetailsRepository.findByPatient_Email(appointment.getPatient().getEmail()).orElseThrow(() -> new ResourceNotFoundException("no Medical Details Found")).getResidenceType());
 
         return ResponseEntity.ok(prescriptionRes);
     }

@@ -213,7 +213,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         resp.setDate(currentAppointment.getAppointment().getDate());
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
 

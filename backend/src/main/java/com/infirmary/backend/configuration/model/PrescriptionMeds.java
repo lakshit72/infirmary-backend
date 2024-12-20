@@ -1,6 +1,7 @@
 package com.infirmary.backend.configuration.model;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,9 +25,9 @@ import lombok.Setter;
 @Table(name = "prescription_medicine")
 public class PrescriptionMeds implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "pres_medicine_id")
-    private Long presMedicineId;
+    private UUID presMedicineId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "medicine",referencedColumnName = "stock_id")
