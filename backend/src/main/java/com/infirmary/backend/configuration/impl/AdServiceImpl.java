@@ -14,8 +14,10 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.infirmary.backend.configuration.dto.AdHocSubmitDTO;
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.model.AD;
+import com.infirmary.backend.configuration.model.ADPrescription;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.AppointmentForm;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
@@ -24,12 +26,14 @@ import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.model.Prescription;
 import com.infirmary.backend.configuration.model.PrescriptionMeds;
 import com.infirmary.backend.configuration.model.Stock;
+import com.infirmary.backend.configuration.repository.AdPrescriptionRepository;
 import com.infirmary.backend.configuration.repository.AdRepository;
 import com.infirmary.backend.configuration.repository.AppointmentFormRepository;
 import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.LocationRepository;
+import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionMedsRepository;
 import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.repository.StockRepository;
@@ -51,7 +55,8 @@ public class AdServiceImpl implements ADService{
     private final PrescriptionMedsRepository prescriptionMedsRepository;
     private final LocationRepository locationRepository;
     private final AdRepository adRepository;
-    
+    private final PatientRepository patientRepository;
+    private final AdPrescriptionRepository adPrescriptionRepository;
 
     //Get The queue pending appointment of doctor
     public ResponseEntity<?> getQueue(Double latitude,Double longitude){
@@ -355,6 +360,28 @@ public class AdServiceImpl implements ADService{
         }
 
         return resp;
+    }
+
+
+    @Override
+    public String submitAdHocAppointment(AdHocSubmitDTO adHocSubmitDTO, String adEmail) {
+        ADPrescription adPrescription = new ADPrescription();
+
+        adPrescription.setAd(adRepository.findByAdEmail(adEmail).orElseThrow(()->new ResourceNotFoundException("No ad exists")));
+
+        Stock stock = stockRepository.findById(adHocSubmitDTO.getMedicine()).orElseThrow(()-> new ResourceNotFoundException("No Medicine Found"));
+
+        if(stock.getQuantity() < adHocSubmitDTO.getQuantity()) throw new IllegalArgumentException("Not enough medicine present");
+        stock.setQuantity(stock.getQuantity() - adHocSubmitDTO.getQuantity());
+        stockRepository.save(stock);
+
+        adPrescription.setMedicine(stock);
+        adPrescription.setQuantity(adHocSubmitDTO.getQuantity());
+
+        adPrescription.setPatient(patientRepository.findByEmail(adHocSubmitDTO.getPatientEmail()).orElseThrow(()-> new ResourceNotFoundException("No patient Found")));
+
+        adPrescriptionRepository.save(adPrescription);
+        return "Appointment Created";
     }
 
 }

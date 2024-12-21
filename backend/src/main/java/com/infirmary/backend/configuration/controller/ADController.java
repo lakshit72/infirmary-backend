@@ -4,6 +4,7 @@ import com.infirmary.backend.configuration.Exception.AppointmentNotFoundExceptio
 import com.infirmary.backend.configuration.Exception.DoctorNotFoundException;
 import com.infirmary.backend.configuration.Exception.StockAlreadyExists;
 import com.infirmary.backend.configuration.Exception.StockNotFoundException;
+import com.infirmary.backend.configuration.dto.AdHocSubmitDTO;
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.StockDTO;
@@ -142,6 +143,12 @@ public class ADController {
     @PostMapping(value = "/submitAppointment")
     public ResponseEntity<?> submitAppointment(@Valid @RequestBody AdSubmitReqDTO adSubmitReqDTO){
         return ResponseEntity.ok(adService.submitAppointment(adSubmitReqDTO));
+    }
+
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @PostMapping(value = "/submit/adHoc")
+    public ResponseEntity<?> submitAdHocAppointment(@Valid @RequestBody AdHocSubmitDTO adHocSubmitDTO){
+        return createSuccessResponse(adService.submitAdHocAppointment(adHocSubmitDTO, getTokenClaims()));
     }
 
     //Get patient and Doctor assigned

@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.infirmary.backend.configuration.dto.AdHocSubmitDTO;
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 
 @Service
@@ -21,4 +22,5 @@ public interface ADService {
     ResponseEntity<?> getTokenData(String email);
     List<?> getAssignedPatient(String sapEmail);
     List<?> getAppointmentByDate(LocalDate date, String sapEmail);
+    String submitAdHocAppointment(AdHocSubmitDTO adHocSubmitDTO, String adEmail);
 }
