@@ -36,5 +36,6 @@ public class DoctorDTO {
         this.gender = doctor.getGender();
         this.password = doctor.getPassword();
         this.location = doctor.getLocation();
+        this.designation = doctor.getDesignation();
     }
 }

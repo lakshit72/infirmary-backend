@@ -368,6 +368,8 @@ public class AdServiceImpl implements ADService{
         ADPrescription adPrescription = new ADPrescription();
 
         adPrescription.setAd(adRepository.findByAdEmail(adEmail).orElseThrow(()->new ResourceNotFoundException("No ad exists")));
+        
+        adPrescription.setPatient(patientRepository.findByEmail(adHocSubmitDTO.getPatientEmail()).orElseThrow(()-> new ResourceNotFoundException("No patient Found")));
 
         Stock stock = stockRepository.findById(adHocSubmitDTO.getMedicine()).orElseThrow(()-> new ResourceNotFoundException("No Medicine Found"));
 
@@ -377,8 +379,6 @@ public class AdServiceImpl implements ADService{
 
         adPrescription.setMedicine(stock);
         adPrescription.setQuantity(adHocSubmitDTO.getQuantity());
-
-        adPrescription.setPatient(patientRepository.findByEmail(adHocSubmitDTO.getPatientEmail()).orElseThrow(()-> new ResourceNotFoundException("No patient Found")));
 
         adPrescriptionRepository.save(adPrescription);
         return "Appointment Created";
