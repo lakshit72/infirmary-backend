@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.dto;
 
+import java.util.UUID;
+
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class CurrentAppointmentDTO {
-    private Long currentAppointmentId;
+    private UUID currentAppointmentId;
     private AppointmentDTO appointmentDTO;
     private PatientDTO patientDTO;
     private DoctorDTO doctorDTO;

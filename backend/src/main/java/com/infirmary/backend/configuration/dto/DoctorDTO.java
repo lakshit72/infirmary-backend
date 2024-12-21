@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.dto;
 
+import java.util.UUID;
+
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Location;
 
@@ -12,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class DoctorDTO {
-    private Long doctorId;
+    private UUID doctorId;
     @NotBlank(message = "Email must not be empty")
     private String doctorEmail;
     @NotBlank(message = "Name must not be empty")

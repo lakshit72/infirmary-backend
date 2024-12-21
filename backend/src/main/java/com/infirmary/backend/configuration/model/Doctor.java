@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -16,9 +17,9 @@ import java.io.Serializable;
 public class Doctor implements Serializable {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "doctor_id")
-    private Long doctorId;
+    private UUID doctorId;
 
     @Column(name = "doctor_email",unique = true)
     private String doctorEmail;

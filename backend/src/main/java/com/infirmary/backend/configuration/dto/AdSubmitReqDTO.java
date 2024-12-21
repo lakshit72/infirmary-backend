@@ -1,5 +1,7 @@
 package com.infirmary.backend.configuration.dto;
 
+import java.util.UUID;
+
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +23,7 @@ public class AdSubmitReqDTO {
     private Float temperature;
 
     @NotNull(message = "Please assign doctor")
-    private Long doctorAss;
+    private UUID doctorAss;
 
     @NotBlank(message = "Please assign patient")
     private String patEmail;

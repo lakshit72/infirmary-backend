@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
 
@@ -16,9 +17,9 @@ import com.infirmary.backend.configuration.dto.AppointmentReqDTO;
 @Table(name = "appointment_form")
 public class AppointmentForm implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     @Column(name = "reason", nullable = false)
     private String reason;

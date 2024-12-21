@@ -1,6 +1,8 @@
 package com.infirmary.backend.configuration.dto;
 
 
+import java.util.UUID;
+
 import com.infirmary.backend.configuration.model.MedicalDetails;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -14,7 +16,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class MedicalDetailsDTO {
-    private Long id;
+    private UUID id;
     
     @NotBlank(message = "Please provide your current address")
     private String currentAddress;

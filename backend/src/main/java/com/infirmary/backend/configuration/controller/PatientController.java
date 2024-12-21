@@ -28,6 +28,7 @@ import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessRes
 import java.lang.String;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -101,7 +102,7 @@ public class PatientController {
     //Get Prescription for patient
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @GetMapping("/getPrescription/{Id}")
-    public ResponseEntity<?> getPrescription(@PathVariable Long Id){
+    public ResponseEntity<?> getPrescription(@PathVariable UUID Id){
         return patientService.getPrescriptions(getTokenClaims(),Id);
     }
 

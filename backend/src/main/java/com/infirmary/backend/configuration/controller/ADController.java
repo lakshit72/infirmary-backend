@@ -83,7 +83,7 @@ public class ADController {
     //Get Prescription for Current ID
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/getPrescription/{id}")
-    public ResponseEntity<?> getAppointment(@PathVariable Long id) {
+    public ResponseEntity<?> getAppointment(@PathVariable UUID id) {
         return prescriptionService.getPrescription(id);
     }
 
@@ -114,6 +114,12 @@ public class ADController {
     @GetMapping(value = "/stock/")
     public ResponseEntity<?> getAllStock(){
         return ResponseEntity.ok(stockService.getAllStocks());
+    }
+
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/stock/available")
+    public ResponseEntity<?> getAvailableStock(@RequestHeader(name = "X-Latitude",required = true) Double latitude, @RequestHeader(name = "X-Longitude", required = true) Double longitude){
+        return ResponseEntity.ok(stockService.getAvailableStock(longitude,latitude));
     }
 
     //Add Stock for AD
@@ -169,7 +175,7 @@ public class ADController {
     //Set Doctor Status for AD
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/setStatus/{docId}")
-    public ResponseEntity<?> setDoctorStatusAD(@RequestParam("isDoctorCheckIn") Boolean isDoctorCheckIn,@PathVariable Long docId,@RequestHeader(name = "X-Latitude",required = false) Double latitude, @RequestHeader(name = "X-Longitude", required = false) Double longitude) throws DoctorNotFoundException {
+    public ResponseEntity<?> setDoctorStatusAD(@RequestParam("isDoctorCheckIn") Boolean isDoctorCheckIn,@PathVariable UUID docId,@RequestHeader(name = "X-Latitude",required = false) Double latitude, @RequestHeader(name = "X-Longitude", required = false) Double longitude) throws DoctorNotFoundException {
         return createSuccessResponse(adService.setDocStatus(docId, isDoctorCheckIn,latitude,longitude));
     }
 

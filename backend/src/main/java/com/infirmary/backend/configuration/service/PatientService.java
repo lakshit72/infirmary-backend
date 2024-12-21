@@ -7,6 +7,8 @@ import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetailsResponseDTO;
 
+import java.util.UUID;
+
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public interface PatientService {
 
     ResponseEntity<?> getToken(String sapEmail) throws ResourceNotFoundException;
 
-    ResponseEntity<?> getPrescriptions(String sapEmail,Long aptId);
+    ResponseEntity<?> getPrescriptions(String sapEmail,UUID aptId);
 
     ResponseEntity<?> getAppointment(String sapEmail);
 }

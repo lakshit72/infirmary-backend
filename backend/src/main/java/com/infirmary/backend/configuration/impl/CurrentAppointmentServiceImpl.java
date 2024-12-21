@@ -15,6 +15,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -28,7 +29,7 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         this.messageConfigUtil = messageConfigUtil;
     }
     @Override
-    public CurrentAppointmentDTO getCurrentAppointmentById(Long currentAppointmentId) {
+    public CurrentAppointmentDTO getCurrentAppointmentById(UUID currentAppointmentId) {
         CurrentAppointment appointment = currentAppointmentRepository.findByAppointment_AppointmentId(currentAppointmentId);
         if (Objects.isNull(appointment)) {
             throw new CurrentAppointmentNotFoundException(messageConfigUtil.getCurrentAppointmentNotFound());
@@ -36,7 +37,7 @@ public class CurrentAppointmentServiceImpl implements CurrentAppointmentService 
         return new CurrentAppointmentDTO(appointment);
     }
     @Override
-    public AppointmentResDTO getAppointmentStatusDoctorStatus(Long currentAppointmentId)throws CurrentAppointmentNotFoundException
+    public AppointmentResDTO getAppointmentStatusDoctorStatus(UUID currentAppointmentId)throws CurrentAppointmentNotFoundException
     {
         AppointmentResDTO appointmentResDTO = new AppointmentResDTO();
         appointmentResDTO.setIsAppointedStatus(null);

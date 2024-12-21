@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping(value = "/api/prescription")
 public class PrescriptionController {
@@ -32,7 +34,7 @@ public class PrescriptionController {
 
     @PostAuthorize("hasRole('ROLE_AD') or hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPrescription/{id}")
-    public ResponseEntity<?> getAppointment(@PathVariable Long id) {
+    public ResponseEntity<?> getAppointment(@PathVariable UUID id) {
         return prescriptionService.getPrescription(id);
     }
 }

@@ -5,22 +5,23 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.UUID;
 
 @Configuration
 public class AppointmentQueueManager {
-    private static final Queue<Long> appointmentQueue = new LinkedList<>();
-    private static final Queue<Long> appointedQueue = new LinkedList<>();
+    private static final Queue<UUID> appointmentQueue = new LinkedList<>();
+    private static final Queue<UUID> appointedQueue = new LinkedList<>();
 
     // Appointment Queue
-    public static void addAppointmentToQueue(Long appointmentId) {
+    public static void addAppointmentToQueue(UUID appointmentId) {
         appointmentQueue.add(appointmentId);
     }
 
-    public static Long getNextAppointment() {
+    public static UUID getNextAppointment() {
         return appointmentQueue.poll();
     }
 
-    public static void removeElement(Long id){
+    public static void removeElement(UUID id){
         appointmentQueue.remove(id);
     }
 
@@ -28,20 +29,20 @@ public class AppointmentQueueManager {
         return !appointmentQueue.isEmpty();
     }
 
-    public static ArrayList<Long> getQueue(){
+    public static ArrayList<UUID> getQueue(){
         return new ArrayList<>(appointmentQueue);
     }
 
     //Appointed Queue
-    public static void addAppointedQueue(Long appointedId){
+    public static void addAppointedQueue(UUID appointedId){
         appointedQueue.add(appointedId);
     }
 
-    public static ArrayList<Long> getAppointedQueue(){
+    public static ArrayList<UUID> getAppointedQueue(){
         return new ArrayList<>(appointedQueue);
     }
 
-    public static void removeApptEl(Long aptId){
+    public static void removeApptEl(UUID aptId){
         appointedQueue.remove(aptId);
     }
   

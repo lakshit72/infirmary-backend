@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 @Entity
 @Getter
 @Setter
@@ -13,9 +14,9 @@ import java.io.Serializable;
 @Table(name = "current_appointment")
 public class CurrentAppointment implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "current_appointment_id")
-    private Long currentAppointmentId;
+    private UUID currentAppointmentId;
 
     @ManyToOne
     @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id")

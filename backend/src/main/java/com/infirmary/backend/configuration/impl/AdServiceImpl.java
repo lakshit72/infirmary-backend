@@ -57,7 +57,7 @@ public class AdServiceImpl implements ADService{
     public ResponseEntity<?> getQueue(Double latitude,Double longitude){
         ArrayList<HashMap<String,String>> resp = new ArrayList<>();
 
-        ArrayList<Long> idQueue = AppointmentQueueManager.getQueue();
+        ArrayList<UUID> idQueue = AppointmentQueueManager.getQueue();
 
         
         List<Location> locations = locationRepository.findAll();
@@ -115,7 +115,7 @@ public class AdServiceImpl implements ADService{
     public ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude) {
         ArrayList<HashMap<String,Object>> resp = new ArrayList<>();
 
-        ArrayList<Long> idQueue = AppointmentQueueManager.getAppointedQueue();
+        ArrayList<UUID> idQueue = AppointmentQueueManager.getAppointedQueue();
         List<Location> locations = locationRepository.findAll();
         
         Location presentLocation = null;
@@ -223,7 +223,7 @@ public class AdServiceImpl implements ADService{
 
     //Set Doctor status by AD
     @Override
-    public String setDocStatus(Long docID, Boolean docStat,Double latitude, Double longitude) {
+    public String setDocStatus(UUID docID, Boolean docStat,Double latitude, Double longitude) {
         Doctor doc = doctorRepository.findById(docID).orElseThrow(()->new ResourceNotFoundException("Doctor Not Found"));
 
         Optional<CurrentAppointment> currentAppointment = currentAppointmentRepository.findByDoctor(doc);
@@ -342,7 +342,7 @@ public class AdServiceImpl implements ADService{
 
         if(ad.getLocation() == null) throw new IllegalArgumentException("Must be present at Infirmary");
 
-        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocationAndAppointmentIdNotIn(date, ad.getLocation(),AppointmentQueueManager.getAppointedQueue());
+        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocation(date, ad.getLocation()).stream().filter(apt -> !(AppointmentQueueManager.getAppointedQueue().contains(apt.getAppointmentId()))).toList();
 
         List<Map<String,String>> resp = new ArrayList<>();
 

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
@@ -33,7 +34,7 @@ public class AppointmentController {
 
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/{appointment-id}")
-    public ResponseEntity<?> getAppointmentById(@PathVariable("appointment-id") Long appointmentId)
+    public ResponseEntity<?> getAppointmentById(@PathVariable("appointment-id") UUID appointmentId)
             throws AppointmentNotFoundException {
         AppointmentDTO response = appointmentService.getAppointmentById(appointmentId);
         return createSuccessResponse(response);
@@ -78,7 +79,7 @@ public class AppointmentController {
 
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/prescription/byAppointmentId/{app-id}")
-    public ResponseEntity<?> getPrescriptionByAppointmentId(@PathVariable("app-id") Long appointmentId)
+    public ResponseEntity<?> getPrescriptionByAppointmentId(@PathVariable("app-id") UUID appointmentId)
             throws AppointmentNotFoundException, PrescriptionNotFoundException {
         PrescriptionDTO response = appointmentService.getPrescriptionByAppointmentId(appointmentId);
         return createSuccessResponse(response);

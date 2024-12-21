@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -15,9 +16,9 @@ import java.io.Serializable;
 public class PatientMedicalDetailsMapping implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-    private Long id;
+    private UUID id;
 
     @OneToOne
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email", nullable = false)

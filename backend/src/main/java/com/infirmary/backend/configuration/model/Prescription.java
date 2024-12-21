@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "prescription")
@@ -20,9 +21,9 @@ import java.util.List;
 public class Prescription implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "prescription_id")
-    private Long prescriptionId;
+    private UUID prescriptionId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email")

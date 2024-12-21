@@ -11,10 +11,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public interface AppointmentService {
-    AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException;
+    AppointmentDTO getAppointmentById(UUID appointmentId) throws AppointmentNotFoundException;
 
     List<AppointmentDTO> getAppointmentsByPatientId(String email) throws AppointmentNotFoundException,
             PatientNotFoundException;
@@ -24,10 +25,10 @@ public interface AppointmentService {
 
     LocalDate getLastAppointmentDateByEmail(String patientEmail) throws AppointmentNotFoundException;
 
-    void scheduleAppointment(Long appointmentId);
-    Long getNextAppointment();
+    void scheduleAppointment(UUID appointmentId);
+    UUID getNextAppointment();
     AppointmentDTO getCurrentNextAppointment();
     List<Prescription> getPrescriptionUrlByPatientEmail(String email) throws PatientNotFoundException;
-    PrescriptionDTO getPrescriptionByAppointmentId(Long appointmentId) throws PatientNotFoundException ,
+    PrescriptionDTO getPrescriptionByAppointmentId(UUID appointmentId) throws PatientNotFoundException ,
             PrescriptionNotFoundException;
 }

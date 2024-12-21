@@ -123,7 +123,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public ResponseEntity<?> getPrescription(Long id) {
+    public ResponseEntity<?> getPrescription(UUID id) {
         Appointment appointment = appointmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
 
         PrescriptionRes prescriptionRes = new PrescriptionRes();

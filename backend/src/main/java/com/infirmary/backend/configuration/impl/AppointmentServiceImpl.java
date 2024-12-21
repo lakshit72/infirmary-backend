@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Transactional
@@ -35,7 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public AppointmentDTO getAppointmentById(Long appointmentId) throws AppointmentNotFoundException {
+    public AppointmentDTO getAppointmentById(UUID appointmentId) throws AppointmentNotFoundException {
         Appointment appointment = appointmentRepository.findByAppointmentId(appointmentId);
         if (Objects.isNull(appointment)) {
             throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());
@@ -82,12 +83,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void scheduleAppointment(Long appointmentId) {
+    public void scheduleAppointment(UUID appointmentId) {
         AppointmentQueueManager.addAppointmentToQueue(appointmentId);
     }
     
     @Override
-    public Long getNextAppointment() {
+    public UUID getNextAppointment() {
         boolean res = AppointmentQueueManager.hasMoreAppointments();
         if (res) {
             return AppointmentQueueManager.getNextAppointment();
@@ -97,7 +98,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentDTO getCurrentNextAppointment() throws AppointmentNotFoundException {
-        Long nextId = getNextAppointment();
+        UUID nextId = getNextAppointment();
         // no need to check as getAppointmentById will be checking for null
         return getAppointmentById(nextId);
     }
@@ -116,7 +117,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
     
     @Override
-    public PrescriptionDTO getPrescriptionByAppointmentId(Long appointmentId) throws PatientNotFoundException ,
+    public PrescriptionDTO getPrescriptionByAppointmentId(UUID appointmentId) throws PatientNotFoundException ,
             PrescriptionNotFoundException {
         if (Objects.isNull(appointmentId)) {
             throw new AppointmentNotFoundException(messageConfigUtil.getAppointmentNotFoundException());

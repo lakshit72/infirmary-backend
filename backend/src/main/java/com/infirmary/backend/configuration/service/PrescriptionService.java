@@ -2,6 +2,8 @@ package com.infirmary.backend.configuration.service;
 
 import com.infirmary.backend.configuration.dto.PrescriptionReq;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -9,5 +11,5 @@ import org.springframework.stereotype.Service;
 public interface PrescriptionService {
     void submitPrescription(PrescriptionReq prescriptionDTO);
 
-    ResponseEntity<?> getPrescription(Long id);
+    ResponseEntity<?> getPrescription(UUID id);
 }

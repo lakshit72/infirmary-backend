@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping(value = "/api/currentAppointment")
 public class CurrentAppointmentController {
@@ -24,13 +26,13 @@ public class CurrentAppointmentController {
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/{id}")
-    public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") UUID id) {
         CurrentAppointmentDTO currentAppointment = currentAppointmentService.getCurrentAppointmentById(id);
         return createSuccessResponse(currentAppointment);
     }
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/status/{id}")
-    public ResponseEntity<?> getAppointmentDoctorStatusById(@PathVariable("id") Long id)
+    public ResponseEntity<?> getAppointmentDoctorStatusById(@PathVariable("id") UUID id)
     {
         AppointmentResDTO appointmentStatusDoctorStatus = currentAppointmentService.getAppointmentStatusDoctorStatus(id);
         return createSuccessResponse(appointmentStatusDoctorStatus);

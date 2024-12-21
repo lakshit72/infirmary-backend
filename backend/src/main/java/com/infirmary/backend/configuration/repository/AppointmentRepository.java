@@ -11,11 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
+public interface AppointmentRepository extends JpaRepository<Appointment, UUID> {
 
-    Appointment findByAppointmentId(@NonNull Long appointmentId);
+    Appointment findByAppointmentId(@NonNull UUID appointmentId);
 
     List<Appointment> findByDoctor_DoctorEmail(String doctorEmail);
 
@@ -31,13 +32,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     List<Appointment> findAllByPatient(Patient patient);
 
-    List<Appointment> findAllByPatientAndPrescriptionNotNullAndAppointmentIdNotIn(Patient patient,List<Long> ids);
+    List<Appointment> findAllByPatientAndPrescriptionNotNull(Patient patient);
 
-    List<Appointment> findAllByAppointmentIdInAndLocation(List<Long> ids,Location location);
+    List<Appointment> findAllByAppointmentIdInAndLocation(List<UUID> ids,Location location);
 
     Integer countByDateAndPrescriptionNotNull(LocalDate date);
 
     Integer countByPrescriptionNotNullAndDateNot(LocalDate date);
 
-    List<Appointment> findAllByDateAndLocationAndAppointmentIdNotIn(LocalDate localDate, Location location,List<Long> ids);
+    List<Appointment> findAllByDateAndLocation(LocalDate localDate, Location location);
+
 }

@@ -39,7 +39,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 @Slf4j
@@ -173,8 +175,12 @@ public class PatientServiceImpl implements PatientService {
 
         Appointment appointment = new Appointment();
         appointment.setPatient(patient.get());
-        appointment.setDate(LocalDate.now());
-        appointment.setTimestamp(System.currentTimeMillis());
+        Long timeStamp = System.currentTimeMillis();
+
+        LocalDate date = Instant.ofEpochMilli(timeStamp).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        appointment.setDate(date);
+        appointment.setTimestamp(timeStamp);
         appointment.setAptForm(appointmentForm2);
         appointment.setTokenNo(appointmentRepository.countByDate(LocalDate.now())+1);
         appointment.setLocation(presentLocation);
@@ -212,7 +218,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public ResponseEntity<?> getPrescriptions(String sapEmail,Long aptId) {
+    public ResponseEntity<?> getPrescriptions(String sapEmail,UUID aptId) {
 
         Appointment appointment = appointmentRepository.findById(aptId).orElseThrow(()-> new ResourceNotFoundException("No prescription Found"));
 
@@ -240,9 +246,11 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public ResponseEntity<?> getAppointment(String sapEmail) {
+        sapEmail = sapEmail.substring(0,sapEmail.indexOf("@")).concat(sapEmail.substring(sapEmail.indexOf("@")).replaceAll(",", "."));
+
         Patient patient = patientRepository.findByEmail(sapEmail).orElseThrow(()-> new ResourceNotFoundException("No Patient Found"));
 
-        List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNullAndAppointmentIdNotIn(patient,AppointmentQueueManager.getAppointedQueue());
+        List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNull(patient).stream().filter(apt -> !(AppointmentQueueManager.getAppointedQueue().contains(apt.getAppointmentId()))).toList();
 
         List<Map<String,String>> resp = new ArrayList<>();
 

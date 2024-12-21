@@ -2,9 +2,8 @@ package com.infirmary.backend.configuration.controller;
 
 
 import java.io.IOException;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
-import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.AuthService;
 
 import jakarta.validation.Valid;
@@ -28,9 +26,6 @@ import jakarta.validation.Valid;
 @Validated
 public class AuthController {
     private AuthService authService;
-
-    @Autowired
-    PrescriptionRepository prescriptionRepository;
 
     public AuthController(AuthService authService){
         this.authService = authService;
@@ -62,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping("/test")
-    public ResponseEntity<?> test(@RequestHeader(name = "Location-Latitude") String latitude){
-        throw new ResourceNotFoundException("Test Exceptiopn");
+    public List<?> test(){
+        throw new IllegalAccessError();
     }
 }

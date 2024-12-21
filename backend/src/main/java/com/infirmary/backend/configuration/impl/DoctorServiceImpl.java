@@ -142,6 +142,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public HashMap<LocalDate, Prescription> getPrescriptionHistory(String email)
     {
+        email = email.substring(0,email.indexOf("@")).concat(email.substring(email.indexOf("@")).replaceAll(",", "."));
         //put check
         List<Appointment> listOfAppointments = appointmentRepository.findByPatient_Email(email);
         HashMap<LocalDate, Prescription> mapOfPrescription = new HashMap<>();

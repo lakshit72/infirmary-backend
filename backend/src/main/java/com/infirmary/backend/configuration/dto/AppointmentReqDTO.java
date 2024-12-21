@@ -1,6 +1,8 @@
 package com.infirmary.backend.configuration.dto;
 
 
+import java.util.UUID;
+
 import com.infirmary.backend.configuration.model.AppointmentForm;
 
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +18,7 @@ public class AppointmentReqDTO {
     @NotBlank(message = "Please Provide reason for visit")
     private String reason;
     private Boolean isFollowUp;
-    private Long preferredDoctor;
+    private UUID preferredDoctor;
     private String reasonPrefDoctor;
 
     public AppointmentReqDTO(AppointmentForm appointmentForm) {

@@ -98,7 +98,7 @@ public class DoctorController {
     //Get Prescription for Current ID
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getPrescription/{id}")
-    public ResponseEntity<?> getAppointment(@PathVariable Long id) {
+    public ResponseEntity<?> getAppointment(@PathVariable UUID id) {
         return prescriptionService.getPrescription(id);
     }
     

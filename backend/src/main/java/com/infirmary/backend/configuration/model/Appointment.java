@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Getter
@@ -16,9 +17,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Appointment implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "appointment_id")
-    private Long appointmentId;
+    private UUID appointmentId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sap_email", referencedColumnName = "sap_email", nullable = false)

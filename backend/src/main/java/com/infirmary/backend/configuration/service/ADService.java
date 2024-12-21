@@ -2,6 +2,7 @@ package com.infirmary.backend.configuration.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public interface ADService {
     ResponseEntity<?> getCompletedQueue(Double latitude, Double longitude);
     String submitAppointment(AdSubmitReqDTO adSubmitReqDTO);
     String rejectAppointment(String email);
-    String setDocStatus(Long docID,Boolean docStat,Double latitude,Double longitude);
+    String setDocStatus(UUID docID,Boolean docStat,Double latitude,Double longitude);
     String completeAppointment(String sapEmail);
     ResponseEntity<?> getTokenData(String email);
     List<?> getAssignedPatient(String sapEmail);
