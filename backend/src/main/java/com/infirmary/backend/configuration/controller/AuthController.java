@@ -1,16 +1,21 @@
 package com.infirmary.backend.configuration.controller;
 
 
+import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
+
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
@@ -18,6 +23,7 @@ import com.infirmary.backend.configuration.dto.LoginRequestDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.service.AuthService;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 
@@ -52,8 +58,13 @@ public class AuthController {
     }
 
     @PostMapping("/patient/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody PatientReqDTO patientDTO, BindingResult bindingResult) throws UserAlreadyExists, IOException{
+    public ResponseEntity<?> registerUser(@Valid @RequestBody PatientReqDTO patientDTO, BindingResult bindingResult) throws UserAlreadyExists, IOException, MessagingException{
         return authService.signUpPat(patientDTO);
+    }
+
+    @GetMapping("/user/verify")
+    public ResponseEntity<?> verifyPatient(@RequestParam(name = "code") UUID code){
+        return createSuccessResponse(authService.verifyUser(code));
     }
 
     @PostMapping("/test")
