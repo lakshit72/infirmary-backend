@@ -24,12 +24,14 @@ public class CurrentAppointmentController {
     public CurrentAppointmentController(CurrentAppointmentService currentAppointmentService) {
         this.currentAppointmentService = currentAppointmentService;
     }
+    
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> getCurrentAppointmentById(@PathVariable("id") UUID id) {
         CurrentAppointmentDTO currentAppointment = currentAppointmentService.getCurrentAppointmentById(id);
         return createSuccessResponse(currentAppointment);
     }
+
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/status/{id}")
     public ResponseEntity<?> getAppointmentDoctorStatusById(@PathVariable("id") UUID id)
@@ -37,6 +39,7 @@ public class CurrentAppointmentController {
         AppointmentResDTO appointmentStatusDoctorStatus = currentAppointmentService.getAppointmentStatusDoctorStatus(id);
         return createSuccessResponse(appointmentStatusDoctorStatus);
     }
+
     @PreAuthorize("hasRole('ROLE_DOCTOR') or hasRole('ROLE_AD')")
     @GetMapping(value = "/currApp/{doctor-id}")
     public ResponseEntity<?> getCurrentAppointmentByDoctorId(@PathVariable("doctor-id") String doctorId)

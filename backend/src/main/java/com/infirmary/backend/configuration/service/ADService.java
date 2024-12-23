@@ -23,4 +23,5 @@ public interface ADService {
     List<?> getAssignedPatient(String sapEmail);
     List<?> getAppointmentByDate(LocalDate date, String sapEmail);
     String submitAdHocAppointment(AdHocSubmitDTO adHocSubmitDTO, String adEmail);
+    List<?> getAdHocAppointment(LocalDate date);
 }

@@ -40,6 +40,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
 
     Integer countByPrescriptionNotNullAndDateNot(LocalDate date);
 
-    List<Appointment> findAllByDateAndLocation(LocalDate localDate, Location location);
+    List<Appointment> findAllByDateAndLocationAndPrescriptionNotNull(LocalDate localDate, Location location);
 
 }

@@ -1,5 +1,6 @@
 package com.infirmary.backend.configuration.model;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import jakarta.persistence.Column;
@@ -34,5 +35,11 @@ public class ADPrescription {
 
     @Column(name = "quantity")
     private Integer quantity;
+
+    @Column(name = "date")
+    private LocalDate date;
+
+    @Column(name = "timestamp")
+    private Long timestamp;
 
 }

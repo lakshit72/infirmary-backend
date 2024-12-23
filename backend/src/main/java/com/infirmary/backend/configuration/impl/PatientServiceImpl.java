@@ -177,12 +177,12 @@ public class PatientServiceImpl implements PatientService {
         appointment.setPatient(patient.get());
         Long timeStamp = System.currentTimeMillis();
 
-        LocalDate date = Instant.ofEpochMilli(timeStamp).atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate date = Instant.ofEpochMilli(timeStamp).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate();
 
         appointment.setDate(date);
         appointment.setTimestamp(timeStamp);
         appointment.setAptForm(appointmentForm2);
-        appointment.setTokenNo(appointmentRepository.countByDate(LocalDate.now())+1);
+        appointment.setTokenNo(appointmentRepository.countByDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate())+1);
         appointment.setLocation(presentLocation);
         appointmentRepository.save(appointment);
         currentAppointment.setAppointment(appointment);
@@ -252,6 +252,10 @@ public class PatientServiceImpl implements PatientService {
 
         List<Appointment> aptList =  appointmentRepository.findAllByPatientAndPrescriptionNotNull(patient).stream().filter(apt -> !(AppointmentQueueManager.getAppointedQueue().contains(apt.getAppointmentId()))).toList();
 
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+
         List<Map<String,String>> resp = new ArrayList<>();
 
         for(Appointment curApt : aptList){
@@ -259,6 +263,7 @@ public class PatientServiceImpl implements PatientService {
             apt.put("appointmentId",curApt.getAppointmentId().toString());
             apt.put("date",curApt.getDate().toString());
             apt.put("token", curApt.getTokenNo().toString());
+            apt.put("time", simpleDateFormat.format(new Date(curApt.getTimestamp())));
             resp.add(apt);
         }
 

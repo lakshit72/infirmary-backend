@@ -2,12 +2,17 @@ package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.TimeZone;
 import java.util.UUID;
 
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -276,11 +281,11 @@ public class AdServiceImpl implements ADService{
         for(PrescriptionMeds meds:medLst){
             Stock stock = stockRepository.findById(meds.getMedicine().getId()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine Exists"));
 
-            Integer medQty = (int) Math.ceil((meds.getDosageAfternoon()+meds.getDosageEvening()+meds.getDosageMorning()));
+            Integer medQty = (int) Math.ceil((meds.getDosageAfternoon()+meds.getDosageEvening()+meds.getDosageMorning())*meds.getDuration());
 
-            if(stock.getQuantity() - (meds.getDuration()*medQty)<0) throw new IllegalArgumentException("Medicine Quantity Not Enough");
+            if(stock.getQuantity() - (medQty)<0) throw new IllegalArgumentException("Medicine Quantity Not Enough");
 
-            stock.setQuantity(stock.getQuantity() - (meds.getDuration()*medQty));
+            stock.setQuantity(stock.getQuantity() - (medQty));
 
             stocks.add(stock);
         }
@@ -347,7 +352,11 @@ public class AdServiceImpl implements ADService{
 
         if(ad.getLocation() == null) throw new IllegalArgumentException("Must be present at Infirmary");
 
-        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocation(date, ad.getLocation()).stream().filter(apt -> !(AppointmentQueueManager.getAppointedQueue().contains(apt.getAppointmentId()))).toList();
+        List<Appointment> allAppointments = appointmentRepository.findAllByDateAndLocationAndPrescriptionNotNull(date, ad.getLocation()).stream().filter(apt -> !(AppointmentQueueManager.getAppointedQueue().contains(apt.getAppointmentId()))).toList();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
 
         List<Map<String,String>> resp = new ArrayList<>();
 
@@ -356,6 +365,8 @@ public class AdServiceImpl implements ADService{
             apt.put("appointmentId",curApt.getAppointmentId().toString());
             apt.put("PatientName",curApt.getPatient().getName());
             apt.put("token", curApt.getTokenNo().toString());
+            apt.put("date", curApt.getDate().toString());
+            apt.put("time", simpleDateFormat.format(new Date(curApt.getTimestamp())));
             resp.add(apt);
         }
 
@@ -371,6 +382,12 @@ public class AdServiceImpl implements ADService{
         
         adPrescription.setPatient(patientRepository.findByEmail(adHocSubmitDTO.getPatientEmail()).orElseThrow(()-> new ResourceNotFoundException("No patient Found")));
 
+        Long timeStamp = System.currentTimeMillis();
+
+        adPrescription.setDate(Instant.ofEpochMilli(timeStamp).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate());
+
+        adPrescription.setTimestamp(timeStamp);
+
         Stock stock = stockRepository.findById(adHocSubmitDTO.getMedicine()).orElseThrow(()-> new ResourceNotFoundException("No Medicine Found"));
 
         if(stock.getQuantity() < adHocSubmitDTO.getQuantity()) throw new IllegalArgumentException("Not enough medicine present");
@@ -382,6 +399,33 @@ public class AdServiceImpl implements ADService{
 
         adPrescriptionRepository.save(adPrescription);
         return "Appointment Created";
+    }
+
+
+    @Override
+    public List<?> getAdHocAppointment(LocalDate date) {
+        List<ADPrescription> adPrescriptions = adPrescriptionRepository.findAllByDate(date);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Kolkata"));
+
+        List<HashMap<String,String>> resp = new ArrayList<>();
+
+        for(ADPrescription adPrescription:adPrescriptions){
+            HashMap<String,String> row = new HashMap<>();
+            row.put("PatientName", adPrescription.getPatient().getName());
+            row.put("MedicineName", adPrescription.getMedicine().getMedicineName());
+            row.put("Quantity", adPrescription.getQuantity().toString());
+            row.put("PatientEmail", adPrescription.getPatient().getEmail());
+            row.put("ADName", adPrescription.getAd().getName());
+            row.put("ADEmail", adPrescription.getAd().getAdEmail());
+            row.put("Date", adPrescription.getDate().toString());
+            row.put("Time", simpleDateFormat.format(new Date(adPrescription.getTimestamp())));
+            resp.add(row);
+        }
+
+        return resp;
     }
 
 }

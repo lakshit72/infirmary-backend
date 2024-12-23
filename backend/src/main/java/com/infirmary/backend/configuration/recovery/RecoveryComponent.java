@@ -2,7 +2,8 @@ package com.infirmary.backend.configuration.recovery;
 
 import java.util.List;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.ZoneId;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class RecoveryComponent {
         List<CurrentAppointment> cursAPt = currentAppointmentRepository.findAllByAppointmentNotNullAndDoctorIsNull();
 
         for(CurrentAppointment crs:cursAPt){
-            if(!crs.getAppointment().getDate().equals(LocalDate.now())){
+            if(!crs.getAppointment().getDate().equals(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate())){
                 Appointment apt = crs.getAppointment();
                 crs.setAppointment(null);
                 currentAppointmentRepository.save(crs);

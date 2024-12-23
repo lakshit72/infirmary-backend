@@ -31,7 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,7 +73,7 @@ public class ADController {
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/total-patient-count")
     public ResponseEntity<?> getPatientStat() throws AppointmentNotFoundException{
-        return createSuccessResponse(doctorService.getAppointmentCountByDate(LocalDate.now()));
+        return createSuccessResponse(doctorService.getAppointmentCountByDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate()));
     }
 
     //Get Appointment Form for AD for Patient List
@@ -108,6 +110,12 @@ public class ADController {
     @GetMapping(value = "/getCompletedQueue")
     public ResponseEntity<?> getCompletedQueue(@RequestHeader(name = "X-Latitude",required = true) Double latitude,@RequestHeader(name = "X-Longitude", required = true) Double longitude){
         return adService.getCompletedQueue(latitude,longitude);
+    }
+
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/getAdHocByDate")
+    public ResponseEntity<?> getAdHocByDate(@RequestParam(name = "date") LocalDate date){
+        return createSuccessResponse(adService.getAdHocAppointment(date));
     }
 
     //Get Stock For AD

@@ -25,7 +25,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -62,7 +64,7 @@ public class DoctorController {
         return createSuccessResponse(response);
     }
 
-    //Not used
+    //Get Status of the doctor in doctor dashboard
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @GetMapping(value = "/getStatus")
     public ResponseEntity<?> getDoctorStatusById() throws DoctorNotFoundException {
@@ -91,7 +93,7 @@ public class DoctorController {
     @GetMapping(value = "/total-patient-count")
     public ResponseEntity<?> getAppointmentCountByDate()
             throws AppointmentNotFoundException {
-        HashMap<String, Integer> countByDate = doctorService.getAppointmentCountByDate(LocalDate.now());
+        HashMap<String, Integer> countByDate = doctorService.getAppointmentCountByDate(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate());
         return createSuccessResponse(countByDate);
     }
 

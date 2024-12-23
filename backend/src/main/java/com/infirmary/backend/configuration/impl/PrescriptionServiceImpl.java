@@ -22,7 +22,8 @@ import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import lombok.extern.slf4j.Slf4j;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
             Stock currMed = stockRepository.findById(pres.getMedicine()).orElseThrow(()->new ResourceNotFoundException("No Such Medicine"));
             if(currMed.getQuantity() < (medQty*pres.getDuration())) throw new IllegalArgumentException("Not enough Stock available");
-            if(currMed.getExpirationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Medicines expired");
+            if(currMed.getExpirationDate().isBefore(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate())) throw new IllegalArgumentException("Medicines expired");
             medicine.setMedicine(currMed);
             medicine.setSuggestion(pres.getSuggestion());
             prescription.addPresMed(medicine);

@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,9 +33,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("status", status.value());
         response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-        String defaultMessage = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
-        String message = defaultMessage.contains(":") ? defaultMessage.substring(defaultMessage.indexOf(":")) : defaultMessage;
-        response.put("message", message);
+        String defaultMessage = "";
+        for(FieldError fieldError:ex.getBindingResult().getFieldErrors()){
+            defaultMessage = defaultMessage.concat(" ".concat(fieldError.getDefaultMessage().substring(fieldError.getDefaultMessage().indexOf(":"))));
+        }
+        response.put("message", defaultMessage);
         response.put("details", "Invalid Arguments");
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
