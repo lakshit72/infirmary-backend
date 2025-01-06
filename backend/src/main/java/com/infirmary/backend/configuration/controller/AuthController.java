@@ -4,6 +4,7 @@ package com.infirmary.backend.configuration.controller;
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
+import com.infirmary.backend.configuration.dto.PasswordChangeDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.service.AuthService;
 
@@ -65,6 +67,16 @@ public class AuthController {
     @GetMapping("/user/verify")
     public ResponseEntity<?> verifyPatient(@RequestParam(name = "code") UUID code){
         return createSuccessResponse(authService.verifyUser(code));
+    }
+
+    @GetMapping("/passwordChangeRequest")
+    public ResponseEntity<?> passwordChangeReq(@RequestParam(name = "email") String email, @RequestParam(name = "role") String role) throws UnsupportedEncodingException, MessagingException{
+        return createSuccessResponse(role.equals("patient")?authService.forgetPassPat(email):role.equals("doctor")?authService.forgetPassDoc(email):authService.forgetPassAd(email));
+    }
+
+    @PostMapping("/passwordChange")
+    public ResponseEntity<?> passwordChange(@RequestParam(name = "code") UUID code, @RequestParam(name = "role") String role, @RequestBody PasswordChangeDTO passwordChange) throws UnsupportedEncodingException, MessagingException{
+        return createSuccessResponse(role.equals("patient")?authService.changePassPat(code, passwordChange):role.equals("doctor")?authService.changePassDoc(code, passwordChange):authService.changePassPat(code, passwordChange));
     }
 
     @PostMapping("/test")

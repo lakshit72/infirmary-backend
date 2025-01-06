@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,17 +29,20 @@ import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.JwtResponse;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
+import com.infirmary.backend.configuration.dto.PasswordChangeDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
 import com.infirmary.backend.configuration.model.AD;
 import com.infirmary.backend.configuration.model.Conformation;
 import com.infirmary.backend.configuration.model.Doctor;
 import com.infirmary.backend.configuration.model.Location;
+import com.infirmary.backend.configuration.model.PasswordChange;
 import com.infirmary.backend.configuration.model.Patient;
 import com.infirmary.backend.configuration.repository.AdRepository;
 import com.infirmary.backend.configuration.repository.ConformationRepository;
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.LocationRepository;
+import com.infirmary.backend.configuration.repository.PasswordChangeRepository;
 import com.infirmary.backend.configuration.repository.PatientRepository;
 import com.infirmary.backend.configuration.securityimpl.UserDetailsImpl;
 import com.infirmary.backend.configuration.service.AuthService;
@@ -61,6 +65,7 @@ public class AuthServiceImpl implements AuthService{
     private LocationRepository locationRepository;
     private ConformationRepository conformationRepository;
     private JavaMailSender javaMailSender;
+    private PasswordChangeRepository passwordChangeRepository;
     
     @Override
     public ResponseEntity<?> loginServicePat(LoginRequestDTO loginRequestDTO) {
@@ -131,7 +136,7 @@ public class AuthServiceImpl implements AuthService{
                     + "Please click the link below to verify your registration:<br>"
                     + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
                     + "Thank you,<br>"
-                    + "Your company name.";
+                    + "UPES UHS.";
             
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -141,7 +146,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", patient.getName());
-            String verifyURL = "http://ec2-3-110-204-139.ap-south-1.compute.amazonaws.com/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
+            String verifyURL = "http://localhost:8081/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -149,7 +154,7 @@ public class AuthServiceImpl implements AuthService{
             
             javaMailSender.send(message);
 
-            return createSuccessResponse("Patient Created Please Verify Your Account");
+            return createSuccessResponse("Patient Created, Please verify email by clicking on the link sent to your email");
         }
 
         @Override
@@ -183,7 +188,7 @@ public class AuthServiceImpl implements AuthService{
                     + "Please click the link below to verify your registration:<br>"
                     + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
                     + "Thank you,<br>"
-                    + "Your company name.";
+                    + "UPES UHS.";
             
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -193,7 +198,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", doctor.getName());
-            String verifyURL = "http://ec2-3-110-204-139.ap-south-1.compute.amazonaws.com/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
+            String verifyURL = "http://localhost:8081/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -201,7 +206,7 @@ public class AuthServiceImpl implements AuthService{
             
             javaMailSender.send(message);
 
-            return createSuccessResponse("Doctor Created");
+            return createSuccessResponse("Doctor Created Please verify email by clicking on the link sent to the email");
         }
 
         @Override
@@ -232,7 +237,7 @@ public class AuthServiceImpl implements AuthService{
                     + "Please click the link below to verify your registration:<br>"
                     + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
                     + "Thank you,<br>"
-                    + "Your company name.";
+                    + "UPES UHS.";
             
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -242,7 +247,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", ad.getName());
-            String verifyURL = "http://ec2-3-110-204-139.ap-south-1.compute.amazonaws.com/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
+            String verifyURL = "http://localhost:8081/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -250,7 +255,7 @@ public class AuthServiceImpl implements AuthService{
             
             javaMailSender.send(message);
 
-            return createSuccessResponse("AD created");
+            return createSuccessResponse("AD created Please verify email by clicking on the link sent to the email");
         }
 
         @Override
@@ -327,6 +332,202 @@ public class AuthServiceImpl implements AuthService{
             Conformation conformation = conformationRepository.findById(code).orElseThrow(()-> new ResourceNotFoundException("Invalid Code"));
             conformationRepository.delete(conformation);
             return "Email Verified";
+        }
+
+        @Override
+        public String forgetPassPat(String email) throws UnsupportedEncodingException, MessagingException {
+            email = email.substring(0,email.indexOf("@")).concat(email.substring(email.indexOf("@")).replaceAll(",", "."));
+
+            Patient patient = patientRepository.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("No User Found"));
+            Optional<PasswordChange> passRecord = passwordChangeRepository.findByPatient(patient);
+
+            if(passRecord.isPresent()){
+                passwordChangeRepository.delete(passRecord.get());
+            }
+
+            PasswordChange newPassChange = new PasswordChange();
+            newPassChange.setPatient(patient);
+
+            newPassChange = passwordChangeRepository.save(newPassChange);
+
+            String toAddress = patient.getEmail();
+            String fromAddress = "infirmarytest@gmail.com";
+            String senderName = "UPES UHS";
+            String subject = "Password Change";
+            String content = "Dear [[name]],<br>"
+                    + "Please click the link below to change your password:<br>"
+                    + "<h3><a href=\"[[URL]]\" target=\"_self\">PASSWORD CHANGE</a></h3>"
+                    + "Thank you,<br>"
+                    + "UPES UHS.";
+            
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+            helper.setFrom(fromAddress, senderName);
+            helper.setTo(toAddress);
+            helper.setSubject(subject);
+            
+            content = content.replace("[[name]]", patient.getName());
+            String verifyURL = "http://localhost:5173/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=patient";
+            
+            content = content.replace("[[URL]]", verifyURL);
+            
+            helper.setText(content, true);
+            
+            javaMailSender.send(message);
+
+            return "Please check the email for password change";
+        }
+
+        @Override
+        public String forgetPassDoc(String email) throws UnsupportedEncodingException, MessagingException{
+
+            email = email.substring(0,email.indexOf("@")).concat(email.substring(email.indexOf("@")).replaceAll(",", "."));
+
+
+            Doctor doctor = doctorRepository.findByDoctorEmail(email).orElseThrow(()->new ResourceNotFoundException("No Doctor Found"));
+            Optional<PasswordChange> passRecord = passwordChangeRepository.findByDoctor(doctor);
+
+            if(passRecord.isPresent()){
+                passwordChangeRepository.delete(passRecord.get());
+            }
+
+            PasswordChange newPassChange = new PasswordChange();
+            newPassChange.setDoctor(doctor);
+
+            newPassChange = passwordChangeRepository.save(newPassChange);
+
+            String toAddress = doctor.getDoctorEmail();
+            String fromAddress = "infirmarytest@gmail.com";
+            String senderName = "UPES UHS";
+            String subject = "Password Change";
+            String content = "Dear [[name]],<br>"
+                    + "Please click the link below to change your password:<br>"
+                    + "<h3><a href=\"[[URL]]\" target=\"_self\">PASSWORD CHANGE</a></h3>"
+                    + "Thank you,<br>"
+                    + "UPES UHS.";
+            
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+            helper.setFrom(fromAddress, senderName);
+            helper.setTo(toAddress);
+            helper.setSubject(subject);
+            
+            content = content.replace("[[name]]", doctor.getName());
+            String verifyURL = "http://localhost:5173/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=doctor";
+            
+            content = content.replace("[[URL]]", verifyURL);
+            
+            helper.setText(content, true);
+            
+            javaMailSender.send(message);
+
+            return "Please check the email for password change";
+        }
+
+        @Override
+        public String forgetPassAd(String email) throws UnsupportedEncodingException, MessagingException{
+            
+            email = email.substring(0,email.indexOf("@")).concat(email.substring(email.indexOf("@")).replaceAll(",", "."));
+
+            
+            AD ad = adRepository.findByAdEmail(email).orElseThrow(()->new ResourceNotFoundException("No AD Found"));
+            Optional<PasswordChange> passRecord = passwordChangeRepository.findByAd(ad);
+
+            if(passRecord.isPresent()){
+                passwordChangeRepository.delete(passRecord.get());
+            }
+
+            PasswordChange newPassChange = new PasswordChange();
+            newPassChange.setAd(ad);
+
+            newPassChange = passwordChangeRepository.save(newPassChange);
+
+            String toAddress = ad.getAdEmail();
+            String fromAddress = "infirmarytest@gmail.com";
+            String senderName = "UPES UHS";
+            String subject = "Password Change";
+            String content = "Dear [[name]],<br>"
+                    + "Please click the link below to change your password:<br>"
+                    + "<h3><a href=\"[[URL]]\" target=\"_self\">PASSWORD CHANGE</a></h3>"
+                    + "Thank you,<br>"
+                    + "UPES UHS.";
+            
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            
+            helper.setFrom(fromAddress, senderName);
+            helper.setTo(toAddress);
+            helper.setSubject(subject);
+            
+            content = content.replace("[[name]]", ad.getName());
+            String verifyURL = "http://localhost:5173/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=ad";
+            
+            content = content.replace("[[URL]]", verifyURL);
+            
+            helper.setText(content, true);
+            
+            javaMailSender.send(message);
+
+            return "Please check the email for password change";
+        }
+
+        @Override
+        public String changePassPat(UUID code, PasswordChangeDTO passwordChangeDTO) throws UnsupportedEncodingException, MessagingException {
+            PasswordChange passwordChange = passwordChangeRepository.findById(code).orElseThrow(()-> new ResourceNotFoundException("Invalid Code"));
+
+            if(passwordChange.getPatient() == null) throw new IllegalArgumentException("Invalid Code");
+
+            if(!(passwordChangeDTO.getNewPass().equals(passwordChangeDTO.getRepeatPassword()))) throw new IllegalArgumentException("Password does not match with repeat password");
+            
+            if(!(isValidPassword(passwordChangeDTO.getNewPass()))) throw new IllegalArgumentException("Pasword must contain atleast 8 characters including uppercase, lowercase, number and a special character");
+            
+            Patient patient = passwordChange.getPatient();
+            patient.setPassword(encoder.encode(passwordChangeDTO.getNewPass()));
+            patientRepository.save(patient);
+
+            passwordChangeRepository.delete(passwordChange);
+
+            return "Password Successfully changed";
+        }
+
+        @Override
+        public String changePassDoc(UUID code, PasswordChangeDTO passwordChangeDTO) throws UnsupportedEncodingException, MessagingException {
+            PasswordChange passwordChange = passwordChangeRepository.findById(code).orElseThrow(()-> new ResourceNotFoundException("Invalid Code"));
+
+            if(passwordChange.getDoctor() == null) throw new IllegalArgumentException("Invalid Code");
+
+            if(!(passwordChangeDTO.getNewPass().equals(passwordChangeDTO.getRepeatPassword()))) throw new IllegalArgumentException("Password does not match with repeat password");
+
+            if(!(isValidPassword(passwordChangeDTO.getNewPass()))) throw new IllegalArgumentException("Pasword must contain atleast 8 characters including uppercase, lowercase, number and a special character");
+
+            Doctor doctor = passwordChange.getDoctor();
+            doctor.setPassword(encoder.encode(passwordChangeDTO.getNewPass()));
+            doctorRepository.save(doctor);
+
+            passwordChangeRepository.delete(passwordChange);
+
+            return "Password Successfully changed";
+        }
+
+        @Override
+        public String changePassAd(UUID code, PasswordChangeDTO passwordChangeDTO) throws UnsupportedEncodingException, MessagingException {
+            PasswordChange passwordChange = passwordChangeRepository.findById(code).orElseThrow(()-> new ResourceNotFoundException("Invalid Code"));
+
+            if(passwordChange.getAd() == null) throw new IllegalArgumentException("Invalid Code");
+
+            if(!(passwordChangeDTO.getNewPass().equals(passwordChangeDTO.getRepeatPassword()))) throw new IllegalArgumentException("Password does not match with repeat password");
+
+            if(!(isValidPassword(passwordChangeDTO.getNewPass()))) throw new IllegalArgumentException("Pasword must contain atleast 8 characters including uppercase, lowercase, number and a special character");
+
+            AD ad = passwordChange.getAd();
+            ad.setPassword(encoder.encode(passwordChangeDTO.getNewPass()));
+            adRepository.save(ad);
+
+            passwordChangeRepository.delete(passwordChange);
+
+            return "Password Successfully changed";
         }
 
 }

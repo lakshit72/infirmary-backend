@@ -11,6 +11,7 @@ import com.infirmary.backend.configuration.Exception.UserAlreadyExists;
 import com.infirmary.backend.configuration.dto.AdDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.LoginRequestDTO;
+import com.infirmary.backend.configuration.dto.PasswordChangeDTO;
 import com.infirmary.backend.configuration.dto.PatientReqDTO;
 
 import jakarta.mail.MessagingException;
@@ -34,4 +35,17 @@ public interface AuthService {
     public ResponseEntity<?> loginServiceAdmin(LoginRequestDTO loginRequestDTO);
 
     public String verifyUser(UUID code);
+
+    public String forgetPassPat(String email) throws UnsupportedEncodingException, MessagingException;
+    
+    public String forgetPassDoc(String email) throws UnsupportedEncodingException, MessagingException;
+    
+    public String forgetPassAd(String email) throws UnsupportedEncodingException, MessagingException;
+    
+    public String changePassPat(UUID code, PasswordChangeDTO passwordChangeDTO) throws UnsupportedEncodingException, MessagingException;
+
+    public String changePassDoc(UUID code, PasswordChangeDTO passwordChangeDTO) throws UnsupportedEncodingException, MessagingException;
+
+    public String changePassAd(UUID code, PasswordChangeDTO passwordChangeDTO) throws UnsupportedEncodingException, MessagingException;
+
 }
