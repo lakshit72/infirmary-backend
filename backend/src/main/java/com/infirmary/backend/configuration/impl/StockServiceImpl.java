@@ -144,7 +144,7 @@ public class StockServiceImpl implements StockService {
             Sheet sheet = workbook.createSheet("Medicine Stocks");
 
             Row headerRow = sheet.createRow(0);
-            String[] columns = {"Batch Number", "Medicine Name", "Composition", "Quantity", "Medicine Type", "Expiration Date", "Company"};
+            String[] columns = {"Batch Number", "Medicine Name", "Composition", "Quantity", "Medicine Type", "Expiration Date", "Company","Location"};
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
@@ -160,6 +160,7 @@ public class StockServiceImpl implements StockService {
                 row.createCell(4).setCellValue(stock.getMedicineType());
                 row.createCell(5).setCellValue(stock.getExpirationDate().toString());
                 row.createCell(6).setCellValue(stock.getCompany());
+                row.createCell(7).setCellValue(stock.getLocation().getLocationName());
             }
 
             for (int i = 0; i < columns.length; i++) {

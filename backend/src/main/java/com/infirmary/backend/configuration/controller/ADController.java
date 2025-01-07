@@ -15,6 +15,9 @@ import com.infirmary.backend.configuration.service.StockService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -206,6 +210,21 @@ public class ADController {
     @GetMapping(value = "/getTokenData")
     public ResponseEntity<?> getTokenData(){
         return adService.getTokenData(getTokenClaims());
+    }
+
+    //Export to excel
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @GetMapping(value = "/export")
+    public ResponseEntity<?> exportStocks() throws IOException {
+        byte[] excelContent = stockService.exportStocksToExcel();
+
+        ByteArrayResource resource = new ByteArrayResource(excelContent);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=medicine_stocks.xlsx");
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentLength(excelContent.length);
+
+        return createSuccessResponse(resource, headers);
     }
 
 }

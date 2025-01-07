@@ -16,6 +16,10 @@ import com.infirmary.backend.configuration.service.PrescriptionService;
 import com.infirmary.backend.configuration.service.StockService;
 
 import jakarta.validation.Valid;
+
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +29,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -186,5 +191,20 @@ public class DoctorController {
     @GetMapping(value = "/getAppointmentPat/{id}")
     public ResponseEntity<?> getAppointmentDocs(@PathVariable String id) {
         return patientService.getAppointment(id);
+    }
+
+    //Export Excel
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @GetMapping(value = "/export")
+    public ResponseEntity<?> exportStocks() throws IOException {
+        byte[] excelContent = stockService.exportStocksToExcel();
+
+        ByteArrayResource resource = new ByteArrayResource(excelContent);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=medicine_stocks.xlsx");
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentLength(excelContent.length);
+
+        return createSuccessResponse(resource, headers);
     }
 }

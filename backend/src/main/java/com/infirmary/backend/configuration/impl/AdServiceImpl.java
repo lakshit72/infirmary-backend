@@ -367,6 +367,7 @@ public class AdServiceImpl implements ADService{
             apt.put("token", curApt.getTokenNo().toString());
             apt.put("date", curApt.getDate().toString());
             apt.put("time", simpleDateFormat.format(new Date(curApt.getTimestamp())));
+            apt.put("location", curApt.getLocation().getLocationName());
             resp.add(apt);
         }
 

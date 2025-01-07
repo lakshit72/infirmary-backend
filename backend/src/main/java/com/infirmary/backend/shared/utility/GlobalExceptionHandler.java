@@ -37,7 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
         
         // Collect field errors without sensitive information
-        StringBuilder messageBuilder = new StringBuilder("Validation failed for fields:");
+        StringBuilder messageBuilder = new StringBuilder("");
         ex.getBindingResult().getFieldErrors().forEach(fieldError -> 
             messageBuilder.append(" ").append(fieldError.getField())
         );
