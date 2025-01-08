@@ -37,10 +37,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         response.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
         
         // Collect field errors without sensitive information
-        StringBuilder messageBuilder = new StringBuilder("");
-        ex.getBindingResult().getFieldErrors().forEach(fieldError -> 
-            messageBuilder.append(" ").append(fieldError.getField())
-        );
+        String messageBuilder = ex.getBindingResult().getFieldErrors().stream().map(constVio -> constVio.getDefaultMessage()).collect(Collectors.joining(", ")).toString();
 
         response.put("message", messageBuilder.toString());
         response.put("details", "Invalid Arguments");
@@ -59,7 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Object> handleValidationEx(Exception ex){
-        String messageBuilder = ((ConstraintViolationException) ex).getConstraintViolations().stream().map(constVio -> constVio.getMessage()).collect(Collectors.joining(" ")).toString();
+        String messageBuilder = ((ConstraintViolationException) ex).getConstraintViolations().stream().map(constVio -> constVio.getMessage()).collect(Collectors.joining(", ")).toString();
         return buildResponse(HttpStatus.BAD_REQUEST, "Invalid Input", messageBuilder);
     }
 

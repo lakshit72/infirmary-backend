@@ -75,7 +75,7 @@ public class AuthController {
     }
 
     @PostMapping("/passwordChange")
-    public ResponseEntity<?> passwordChange(@RequestParam(name = "code") UUID code, @RequestParam(name = "role") String role, @RequestBody PasswordChangeDTO passwordChange) throws UnsupportedEncodingException, MessagingException{
+    public ResponseEntity<?> passwordChange(@RequestParam(name = "code") UUID code, @RequestParam(name = "role") String role, @Valid @RequestBody PasswordChangeDTO passwordChange,BindingResult bindingResult) throws UnsupportedEncodingException, MessagingException{
         return createSuccessResponse(role.equals("patient")?authService.changePassPat(code, passwordChange):role.equals("doctor")?authService.changePassDoc(code, passwordChange):authService.changePassPat(code, passwordChange));
     }
 
