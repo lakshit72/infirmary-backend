@@ -1,7 +1,8 @@
 package com.infirmary.backend.configuration.dto;
 
 import java.time.LocalDate;
-import java.util.List;
+
+import com.infirmary.backend.configuration.model.Prescription;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.Setter;
 public class PatientDetails {
     private PatientDTO patient;
     private MedicalDetailsDTO medicalDetails;
-    private List<PrescriptionDTO> prescriptions;
+    private PrescriptionInfo prescription;
     private String reason;
     private String docName;
     private String time;
@@ -22,9 +23,9 @@ public class PatientDetails {
     private String designation;
 
 
-    public PatientDetails(PatientDTO patient,MedicalDetailsDTO medicalDetails,List<PrescriptionDTO> prescriptions){
+    public PatientDetails(PatientDTO patient,MedicalDetailsDTO medicalDetails,Prescription prescription){
         this.patient = patient;
         this.medicalDetails = medicalDetails;
-        this.prescriptions = prescriptions;
+        this.prescription = new PrescriptionInfo(prescription);
     }
 }

@@ -7,6 +7,7 @@ import com.infirmary.backend.configuration.Exception.StockNotFoundException;
 import com.infirmary.backend.configuration.dto.AdHocSubmitDTO;
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
 import com.infirmary.backend.configuration.dto.DoctorDTO;
+import com.infirmary.backend.configuration.dto.ReassignPatientDTO;
 import com.infirmary.backend.configuration.dto.StockDTO;
 import com.infirmary.backend.configuration.service.ADService;
 import com.infirmary.backend.configuration.service.DoctorService;
@@ -187,7 +188,7 @@ public class ADController {
     //Reject Appointment by AD
     @PreAuthorize("hasRole('ROLE_AD')")
     @GetMapping(value = "/rejectAppointment")
-    public ResponseEntity<?> rejectAppointment(@RequestParam("email") String email){
+    public ResponseEntity<?> rejectAppointment(@RequestParam("email") String email) throws IOException{
         return ResponseEntity.ok(adService.rejectAppointment(email));
     }
 
@@ -225,6 +226,13 @@ public class ADController {
         headers.setContentLength(excelContent.length);
 
         return createSuccessResponse(resource, headers);
+    }
+
+    //Reassign Patient
+    @PreAuthorize("hasRole('ROLE_AD')")
+    @PostMapping(value = "/reassign")
+    public ResponseEntity<?> reassignPatient(@Valid @RequestBody ReassignPatientDTO reassignPatientDTO){
+        return createSuccessResponse(adService.reassignPatient(reassignPatientDTO));
     }
 
 }

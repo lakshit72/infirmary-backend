@@ -42,6 +42,7 @@ public class StockDTO {
     private String company;
 
     public StockDTO(Stock stock) {
+        this.id = stock.getId();
         this.batchNumber = stock.getBatchNumber();
         this.medicineName = stock.getMedicineName();
         this.composition = stock.getComposition();

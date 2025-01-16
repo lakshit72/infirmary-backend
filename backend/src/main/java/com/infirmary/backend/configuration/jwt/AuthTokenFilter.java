@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.infirmary.backend.configuration.securityimpl.AdDetailsImpl;
 import com.infirmary.backend.configuration.securityimpl.AdminDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.AnalyticsDetailsImpl;
 import com.infirmary.backend.configuration.securityimpl.DoctorDetailsImpl;
 import com.infirmary.backend.configuration.securityimpl.PatientDetailsImpl;
 
@@ -25,13 +26,15 @@ public class AuthTokenFilter extends OncePerRequestFilter{
     private AdminDetailsImpl adminDetailsImpl;
     private AdDetailsImpl adDetailsImpl;
     private DoctorDetailsImpl doctorDetailsImpl;
+    private AnalyticsDetailsImpl analyticsDetailsImpl;
 
-    public AuthTokenFilter(JwtUtils jwtUtils, PatientDetailsImpl patientDetailsImpl, AdminDetailsImpl adminDetailsImpl, AdDetailsImpl adDetailsImpl, DoctorDetailsImpl doctorDetailsImpl){
+    public AuthTokenFilter(JwtUtils jwtUtils, PatientDetailsImpl patientDetailsImpl, AdminDetailsImpl adminDetailsImpl, AdDetailsImpl adDetailsImpl, DoctorDetailsImpl doctorDetailsImpl, AnalyticsDetailsImpl analyticsDetailsImpl){
         this.jwtUtils = jwtUtils;
         this.patientDetailsImpl = patientDetailsImpl;
         this.adDetailsImpl = adDetailsImpl;
         this.adminDetailsImpl = adminDetailsImpl;
         this.doctorDetailsImpl = doctorDetailsImpl;
+        this.analyticsDetailsImpl = analyticsDetailsImpl;
     }
 
     private String parseJwt(HttpServletRequest request){
@@ -64,6 +67,8 @@ public class AuthTokenFilter extends OncePerRequestFilter{
                 userDetails = adDetailsImpl.loadUserByUsername(username);
             } else if (requestURI.startsWith("/api/admin/")) {
                 userDetails = adminDetailsImpl.loadUserByUsername(username);
+            }else if (requestURI.startsWith("/api/analytics/")) {
+                userDetails = analyticsDetailsImpl.loadUserByUsername(username);
             }
 
             if(userDetails == null) throw new IllegalArgumentException("No valid Endpoint exists");

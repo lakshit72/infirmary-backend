@@ -146,7 +146,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", patient.getName());
-            String verifyURL = "http://localhost:8081/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
+            String verifyURL = "http://ec2-3-110-204-139.ap-south-1.compute.amazonaws.com/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -198,7 +198,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", doctor.getName());
-            String verifyURL = "http://localhost:8081/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
+            String verifyURL = "http://ec2-3-110-204-139.ap-south-1.compute.amazonaws.com/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -247,7 +247,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", ad.getName());
-            String verifyURL = "http://localhost:8081/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
+            String verifyURL = "http://ec2-3-110-204-139.ap-south-1.compute.amazonaws.com/api/auth/user" + "/verify?code=" + conformation.getConformationToken();
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -368,7 +368,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", patient.getName());
-            String verifyURL = "http://localhost:5172/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=patient";
+            String verifyURL = "http://ec2-13-126-247-225.ap-south-1.compute.amazonaws.com/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=patient";
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -415,7 +415,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", doctor.getName());
-            String verifyURL = "http://localhost:5172/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=doctor";
+            String verifyURL = "http://ec2-13-126-247-225.ap-south-1.compute.amazonaws.com/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=doctor";
             
             content = content.replace("[[URL]]", verifyURL);
             
@@ -462,7 +462,7 @@ public class AuthServiceImpl implements AuthService{
             helper.setSubject(subject);
             
             content = content.replace("[[name]]", ad.getName());
-            String verifyURL = "http://localhost:5172/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=ad";
+            String verifyURL = "http://ec2-13-126-247-225.ap-south-1.compute.amazonaws.com/pass-change" + "?code=" + newPassChange.getChangeCode() + "&role=ad";
             
             content = content.replace("[[URL]]", verifyURL);
             

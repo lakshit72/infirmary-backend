@@ -27,5 +27,7 @@ public interface StockRepository extends JpaRepository<Stock, UUID> {
 
     List<Stock> findByExpirationDateAfter(LocalDate expirationDate);
     
-    List<Stock> findByQuantityGreaterThanAndLocation(int quantity, Location location);
+    List<Stock> findByQuantityGreaterThanAndLocationAndExpirationDateAfter(int quantity, Location location, LocalDate date);
+
+    List<Stock> findByQuantityGreaterThan(int quantity);
 }

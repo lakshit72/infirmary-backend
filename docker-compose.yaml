@@ -27,6 +27,7 @@ services:
      - backend/secrets.env
    volumes:
      - ./backend/build/resources/main/static/Profile:/opt/app/build/resources/main/static/Profile
+     - ./backend/src/main/resources/Deleted:/opt/app/src/main/resources/Deleted
      - ./backend/src/main/resources/static/Profile:/opt/app/src/main/resources/static/Profile
 
 networks:

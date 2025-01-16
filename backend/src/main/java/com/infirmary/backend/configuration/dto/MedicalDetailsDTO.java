@@ -17,6 +17,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class MedicalDetailsDTO {
     private UUID id;
+
+    private String image;
     
     @NotBlank(message = "Please provide your current address")
     private String currentAddress;

@@ -6,7 +6,7 @@ import com.infirmary.backend.configuration.dto.DoctorDTO;
 import com.infirmary.backend.configuration.dto.MedicalDetailsDTO;
 import com.infirmary.backend.configuration.dto.PatientDTO;
 import com.infirmary.backend.configuration.dto.PatientDetails;
-import com.infirmary.backend.configuration.dto.PrescriptionDTO;
+import com.infirmary.backend.configuration.dto.PrescriptionInfo;
 import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Doctor;
@@ -19,7 +19,6 @@ import com.infirmary.backend.configuration.repository.CurrentAppointmentReposito
 import com.infirmary.backend.configuration.repository.DoctorRepository;
 import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.configuration.repository.MedicalDetailsRepository;
-import com.infirmary.backend.configuration.repository.PrescriptionRepository;
 import com.infirmary.backend.configuration.service.DoctorService;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
 import com.infirmary.backend.shared.utility.FunctionUtil;
@@ -48,16 +47,14 @@ public class DoctorServiceImpl implements DoctorService {
     private final MessageConfigUtil messageConfigUtil;
     private final CurrentAppointmentRepository currentAppointmentRepository;
     private final MedicalDetailsRepository medicalDetailsRepository;
-    private final PrescriptionRepository prescriptionRepository;
     private final LocationRepository locationRepository;
 
-    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository, PrescriptionRepository prescriptionRepository, LocationRepository locationRepository) {
+    public DoctorServiceImpl(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MessageConfigUtil messageConfigUtil,CurrentAppointmentRepository currentAppointmentRepository, MedicalDetailsRepository medicalDetailsRepository, LocationRepository locationRepository) {
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
         this.messageConfigUtil = messageConfigUtil;
         this.currentAppointmentRepository = currentAppointmentRepository;
         this.medicalDetailsRepository = medicalDetailsRepository;
-        this.prescriptionRepository = prescriptionRepository;
         this.locationRepository = locationRepository;
     }
 
@@ -206,9 +203,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         resp.setMedicalDetails(new MedicalDetailsDTO(medicalDetails));
 
-        List<PrescriptionDTO> presc = prescriptionRepository.findByPatient(patient).stream().map((pres)->(new PrescriptionDTO(pres))).toList();
-
-        resp.setPrescriptions(presc);
+        resp.setPrescription(new PrescriptionInfo(currentAppointment.getAppointment().getPrescription()));
 
         resp.getMedicalDetails().setWeight(currentAppointment.getAppointment().getWeight());
 
