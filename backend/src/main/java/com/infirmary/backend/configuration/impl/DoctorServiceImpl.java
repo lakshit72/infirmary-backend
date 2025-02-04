@@ -203,7 +203,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         resp.setMedicalDetails(new MedicalDetailsDTO(medicalDetails));
 
-        resp.setPrescription(new PrescriptionInfo(currentAppointment.getAppointment().getPrescription()));
+        if(currentAppointment.getAppointment().getPrescription() != null) resp.setPrescription(new PrescriptionInfo(currentAppointment.getAppointment().getPrescription()));
 
         resp.getMedicalDetails().setWeight(currentAppointment.getAppointment().getWeight());
 
