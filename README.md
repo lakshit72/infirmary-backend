@@ -1,6 +1,6 @@
 # UPES UHS Portal Backend
 
-This project is the backend of the UPES UHS (University Health Services) Portal, built using **Spring** and connected to a **PostgreSQL** database. The backend is containerized using **Docker** and can be easily run with **Docker Compose**. Once set up, the server will be available at **http://localhost:8081** and will accept connections.
+This is the backend of the UPES UHS (University Health Services) Portal, built using **Spring** and connected to a **PostgreSQL** database. The backend is containerized using **Docker** and can be easily run with **Docker Compose**. Once set up, the server will be available at **http://localhost:8081** and will accept connections.
 
 ## Prerequisites
 
