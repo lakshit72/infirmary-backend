@@ -19,7 +19,7 @@ public class AdDetailsImpl implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws ResourceNotFoundException{
-        AD ad = adRepository.findByAdEmail(username).orElseThrow(()-> new ResourceNotFoundException("Ad does not exists"));
+        AD ad = adRepository.findByAdEmail(username).orElseThrow(()-> new ResourceNotFoundException("Nursing Assistant does not exists"));
         return UserDetailsImpl.build(ad);
     }
 }
