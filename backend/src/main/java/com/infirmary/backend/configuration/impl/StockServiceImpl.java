@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -174,7 +176,7 @@ public class StockServiceImpl implements StockService {
 
     @Override
     public List<Stock> getAllStocks() {
-        return stockRepository.findAll();
+        return stockRepository.findByQuantityGreaterThan(0);
     }
 
     
@@ -205,7 +207,7 @@ public class StockServiceImpl implements StockService {
 
         if(presentLocation == null) throw new IllegalArgumentException("Must be present on location");
         
-        return stockRepository.findByQuantityGreaterThanAndLocation(0,presentLocation);
+        return stockRepository.findByQuantityGreaterThanAndLocationAndExpirationDateAfter(0,presentLocation,Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate());
     }
 
     @Override

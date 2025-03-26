@@ -2,8 +2,6 @@ package com.infirmary.backend.configuration.recovery;
 
 import java.util.List;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneId;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -14,11 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infirmary.backend.configuration.dto.AdminDTO;
 import com.infirmary.backend.configuration.dto.LocationDataDTO;
 import com.infirmary.backend.configuration.model.Admin;
-import com.infirmary.backend.configuration.model.Appointment;
 import com.infirmary.backend.configuration.model.CurrentAppointment;
 import com.infirmary.backend.configuration.model.Location;
 import com.infirmary.backend.configuration.repository.AdminRepository;
-import com.infirmary.backend.configuration.repository.AppointmentRepository;
 import com.infirmary.backend.configuration.repository.CurrentAppointmentRepository;
 import com.infirmary.backend.configuration.repository.LocationRepository;
 import com.infirmary.backend.shared.utility.AppointmentQueueManager;
@@ -30,7 +26,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RecoveryComponent {
     private final CurrentAppointmentRepository currentAppointmentRepository;
-    private final AppointmentRepository appointmentRepository;
     private final LocationRepository locationRepository;
     private final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder;
@@ -40,15 +35,8 @@ public class RecoveryComponent {
         List<CurrentAppointment> cursAPt = currentAppointmentRepository.findAllByAppointmentNotNullAndDoctorIsNull();
 
         for(CurrentAppointment crs:cursAPt){
-            if(!crs.getAppointment().getDate().equals(Instant.ofEpochMilli(System.currentTimeMillis()).atZone(ZoneId.of("Asia/Kolkata")).toLocalDate())){
-                Appointment apt = crs.getAppointment();
-                crs.setAppointment(null);
-                currentAppointmentRepository.save(crs);
-                appointmentRepository.delete(apt);
-            }else{
                 if(crs.getAppointment().getDoctor() == null) AppointmentQueueManager.addAppointmentToQueue(crs.getAppointment().getAppointmentId());
                 if(crs.getAppointment().getDoctor() != null) AppointmentQueueManager.addAppointedQueue(crs.getAppointment().getAppointmentId());
-            }
         }
 
         //Check if location table empty

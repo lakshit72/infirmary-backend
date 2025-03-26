@@ -1,7 +1,9 @@
 package com.infirmary.backend.configuration.impl;
 
 import static com.infirmary.backend.shared.utility.FunctionUtil.createSuccessResponse;
+import static com.infirmary.backend.shared.utility.FunctionUtil.saveToJSON;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import com.infirmary.backend.configuration.dto.AdHocSubmitDTO;
 import com.infirmary.backend.configuration.dto.AdSubmitReqDTO;
+import com.infirmary.backend.configuration.dto.ReassignPatientDTO;
 import com.infirmary.backend.configuration.model.AD;
 import com.infirmary.backend.configuration.model.ADPrescription;
 import com.infirmary.backend.configuration.model.Appointment;
@@ -183,10 +186,14 @@ public class AdServiceImpl implements ADService{
 
     //Reject appointment for a patient by AD
     @Override
-    public String rejectAppointment(String email) {
+    public String rejectAppointment(String email) throws IOException {
+        email = email.substring(0,email.indexOf("@")).concat(email.substring(email.indexOf("@")).replaceAll(",", "."));
+
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(email).orElseThrow(() -> new ResourceNotFoundException("No Appointment Scheduled"));
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Apointment Scheduled");
+
+        saveToJSON(currentAppointment.getAppointment());
 
         Appointment appointment = appointmentRepository.findByAppointmentId(currentAppointment.getAppointment().getAppointmentId());
 
@@ -270,6 +277,8 @@ public class AdServiceImpl implements ADService{
     //Complete a appointment for a patient
     @Override
     public String completeAppointment(String sapEmail) {
+        sapEmail = sapEmail.substring(0,sapEmail.indexOf("@")).concat(sapEmail.substring(sapEmail.indexOf("@")).replaceAll(",", "."));
+
         CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(sapEmail).orElseThrow(()->new ResourceNotFoundException("No Appointment Scheduled"));
 
         if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Scheduled");
@@ -427,6 +436,32 @@ public class AdServiceImpl implements ADService{
         }
 
         return resp;
+    }
+
+
+    @Override
+    public String reassignPatient(ReassignPatientDTO reassignPatientDTO) {
+
+        Doctor doctor = doctorRepository.findById(reassignPatientDTO.getDoctorEmail()).orElseThrow(()-> new ResourceNotFoundException("No Such Doctor Exists"));
+
+        CurrentAppointment currentAppointment = currentAppointmentRepository.findByPatient_Email(reassignPatientDTO.getPatientEmail()).orElseThrow(()-> new ResourceNotFoundException("No Such Patient Exists"));
+
+        if(currentAppointment.getAppointment() == null) throw new ResourceNotFoundException("No Appointment Exists");
+
+        AppointmentQueueManager.removeApptEl(currentAppointment.getAppointment().getAppointmentId());
+
+        Appointment appointment = currentAppointment.getAppointment();
+        appointment.setDoctor(doctor);
+        appointmentRepository.save(appointment);
+
+        currentAppointment.setDoctor(doctor);
+        
+        doctor.setStatus(false);
+        doctorRepository.save(doctor);
+        
+        currentAppointmentRepository.save(currentAppointment);
+
+        return "Patient Reassigned";
     }
 
 }

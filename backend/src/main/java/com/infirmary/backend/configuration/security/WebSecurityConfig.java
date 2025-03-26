@@ -28,6 +28,7 @@ import com.infirmary.backend.configuration.jwt.AuthTokenFilter;
 import com.infirmary.backend.configuration.jwt.JwtUtils;
 import com.infirmary.backend.configuration.securityimpl.AdDetailsImpl;
 import com.infirmary.backend.configuration.securityimpl.AdminDetailsImpl;
+import com.infirmary.backend.configuration.securityimpl.AnalyticsDetailsImpl;
 import com.infirmary.backend.configuration.securityimpl.DoctorDetailsImpl;
 import com.infirmary.backend.configuration.securityimpl.PatientDetailsImpl;
 
@@ -45,19 +46,21 @@ public class WebSecurityConfig {
     private AdminDetailsImpl adminDetailsImpl;
     private AuthEntryPointJwt unauthorizedHandler;
     private JwtUtils jwtUtils;
+    private AnalyticsDetailsImpl analyticsDetailsImpl;
 
-    public WebSecurityConfig(AuthEntryPointJwt authEntryPointJwt,JwtUtils jwtUtils, PatientDetailsImpl patientDetailsImpl, DoctorDetailsImpl doctorDetailsImpl, AdDetailsImpl adDetailsImpl, AdminDetailsImpl adminDetailsImpl){
+    public WebSecurityConfig(AuthEntryPointJwt authEntryPointJwt,JwtUtils jwtUtils, PatientDetailsImpl patientDetailsImpl, DoctorDetailsImpl doctorDetailsImpl, AdDetailsImpl adDetailsImpl, AdminDetailsImpl adminDetailsImpl,AnalyticsDetailsImpl analyticsDetailsImpl){
         this.unauthorizedHandler = authEntryPointJwt;
         this.jwtUtils = jwtUtils;
         this.adDetailsImpl = adDetailsImpl;
         this.adminDetailsImpl = adminDetailsImpl;
         this.doctorDetailsImpl = doctorDetailsImpl;
         this.patientDetailsImpl = patientDetailsImpl;
+        this.analyticsDetailsImpl = analyticsDetailsImpl;
     }
 
     @Bean
     public AuthTokenFilter authenticatioTokenFilterPatient(){
-        return new AuthTokenFilter(jwtUtils,patientDetailsImpl,adminDetailsImpl,adDetailsImpl,doctorDetailsImpl);
+        return new AuthTokenFilter(jwtUtils,patientDetailsImpl,adminDetailsImpl,adDetailsImpl,doctorDetailsImpl,analyticsDetailsImpl);
     }
 
     public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsImpl){
@@ -75,7 +78,8 @@ public class WebSecurityConfig {
             authenticationProvider(patientDetailsImpl),
             authenticationProvider(doctorDetailsImpl),
             authenticationProvider(adDetailsImpl),
-            authenticationProvider(adminDetailsImpl)
+            authenticationProvider(adminDetailsImpl),
+            authenticationProvider(analyticsDetailsImpl)
         );
 
         return authentication -> {
@@ -98,6 +102,8 @@ public class WebSecurityConfig {
                 selectedProvider = providers.stream().toList().get(2);
             } else if (requestURI.startsWith("/api/admin/") || requestURI.startsWith("/api/auth/admin/")) {
                 selectedProvider = providers.stream().toList().get(3);
+            }else if (requestURI.startsWith("/api/analytics/")) {
+                selectedProvider = providers.stream().toList().get(4);
             }
             // If no matching provider is found, throw an exception
             if (selectedProvider == null) {
@@ -186,6 +192,20 @@ public class WebSecurityConfig {
             .addFilterBefore(authenticatioTokenFilterPatient(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Order(6)
+    @Bean
+    public SecurityFilterChain analyticsSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/api/analytics/**")
+            .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth.anyRequest().authenticated()
+            )
+            .addFilterBefore(authenticatioTokenFilterPatient(), UsernamePasswordAuthenticationFilter.class);
+
+            return http.build();
     }
 
     @Bean

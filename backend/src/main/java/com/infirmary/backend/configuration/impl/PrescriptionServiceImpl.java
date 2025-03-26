@@ -107,6 +107,13 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         prescription = prescriptionRepository.save(prescription);
         // Set Prescription for appointment
         Appointment appointment = appointmentRepository.findByAppointmentId(byDoctorEmail.getAppointment().getAppointmentId());
+
+        if(appointment.getPrescription() != null){
+            Prescription prescription2 = appointment.getPrescription();
+            appointment.setPrescription(null);
+            prescriptionRepository.delete(prescription2);
+        }
+
         appointment.setPrescription(prescription);
         appointmentRepository.save(appointment);
 
